@@ -1,0 +1,21 @@
+{
+  "name": "cypress",
+  "version": "1.0.0",
+  "description": "Bretsch React Cypress for a e-vehicle app",
+  "scripts": {
+    "cypress": "npx cypress open"
+  },
+  "keywords": [
+    "Bretsch",
+    "h-da",
+    "Cypress",
+    "e-vehicle"
+  ],
+  "author": "BRETSCH™ Development Team <develop@bretsch.eu>",
+  "license": "MIT",
+  "dependencies": {
+    "@testing-library/cypress": "^6.0.0",
+    "cypress": "^4.7.0",
+    "test-data-bot": "^0.8.0"
+  }
+}

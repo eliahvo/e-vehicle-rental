@@ -1,0 +1,37 @@
+version: "3.4"
+services:
+  bretsch-frontend:
+    image: node:alpine
+    container_name: bretsch-frontend
+    working_dir: /bretsch-app/bretsch-frontend
+    command: sh entrypoint.sh
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./bretsch-app/bretsch-frontend:/bretsch-app/bretsch-frontend
+  bretsch-api:
+    image: node:alpine
+    container_name: bretsch-api
+    working_dir: /bretsch-app/bretsch-api
+    command: sh entrypoint.sh -dev # Remove the "-dev" to turn off the development mode
+    restart: always
+    ports: # Have to match the value set in env file
+      - 3000:3000
+    volumes:
+      - ./bretsch-app/bretsch-api:/bretsch-app/bretsch-api
+  bretsch-mysql:
+    image: mariadb:latest
+    container_name: bretsch-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports: # Have to match the value set in env file
+      - 3306:3306
+    volumes:
+      - ./bretsch-app/bretsch-db:/var/lib/mysql
+    cap_add:
+      - SYS_NICE
+    environment: # Have to match the values set in env file
+      - MYSQL_DATABASE=bretsch-app
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=NeverGuessThis!

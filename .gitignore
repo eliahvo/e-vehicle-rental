@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Generated output
+dist
+coverage
+build
+
+# Enviroment files
+bretsch-db/
+*.env
+.eslintcache
+
+#IDE Settings
+.vscode/
+
+# Logs
+logs
+*.log
