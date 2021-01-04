@@ -13,7 +13,7 @@ PREFIX="[Entrypoint Script]"
 # Install only procedure
 function install() {
     echo "$PREFIX Installing all necessary packages..."
-	npm i
+	npm i --legacy-peer-deps
 }
 
 # Build only procedure
