@@ -29,22 +29,22 @@
 
 The participants or contributors of this project include:
 
-🎓 **Cimpoes, Vitali**
+🎓 **Cimpoes, Vitali**  
 GitLab: [@istvicimp](https://code.fbi.h-da.de/istvicimp "@istvicimp")<br>
 
-🎓 **Cincato, Ricardo**
+🎓 **Cincato, Ricardo**  
 GitLab: [@istricinc](https://code.fbi.h-da.de/istricinc "@istricinc")<br>
 
-🎓 **Heymel, Celine**
+🎓 **Heymel, Celine**  
 GitLab: [@istceheym](https://code.fbi.h-da.de/istceheym "@istceheym")<br>
 
-🎓 **Vogel, Eliah**
+🎓 **Vogel, Eliah**  
 GitLab: [@istelvoge](https://code.fbi.h-da.de/istelvoge "@istelvoge")<br>
 
-🎓 **Walther, Ramon**
+🎓 **Walther, Ramon**  
 GitLab: [@istrawalt](https://code.fbi.h-da.de/istrawalt "@istrawalt")<br>
 
-🎓 **Werner, Niklas**
+🎓 **Werner, Niklas**  
 GitLab: [@istnswern](https://code.fbi.h-da.de/istnswern "@istnswern")<br>
 
 _This project is kindly supervised by T. Sauer / D. Schulz / D. Wohlfarth._
