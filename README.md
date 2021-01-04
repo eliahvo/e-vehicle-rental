@@ -17,12 +17,7 @@
   - [Testing manually](#2-testing-manually)
 - [💡 Frontend Reference](#-frontend-reference)
 - [🖥️ API Reference](#%EF%B8%8F-api-reference)
-  - [Route `/label`](#route-label)
-    - [Route `/label/:label/task`](#route-labellabeltask)
-  - [Route `/task`](#route-task)
-    - [Route `/task/:taskId/label`](#route-tasktaskidlabel)
-    - [Route `/task/:taskId/tracking`](#route-tasktaskidtracking)
-  - [Route `/tracking`](#route-tracking)
+  - [Route `/example`](#route-example)
 - [⚠ Status codes](#-status-codes)
 - [© License](#-license)
 
