@@ -26,7 +26,7 @@ services:
     image: node:alpine
     container_name: bretsch-frontend
     working_dir: /bretsch-app/bretsch-frontend
-    command: sh entrypoint.sh -nobuild # Remove the "-nobuild" to turn enable the creation of an optimized output build
+    command: sh entrypoint.sh -skipbuild # Remove the "-skipbuild" to turn enable the creation of an optimized output build
     restart: always
     ports:
       - 80:80
