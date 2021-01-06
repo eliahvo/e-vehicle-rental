@@ -7,7 +7,7 @@ import { vehicleTypeRouter } from './vehicleType.router';
 export const globalRouter: Router = Router({ mergeParams: true });
 
 globalRouter.get('/', async (_: Request, res: Response) => {
-    res.send({ message: 'Hello api' });
+    res.send('Hello API!');
   });
 
 globalRouter.use('/booking', bookingRouter);

@@ -11,7 +11,6 @@ import {
 
 export const userRouter = Router({ mergeParams: true });
 
-
 userRouter.post('/', createUser);
 userRouter.delete('/:userId', deleteUser);
 userRouter.get('/', getAllUser);
