@@ -66,6 +66,8 @@ There is barley nothing easier than setting up this project. Just follow this 3 
    docker-compose up
    ```
 
+   ❗ **IMPORTANT:** If you run in any errors concerning the `entrypoint.sh` files, just copy and paste them with your user in the same place and with the same filename as before. This results in a new creation of the files but with the nessesary permissions to run them.
+
    **Note:** In some cases, the creation of the DB docker is slower than the API docker. This is resulting in the API docker failing to connect to the DB and automatically synchronies the db schema. If this is the case, make sure to restart the project or execute the following command manually as soon as the db is up and running:
 
    ```
