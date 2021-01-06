@@ -86,7 +86,6 @@ export const deleteUser = async (req: Request, res: Response) =>{
  */
 export const getAllUser = async (res: Response) =>{
 
-    console.log("Test");
     const userRepository = getRepository(User);
     const users = await userRepository.find({ relations: ['bookings'] });
 
@@ -104,8 +103,20 @@ export const getAllUser = async (res: Response) =>{
  * @param {Request}req Request
  * @param {Response}res Response
  */
-export const getBookingsByUserId = async () =>{
+export const getBookingsByUserId = async (req: Request, res: Response) =>{
 
+    const userId = req.params.userId;
+    const userRepository = getRepository(User);
+
+	try {
+		const user = await userRepository.findOneOrFail(userId, { relations: ['bookings'] });
+		const userBookingList = user.bookings;
+		res.status(200).send({ data: userBookingList });
+	} catch (error) {
+		res.status(404).send({
+			status: 'Error: ' + error,
+		});
+	}
 };
 
 /**
