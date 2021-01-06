@@ -2,6 +2,22 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User.entity";
 
+/**
+ * Create User 
+ * Method: create
+ * Expected as a parameter: ---
+ * Expected in the body:
+ *                      email,
+ *                      hashedPassword,
+ *                      firstName,
+ *                       lastName,
+ *                       birthDate,
+ *                       preferedPayment,
+ *                       streetPlusNumber,
+ *                       city
+ * @param {Request}req Request
+ * @param {Response}res Response
+ */
 export const createUser = async (req: Request, res: Response) =>{
 
     const {email, hashedPassword, firstName, lastName, birthDate, preferedPayment,
@@ -35,6 +51,14 @@ export const createUser = async (req: Request, res: Response) =>{
 
 };
 
+/**
+ * Delete User based on the userId
+ * Method: delete
+ * Expected as a parameter: userId
+ * Expected in the body: ---
+ * @param {Request}req Request
+ * @param {Response}res Response
+ */
 export const deleteUser = async (req: Request, res: Response) =>{
 
     const userId = req.params.userId;
@@ -53,6 +77,13 @@ export const deleteUser = async (req: Request, res: Response) =>{
 	}
 };
 
+/**
+ * Get All User
+ * Method: get
+ * Expected as a parameter: ---
+ * Expected in the body: ---
+ * @param {Response}res Response
+ */
 export const getAllUser = async (res: Response) =>{
 
     console.log("Test");
@@ -65,13 +96,33 @@ export const getAllUser = async (res: Response) =>{
 
 };
 
+/**
+ * Get all Bokkings from a specific User
+ * Method: get
+ * Expected as a parameter: userId
+ * Expected in the body: ---
+ * @param {Request}req Request
+ * @param {Response}res Response
+ */
+export const getBookingsByUserId = async () =>{
+
+};
+
+/**
+ * Receives a User based on the userId
+ * Method: get
+ * Expected as a parameter: userId
+ * Expected in the body: ---
+ * @param {Request}req Request
+ * @param {Response}res Response
+ */
 export const getSpecificUser = async (req: Request, res: Response) =>{
 
     const userId = req.params.userId;
     const userRepository = getRepository(User);
 
 	try {
-		const user = await userRepository.findOneOrFail(userId);
+		const user = await userRepository.findOneOrFail(userId, { relations: ['bookings'] });
 		res.status(200).send({
 			data: user,
 		});
@@ -82,6 +133,23 @@ export const getSpecificUser = async (req: Request, res: Response) =>{
 	}
 
 };
+
+/**
+ * Update a User based on the userId
+ * Method: patch
+ * Expected as a parameter: userId
+ * Expected in the body (at least one parameter):
+ * *                                            email,
+ *                                              hashedPassword,
+ *                                              firstName,
+ *                                              lastName,
+ *                                              birthDate,
+ *                                              preferedPayment,
+ *                                              streetPlusNumber,
+ *                                              city
+ * @param {Request}req Request
+ * @param {Response}res Response
+ */
 export const updateUser = async (req: Request, res: Response) =>{
     const userId = req.params.userId;
 	const {email, hashedPassword, firstName, lastName, birthDate, preferedPayment,
@@ -109,8 +177,5 @@ export const updateUser = async (req: Request, res: Response) =>{
 			status: 'Error: ' + error,
 		});
 	}
-
-};
-export const getBookingsByUserId = async () =>{
 
 };
