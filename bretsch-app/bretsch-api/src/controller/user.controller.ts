@@ -3,7 +3,6 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User.entity";
 
 export const createUser = async (req: Request, res: Response) =>{
-    console.log("test");
 
     const {email, hashedPassword, firstName, lastName, birthDate, preferedPayment,
         streetPlusNumber, city} = req.body;

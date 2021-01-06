@@ -1,0 +1,68 @@
+{
+	"info": {
+		"_postman_id": "30bd769b-02b9-4a58-91d3-c0afec038b42",
+		"name": "Main_Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "api",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"email\": \"123@gmail.com\",\r\n     \"hashedPassword\":  \"User hashedPassword\",\r\n     \"firstName\": \"User firstName\",\r\n     \"lastName\":  \"User lastName\",\r\n     \"birthDate\": \"User birthDate\",\r\n     \"preferedPayment\":  \"User preferedPayment\",\r\n     \"streetPlusNumber\":  \"User streetPlusNumber\",\r\n     \"city\":  \"User city\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
