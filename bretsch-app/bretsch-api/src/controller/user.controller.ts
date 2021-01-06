@@ -1,5 +1,10 @@
+import { Request, Response } from "express";
+import { getRepository } from "typeorm";
+import { User } from "../entity/User.entity";
 
-export const createUser = async (req, res) =>{
+export const createUser = async (req: Request, res: Response) =>{
+    console.log("test");
+
     const {email, hashedPassword, firstName, lastName, birthDate, preferedPayment,
         streetPlusNumber, city} = req.body;
 
@@ -9,20 +14,41 @@ export const createUser = async (req, res) =>{
 			status: 'Error: Parameter fehlt!',
 		});
 		return;
-	}
-}
-export const deleteUser = async (req, res) =>{
+    }
+    
+    const user = new User();
 
-}
-export const getAllUser = async (req, res) =>{
+    user.email = email;
+    user.hashedPassword = hashedPassword;
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.birthDate = birthDate;
+    user.preferedPayment = preferedPayment;
+    user.streetPlusNumber = streetPlusNumber;
+    user.city = city;
 
-}
-export const getSpecificUser = async (req, res) =>{
+    const userRepository = getRepository(User);
+    const createdUser = await userRepository.save(user);
 
-}
-export const updateUser = async (req, res) =>{
+    res.status(200).send({
+		data: createdUser,
+	});
 
-}
-export const getBookingsByUserId = async (req, res) =>{
+};
 
-}
+export const deleteUser = async () =>{
+
+};
+export const getAllUser = async () =>{
+
+};
+
+export const getSpecificUser = async () =>{
+
+};
+export const updateUser = async () =>{
+
+};
+export const getBookingsByUserId = async () =>{
+
+};
