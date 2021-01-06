@@ -1,3 +1,19 @@
-import { VehicleType } from '../entity/VehicleType.entity';
 
-let vehicleType = new VehicleType();
+export const createVehicleType = () =>{
+
+}
+export const deleteVehicleType = () =>{
+
+}
+export const getAllVehicleType = () =>{
+
+}
+export const getSpecificVehicleType = () =>{
+
+}
+export const updateVehicleType= () =>{
+
+}
+export const getAllVehiclesByVehicleTypeId = () =>{
+
+}

@@ -1,10 +1,13 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Booking } from "./Booking.entity";
 import { VehicleType } from "./VehicleType.entity";
 
 @Entity()
 export class Vehicle {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+	vehicleId: number;
+
+  @Column()
   licencePlate: string;
 
   @Column()

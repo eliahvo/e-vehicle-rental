@@ -1,3 +1,19 @@
-import { Vehicle } from '../entity/Vehicle.entity';
 
-const vehicle = new Vehicle();
+export const createVehicle = () =>{
+
+}
+export const deleteVehicle = () =>{
+
+}
+export const getAllVehicle = () =>{
+
+}
+export const getSpecificVehicle = () =>{
+
+}
+export const updateVehicle = () =>{
+
+}
+export const getAllBookingsByVehicleId = () =>{
+
+}
