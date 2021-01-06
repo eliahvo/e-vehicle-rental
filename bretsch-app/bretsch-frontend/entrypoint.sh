@@ -10,6 +10,21 @@
 # ------------------------------------------------------------------
 PREFIX="[Entrypoint Script]"
 
+# Default init procedure
+function init() {
+    echo "$PREFIX Initializing frontend..."
+    install
+	build
+    start
+}
+
+# Development init procedure
+function noBuildInit() {
+    echo "$PREFIX Initializing frontend... (No Build Mode)"
+    install
+    start
+}
+
 # Install only procedure
 function install() {
     echo "$PREFIX Installing all necessary packages..."
@@ -30,9 +45,15 @@ function start() {
 
 # Arguments handling
 function main() {
-    echo "$PREFIX Initializing frontend..."
-    install
-	build
-    start
+    if ([ "$1" != '' ]); then   # Check for command line argument
+        case "$1" in
+            -skipbuild)      noBuildInit 	    ;;
+            *)	echo "$PREFIX Failed: Argument '$1' not found."
+                exit 1	;;
+        esac
+    else    # No argument was given
+        echo "$PREFIX No arguments given. Running default init procedure..."
+        init
+    fi
 }
 main
