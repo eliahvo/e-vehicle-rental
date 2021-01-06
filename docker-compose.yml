@@ -1,8 +1,8 @@
 version: "3.4"
 services:
-  bretsch-mysql:
+  bretsch-db:
     image: mariadb:10.1
-    container_name: bretsch-mysql
+    container_name: bretsch-db
     restart: always
     ports: # Have to match the value set in env file
       - 3306:3306
