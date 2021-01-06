@@ -12,8 +12,8 @@ import {
 export const vehicleTypeRouter = Router({ mergeParams: true });
 
 vehicleTypeRouter.post('/', createVehicleType);
+vehicleTypeRouter.delete('/:vehicleTypeId', deleteVehicleType);
+vehicleTypeRouter.get('/:vehicleTypeId/vehicles', getAllVehiclesByVehicleTypeId);
 vehicleTypeRouter.get('/', getAllVehicleType);
 vehicleTypeRouter.get('/:vehicleTypeId', getSpecificVehicleType);
 vehicleTypeRouter.patch('/:vehicleTypeId', updateVehicleType);
-vehicleTypeRouter.delete('/:vehicleTypeId', deleteVehicleType);
-vehicleTypeRouter.get('/:vehicleTypeId/vehicles', getAllVehiclesByVehicleTypeId);

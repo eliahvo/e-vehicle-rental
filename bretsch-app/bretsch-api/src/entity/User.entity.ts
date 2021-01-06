@@ -13,7 +13,7 @@ export class User {
   hashedPassword: string;
 
   @Column()
-  type: string;
+  userRole: string;
 
   @Column()
   firstName: string;
@@ -22,7 +22,7 @@ export class User {
   lastName: string;
 
   @Column()
-  birthday: string;
+  birthDate: string;
 
   @Column()
   preferedPayment: string;

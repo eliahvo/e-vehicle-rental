@@ -11,7 +11,7 @@ import {
 export const bookingRouter = Router({ mergeParams: true });
 
 bookingRouter.post('/', createBooking);
+bookingRouter.delete('/:bookingId', deleteBooking);
 bookingRouter.get('/', getAllBooking);
 bookingRouter.get('/:bookingId', getSpecificBooking);
 bookingRouter.patch('/:bookingId', updateBooking);
-bookingRouter.delete('/:bookingId', deleteBooking);

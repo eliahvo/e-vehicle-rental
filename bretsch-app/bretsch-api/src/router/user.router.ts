@@ -13,8 +13,8 @@ export const userRouter = Router({ mergeParams: true });
 
 
 userRouter.post('/', createUser);
+userRouter.delete('/:userId', deleteUser);
 userRouter.get('/', getAllUser);
+userRouter.get('/:userId/bookings', getBookingsByUserId);
 userRouter.get('/:userId', getSpecificUser);
 userRouter.patch('/:userId', updateUser);
-userRouter.delete('/:userId', deleteUser);
-userRouter.get('/:userId/bookings', getBookingsByUserId);
