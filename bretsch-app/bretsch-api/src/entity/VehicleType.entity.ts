@@ -1,9 +1,12 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Vehicle } from "./Vehicle.entity";
 
 @Entity()
 export class VehicleType {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+	vehicleTypeId: number;
+
+  @Column()
   type: string;
 
   @Column()

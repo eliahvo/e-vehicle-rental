@@ -1,3 +1,16 @@
-import { Booking } from '../entity/Booking.entity';
 
-var booking = new Booking();
+export const createBooking = () =>{
+
+}
+export const deleteBooking = () =>{
+
+}
+export const getAllBooking = () =>{
+
+}
+export const getSpecificBooking = () =>{
+
+}
+export const updateBooking = () =>{
+
+}
