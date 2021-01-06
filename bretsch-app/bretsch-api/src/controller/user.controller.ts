@@ -35,17 +35,80 @@ export const createUser = async (req: Request, res: Response) =>{
 
 };
 
-export const deleteUser = async () =>{
+export const deleteUser = async (req: Request, res: Response) =>{
+
+    const userId = req.params.userId;
+    const userRepository = getRepository(User);
+
+    try {
+		const user = await userRepository.findOneOrFail(userId);
+		await userRepository.remove(user);
+		res.status(200).send({
+
+        });
+	} catch (error) {
+		res.status(404).send({
+			status: 'Error: ' + error,
+		});
+	}
+};
+
+export const getAllUser = async (res: Response) =>{
+
+    console.log("Test");
+    const userRepository = getRepository(User);
+    const users = await userRepository.find({ relations: ['bookings'] });
+
+    res.status(200).send({ 
+        data: users 
+    });
 
 };
-export const getAllUser = async () =>{
+
+export const getSpecificUser = async (req: Request, res: Response) =>{
+
+    const userId = req.params.userId;
+    const userRepository = getRepository(User);
+
+	try {
+		const user = await userRepository.findOneOrFail(userId);
+		res.status(200).send({
+			data: user,
+		});
+	} catch (error) {
+		res.status(404).send({
+			status: 'Error: ' + error,
+		});
+	}
 
 };
+export const updateUser = async (req: Request, res: Response) =>{
+    const userId = req.params.userId;
+	const {email, hashedPassword, firstName, lastName, birthDate, preferedPayment,
+        streetPlusNumber, city} = req.body;
+	const userRepository = getRepository(User);
 
-export const getSpecificUser = async () =>{
+	try {
+		let user = await userRepository.findOneOrFail(userId);
+		user.email = email;
+        user.hashedPassword = hashedPassword;
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.birthDate = birthDate;
+        user.preferedPayment = preferedPayment;
+        user.streetPlusNumber = streetPlusNumber;
+        user.city = city;
 
-};
-export const updateUser = async () =>{
+		user = await userRepository.save(user);
+
+		res.status(200).send({
+			data: user,
+		});
+	} catch (error) {
+		res.status(404).send({
+			status: 'Error: ' + error,
+		});
+	}
 
 };
 export const getBookingsByUserId = async () =>{
