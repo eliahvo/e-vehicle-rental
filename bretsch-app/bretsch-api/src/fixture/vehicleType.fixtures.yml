@@ -4,14 +4,13 @@ items:
     type: scooter
     pricePerMinute: 5
     minimalBatteryLevel: 15
-    #vehicles: '@Vehicle1'
+
   VehicleType2:
     type: car
     pricePerMinute: 10
     minimalBatteryLevel: 10
-    #vehicles: '@Vehicle2'
+
   VehicleType3:
     type: hoverboard
     pricePerMinute: 3
     minimalBatteryLevel: 20
-    #vehicles: '@Vehicle3'

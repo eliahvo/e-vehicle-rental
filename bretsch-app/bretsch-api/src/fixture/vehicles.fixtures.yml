@@ -7,7 +7,7 @@ items:
     positionLatitude: O11
     batteryLevel: 50
     vehicleType: '@VehicleType1'
-    #bookings: '@Booking2'
+
   Vehicle2:
     licencePlate: DA-BR-002
     status: free
@@ -15,6 +15,7 @@ items:
     positionLatitude: O22
     batteryLevel: 80
     vehicleType: '@VehicleType2'
+
   Vehicle3:
     licencePlate: DA-BR-003
     status: inUse
@@ -22,4 +23,4 @@ items:
     positionLatitude: O33
     batteryLevel: 20
     vehicleType: '@VehicleType3'
-    #bookings: '@Booking1'
+
