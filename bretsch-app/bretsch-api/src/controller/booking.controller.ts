@@ -4,6 +4,19 @@ import { Booking } from "../entity/Booking.entity";
 import { Vehicle } from "../entity/Vehicle.entity";
 import { User } from "../entity/User.entity";
 
+/**
+ * Create Booking
+ * Method: POST
+ * Expected as a parameter: ---
+ * Expected in the body:
+ *                      startDate,
+ *                      endDate,
+ *                      paymentStatus,
+ *                      vehicleId,
+ *                      userId
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const createBooking = async (req: Request, res: Response) => {
   const { startDate, endDate, paymentStatus, vehicleId, userId } = req.body;
   const booking = new Booking();
@@ -35,9 +48,17 @@ export const createBooking = async (req: Request, res: Response) => {
   }
   const createdBooking = await bookingRepository.save(booking);
 
-  res.send({ data: createdBooking });
+  res.status(200).send({ data: createdBooking });
 };
 
+/**
+ * Delete Booking
+ * Method: DELETE
+ * Expected as a parameter: bookingId
+ * Expected in the body: ---
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const deleteBooking = async (req: Request, res: Response) => {
   const bookingId = req.params.bookingId;
   const bookingRepository = await getRepository(Booking);
@@ -51,14 +72,30 @@ export const deleteBooking = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllBooking = async (res: Response) => {
+/**
+ * Get all bookings
+ * Method: GET
+ * Expected as a parameter: ---
+ * Expected in the body: ---
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
+export const getAllBooking = async (_: Request, res: Response) => {
   const bookingRepository = await getRepository(Booking);
   const bookings = await bookingRepository.find({
     relations: ["user", "vehicle"],
   });
-  res.send({ data: bookings });
+  res.status(200).send({ data: bookings });
 };
 
+/**
+ * Get booking by id
+ * Method: GET
+ * Expected as a parameter: bookingId
+ * Expected in the body: ---
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const getSpecificBooking = async (req: Request, res: Response) => {
   const bookingId = req.params.bookingId;
   const bookingRepository = await getRepository(Booking);
@@ -74,9 +111,22 @@ export const getSpecificBooking = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Update Booking
+ * Method: PATCH
+ * Expected as a parameter: bookingId;
+ * Expected in the body:
+ *                      startDate,
+ *                      endDate,
+ *                      paymentStatus,
+ *                      vehicleId,
+ *                      userId
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const updateBooking = async (req: Request, res: Response) => {
   const bookingId = req.params.bookingId;
-  const { endDate } = req.body;
+  const { endDate, price } = req.body;
   const bookingRepository = await getRepository(Booking);
 
   try {
@@ -85,7 +135,7 @@ export const updateBooking = async (req: Request, res: Response) => {
       where: { bookingId: bookingId },
     });
     foundBooking.endDate = endDate;
-
+    foundBooking.price = price;
     foundBooking = await bookingRepository.save(foundBooking);
 
     res.send({
