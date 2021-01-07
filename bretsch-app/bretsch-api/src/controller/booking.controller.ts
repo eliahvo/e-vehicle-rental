@@ -12,13 +12,14 @@ import { User } from "../entity/User.entity";
  *                      startDate,
  *                      endDate,
  *                      paymentStatus,
+ *                      price,
  *                      vehicleId,
  *                      userId
  * @param {Request} req Request
  * @param {Response} res Response
  */
 export const createBooking = async (req: Request, res: Response) => {
-  const { startDate, endDate, paymentStatus, vehicleId, userId } = req.body;
+  const { startDate, endDate, paymentStatus, price, vehicleId, userId } = req.body;
   const booking = new Booking();
   const bookingRepository = await getRepository(Booking);
   const userRepository = await getRepository(User);
@@ -27,6 +28,7 @@ export const createBooking = async (req: Request, res: Response) => {
   booking.startDate = startDate;
   booking.endDate = endDate;
   booking.paymentStatus = paymentStatus;
+  booking.price = price;
 
   try {
     const foundUser = await userRepository.findOneOrFail({
@@ -115,12 +117,10 @@ export const getSpecificBooking = async (req: Request, res: Response) => {
  * Update Booking
  * Method: PATCH
  * Expected as a parameter: bookingId;
- * Expected in the body:
- *                      startDate,
+ * Expected in the body: at least one of the following
  *                      endDate,
- *                      paymentStatus,
- *                      vehicleId,
- *                      userId
+ *                      price
+ *
  * @param {Request} req Request
  * @param {Response} res Response
  */
