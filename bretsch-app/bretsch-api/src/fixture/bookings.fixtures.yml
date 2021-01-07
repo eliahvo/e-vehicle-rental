@@ -1,0 +1,23 @@
+entity: Booking
+items:
+  Booking1:
+    paymentStatus: not payed
+    price: 20
+    vehicle: '@Vehicle1'
+    user: '@User1'
+
+
+  Booking2:
+    paymentStatus: payed
+    price: 10
+    vehicle: '@Vehicle2'
+    user: '@User2'
+
+
+  Booking3:
+    paymentStatus: not payed
+    price: 30
+    vehicle: '@Vehicle3'
+    user: '@User3'
+
+

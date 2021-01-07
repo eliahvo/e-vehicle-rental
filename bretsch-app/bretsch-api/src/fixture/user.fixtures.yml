@@ -3,37 +3,34 @@ items:
   User1:
     email: user1@bretsch.eu
     hashedPassword: bretsch1
+    userRole: admin
     firstName: user1
     lastName: bretsch1
     birthDate: 10.10.10
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
-    #bookings:
-    #  - '@Booking1'
+    #bookings: '@Booking1'
   User2:
     email: user2@bretsch.eu
     hashedPassword: bretsch2
+    userRole: normal user
     firstName: user2
     lastName: bretsch2
     birthDate: 11.11.11
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
-    #bookings:
-    #  - '@Booking1'
-    #  - '@Booking2'
+    #bookings: '@Booking2'
   User3:
     email: user3@bretsch.eu
     hashedPassword: bretsch3
+    userRole: developer
     firstName: user3
     lastName: bretsch
     birthDate: 12.12.12
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
-    #bookings:
-    #  - '@Booking1'
-    #  - '@Booking2'
-    #  - '@Booking3'
+    #bookings: '@Booking3'
     
