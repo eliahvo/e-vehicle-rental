@@ -92,7 +92,7 @@ export const getAllVehiclesByVehicleTypeId = async (req: Request, res: Response)
  * Expected in the body: ---
  * @param {Response}res Response
  */
-export const getAllVehicleType = async (res: Response) => {
+export const getAllVehicleType = async (_: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
   const vehicleTypes = await vehicleTypeRepository.find({ relations: ['vehicles'] });
 
