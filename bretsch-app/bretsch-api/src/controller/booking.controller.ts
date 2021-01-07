@@ -51,7 +51,7 @@ export const deleteBooking = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllBooking = async (req: Request, res: Response) => {
+export const getAllBooking = async (res: Response) => {
   const bookingRepository = await getRepository(Booking);
   const bookings = await bookingRepository.find({
     relations: ["user", "vehicle"],
