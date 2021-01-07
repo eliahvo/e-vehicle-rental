@@ -16,6 +16,9 @@ export class Booking {
   @Column()
   paymentStatus: string;
 
+  @Column()
+  price: number;
+
   @ManyToOne(() => Vehicle, vehicle => vehicle.bookings)
   vehicle: Vehicle;
 
