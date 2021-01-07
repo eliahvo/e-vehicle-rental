@@ -20,8 +20,16 @@ import { User } from "../entity/User.entity";
  */
 export const createUser = async (req: Request, res: Response) =>{
 
-    const {email, hashedPassword, firstName, lastName, birthDate, preferedPayment,
-        streetPlusNumber, city} = req.body;
+    const {
+		email,
+		hashedPassword,
+		firstName,
+		lastName,
+		birthDate,
+		preferedPayment,
+        streetPlusNumber,
+		city
+		} = req.body;
 
     if (!email || !hashedPassword || !firstName || !lastName ||
         !birthDate || !preferedPayment || !streetPlusNumber || !city) {
@@ -111,7 +119,9 @@ export const getBookingsByUserId = async (req: Request, res: Response) =>{
 	try {
 		const user = await userRepository.findOneOrFail(userId, { relations: ['bookings'] });
 		const userBookingList = user.bookings;
-		res.status(200).send({ data: userBookingList });
+		res.status(200).send({
+			 data: userBookingList
+			});
 	} catch (error) {
 		res.status(404).send({
 			status: 'Error: ' + error,
@@ -163,8 +173,16 @@ export const getSpecificUser = async (req: Request, res: Response) =>{
  */
 export const updateUser = async (req: Request, res: Response) =>{
     const userId = req.params.userId;
-	const {email, hashedPassword, firstName, lastName, birthDate, preferedPayment,
-        streetPlusNumber, city} = req.body;
+	const {
+		email,
+		hashedPassword,
+		firstName,
+		lastName,
+		birthDate,
+		preferedPayment,
+        streetPlusNumber, 
+		city
+		} = req.body;
 	const userRepository = getRepository(User);
 
 	try {
