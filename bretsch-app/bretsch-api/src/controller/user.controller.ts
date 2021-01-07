@@ -4,7 +4,7 @@ import { User } from "../entity/User.entity";
 
 /**
  * Create User 
- * Method: create
+ * Method: post
  * Expected as a parameter: ---
  * Expected in the body:
  *                      email,
@@ -84,10 +84,10 @@ export const deleteUser = async (req: Request, res: Response) =>{
  * Expected in the body: ---
  * @param {Response}res Response
  */
-export const getAllUser = async (res: Response) =>{
+export const getAllUser = async (_: Request, res: Response) =>{
 
     const userRepository = getRepository(User);
-    const users = await userRepository.find({ relations: ['bookings'] });
+    const users = await userRepository.find();
 
     res.status(200).send({ 
         data: users 
