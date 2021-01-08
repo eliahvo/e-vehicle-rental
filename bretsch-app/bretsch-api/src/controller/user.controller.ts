@@ -31,8 +31,14 @@ export const createUser = async (req: Request, res: Response) =>{
 		city
 		} = req.body;
 
-    if (!email || !hashedPassword || !firstName || !lastName ||
-        !birthDate || !preferedPayment || !streetPlusNumber || !city) {
+	if (!email ||
+		!hashedPassword ||
+		!firstName ||
+		!lastName ||
+		!birthDate ||
+		!preferedPayment ||
+		!streetPlusNumber ||
+		!city) {
 		res.status(400).send({
 			status: 'Error: Parameter fehlt!',
 		});
