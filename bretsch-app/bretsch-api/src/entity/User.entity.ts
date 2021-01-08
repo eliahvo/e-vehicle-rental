@@ -1,16 +1,19 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Booking } from "./Booking.entity";
 
 @Entity()
 export class User {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+	userId: number;
+
+  @Column()
   email: string;
 
   @Column()
   hashedPassword: string;
 
   @Column()
-  type: string;
+  userRole: string;
 
   @Column()
   firstName: string;
@@ -19,7 +22,7 @@ export class User {
   lastName: string;
 
   @Column()
-  birthday: string;
+  birthDate: string;
 
   @Column()
   preferedPayment: string;

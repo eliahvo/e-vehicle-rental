@@ -1,0 +1,16 @@
+entity: VehicleType
+items:
+  VehicleType1:
+    type: scooter
+    pricePerMinute: 5
+    minimalBatteryLevel: 15
+
+  VehicleType2:
+    type: car
+    pricePerMinute: 10
+    minimalBatteryLevel: 10
+
+  VehicleType3:
+    type: hoverboard
+    pricePerMinute: 3
+    minimalBatteryLevel: 20

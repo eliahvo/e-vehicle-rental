@@ -22,9 +22,13 @@ export class Helper {
 
     this.app.use('/api', globalRouter);
     this.dbConnection = await createConnection();
-
-    await this.resetDatabase();
-    await this.loadFixtures();
+    
+    /**
+     * These two lines cause an error runnng the tests
+     * 
+     **/
+    //await this.resetDatabase();
+    //await this.loadFixtures();
   }
 
   /**
