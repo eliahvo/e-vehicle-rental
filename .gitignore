@@ -17,3 +17,6 @@ bretsch-db/
 # Logs
 logs
 *.log
+
+#IDE
+.idea

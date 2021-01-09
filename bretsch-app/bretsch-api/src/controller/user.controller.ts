@@ -40,7 +40,7 @@ export const createUser = async (req: Request, res: Response) =>{
 		!streetPlusNumber ||
 		!city) {
 		res.status(400).send({
-			status: 'Error: Parameter fehlt!',
+			status: 'Error: Parameter missing!',
 		});
 		return;
     }
