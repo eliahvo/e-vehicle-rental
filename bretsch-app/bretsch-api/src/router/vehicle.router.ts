@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import {
-    createVehicle,
-    deleteVehicle,
-    getAllBookingsByVehicleId,
-    getAllVehicle,
-    getSpecificVehicle,
-    updateVehicle
+  createVehicle,
+  deleteVehicle,
+  getAllBookingsByVehicleId,
+  getAllVehicle,
+  getSpecificVehicle,
+  updateVehicle,
 } from '../controller/vehicle.controller';
-
 
 export const vehicleRouter = Router({ mergeParams: true });
 
