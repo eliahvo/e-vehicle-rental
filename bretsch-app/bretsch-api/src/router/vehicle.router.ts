@@ -14,5 +14,5 @@ vehicleRouter.post('/', createVehicle);
 vehicleRouter.delete('/:vehicleId', deleteVehicle);
 vehicleRouter.get('/:vehicleId/bookings', getAllBookingsByVehicleId);
 vehicleRouter.get('/', getAllVehicle);
-vehicleRouter.get('/:vehicleTypeId', getSpecificVehicle);
-vehicleRouter.patch('/:vehicleTypeId', updateVehicle);
+vehicleRouter.get('/:vehicleId', getSpecificVehicle);
+vehicleRouter.patch('/:vehicleId', updateVehicle);

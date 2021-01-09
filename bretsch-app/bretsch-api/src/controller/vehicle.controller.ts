@@ -17,7 +17,6 @@ export const createVehicle = async (req: Request, res: Response) => {
   vehicle.positionLongitude = positionLongitude;
   vehicle.positionLatitude = positionLatitude;
   vehicle.batteryLevel = batteryLevel;
-  console.log('Hier');
   // VehicleType by Id
   const repVehicleType = await getRepository(VehicleType);
   try {
@@ -66,10 +65,73 @@ export const getAllBookingsByVehicleId = async (req: Request, res: Response) => 
   }
 };
 
-export const getAllVehicle = () => {
+// tslint:disable-next-line:variable-name
+export const getAllVehicle = async (_req: Request, res: Response) => {
+  const vehicleRep = getRepository(Vehicle);
+  const vehicles = await vehicleRep.find({ relations: ['bookings', 'vehicleType'] });
 
+  res.status(200).send({
+    data: vehicles,
+  });
 };
 
-export const getSpecificVehicle = () => {};
+export const getSpecificVehicle = async (req: Request, res: Response) => {
+  const vehicleId = req.params.vehicleId;
+  const vehicleRep = getRepository(Vehicle);
 
-export const updateVehicle = () => {};
+  try {
+    const vehicle = await vehicleRep.findOneOrFail(vehicleId, { relations: ['bookings', 'vehicleType'] });
+    res.status(200).send({
+      data: vehicle,
+    });
+  } catch (error) {
+    res.status(404).send({
+      // tslint:disable-next-line:prefer-template
+      status: 'Error: ' + error,
+    });
+  }
+};
+
+export const updateVehicle = async (req: Request, res: Response) => {
+  const vehicleId = req.params.vehicleId;
+  const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
+  if (!licencePlate || !status || !positionLongitude || !positionLatitude || !batteryLevel || !vehicleType) {
+    res.status(400).send({
+      status: 'Error: Missing parameter!',
+    });
+    return;
+  }
+  const vehicleRep = getRepository(Vehicle);
+
+  try {
+    const vehicle = await vehicleRep.findOneOrFail(vehicleId);
+    vehicle.licencePlate = licencePlate;
+    vehicle.status = status;
+    vehicle.positionLongitude = positionLongitude;
+    vehicle.positionLatitude = positionLatitude;
+    vehicle.batteryLevel = batteryLevel;
+
+    // get update wanted VehicleType
+    const repVehicleType = await getRepository(VehicleType);
+    try {
+      const vType = await repVehicleType.findOneOrFail({
+        where: { vehicleTypeId: vehicleType },
+      });
+      vehicle.vehicleType = vType;
+    } catch (error) {
+      res.status(404).send({ status: 'Vehicle Type not_found' });
+      return;
+    }
+
+    const savedVehicle = await vehicleRep.save(vehicle);
+
+    res.status(200).send({
+      data: savedVehicle,
+    });
+  } catch (error) {
+    res.status(404).send({
+      // tslint:disable-next-line:prefer-template
+      status: 'Error: ' + error,
+    });
+  }
+};
