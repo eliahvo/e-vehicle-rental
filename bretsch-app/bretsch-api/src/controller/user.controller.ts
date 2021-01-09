@@ -204,7 +204,6 @@ export const updateUser = async (req: Request, res: Response) =>{
 
 		user = await userRepository.save(user);
 
-		
 		res.status(200).send({
 			data: user,
 		});
