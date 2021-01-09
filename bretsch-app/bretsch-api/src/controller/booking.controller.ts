@@ -25,6 +25,11 @@ export const createBooking = async (req: Request, res: Response) => {
   const userRepository = await getRepository(User);
   const vehicleRepository = await getRepository(Vehicle);
 
+  if(!startDate || !endDate || !paymentStatus || !price || !vehicleId || !userId ){
+    res.status(400).send({status: "Error: Parameter missing!",});
+    return;
+  }
+
   booking.startDate = startDate;
   booking.endDate = endDate;
   booking.paymentStatus = paymentStatus;
