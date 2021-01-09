@@ -40,7 +40,7 @@ export const createUser = async (req: Request, res: Response) =>{
 		!streetPlusNumber ||
 		!city) {
 		res.status(400).send({
-			status: 'Error: Parameter fehlt!',
+			status: 'Error: Parameter missing!',
 		});
 		return;
     }
@@ -204,6 +204,7 @@ export const updateUser = async (req: Request, res: Response) =>{
 
 		user = await userRepository.save(user);
 
+		
 		res.status(200).send({
 			data: user,
 		});
