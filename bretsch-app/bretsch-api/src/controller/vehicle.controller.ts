@@ -31,12 +31,11 @@ export const createVehicle = async (req: Request, res: Response) => {
   }
   const vehicleRep = getRepository(Vehicle);
   const createdVehicle = await vehicleRep.save(vehicle);
-// na du
   res.status(201).send({
     data: createdVehicle,
   });
 };
-// Hallo
+
 export const deleteVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRepository = getRepository(Vehicle);
@@ -56,20 +55,10 @@ export const getAllBookingsByVehicleId = async (req: Request, res: Response) => 
   const vehicleId = req.params.vehicleId;
   const vehicleRep = await getRepository(Vehicle);
   try {
-    const vehicle = await vehicleRep.find({
-      where: { id: vehicleId },
-      // tslint:disable-next-line:object-literal-sort-keys
-      relations: ['bookings'],
+    const vehicle = await vehicleRep.findOneOrFail(vehicleId, { relations: ['bookings'] });
+    res.send({
+      data: vehicle.bookings,
     });
-    if (vehicle == null) {
-      res.status(404).send({
-        status: 'vehicle_not_found',
-      });
-    } else {
-      res.send({
-        data: vehicle,
-      });
-    }
   } catch (e) {
     res.status(404).send({
       status: 'Vehicle_not_found',
@@ -77,7 +66,9 @@ export const getAllBookingsByVehicleId = async (req: Request, res: Response) => 
   }
 };
 
-export const getAllVehicle = () => {};
+export const getAllVehicle = () => {
+
+};
 
 export const getSpecificVehicle = () => {};
 
