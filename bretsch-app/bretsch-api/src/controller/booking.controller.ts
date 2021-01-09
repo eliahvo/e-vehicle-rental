@@ -19,14 +19,28 @@ import { User } from "../entity/User.entity";
  * @param {Response} res Response
  */
 export const createBooking = async (req: Request, res: Response) => {
-  const { startDate, endDate, paymentStatus, price, vehicleId, userId } = req.body;
+  const {
+    startDate,
+    endDate,
+    paymentStatus,
+    price,
+    vehicleId,
+    userId,
+  } = req.body;
   const booking = new Booking();
   const bookingRepository = await getRepository(Booking);
   const userRepository = await getRepository(User);
   const vehicleRepository = await getRepository(Vehicle);
 
-  if(!startDate || !endDate || !paymentStatus || !price || !vehicleId || !userId ){
-    res.status(400).send({status: "Error: Parameter missing!",});
+  if (
+    !startDate ||
+    !endDate ||
+    !paymentStatus ||
+    !price ||
+    !vehicleId ||
+    !userId
+  ) {
+    res.status(400).send({ status: "Error: Parameter missing!" });
     return;
   }
 
