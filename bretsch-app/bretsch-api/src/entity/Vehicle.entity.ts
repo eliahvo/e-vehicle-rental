@@ -1,11 +1,19 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Booking } from "./Booking.entity";
-import { VehicleType } from "./VehicleType.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Booking } from './Booking.entity';
+import { VehicleType } from './VehicleType.entity';
 
 @Entity()
 export class Vehicle {
   @PrimaryGeneratedColumn()
-	vehicleId: number;
+  vehicleId: number;
 
   @Column()
   licencePlate: string;
@@ -22,10 +30,10 @@ export class Vehicle {
   @Column()
   batteryLevel: number;
 
-  @ManyToOne(() => VehicleType, vehicleType => vehicleType.vehicles)
+  @ManyToOne(() => VehicleType, (vehicleType) => vehicleType.vehicles)
   vehicleType: VehicleType;
 
-  @OneToMany(() => Booking, booking => booking.vehicle)
+  @OneToMany(() => Booking, (booking) => booking.vehicle)
   bookings: Booking[];
 
   @CreateDateColumn()
