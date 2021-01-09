@@ -35,7 +35,7 @@ describe('Tests for the User class Scary Path', () => {
 			.expect(400)
 			.end(async (err, res) => {
 				if (err) throw err;
-				expect(res.body.status).toBe('Error: Parameter fehlt!');
+				expect(res.body.status).toBe('Error: Parameter missing!');
 				done();
 			});
 	});
