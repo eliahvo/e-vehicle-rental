@@ -118,17 +118,21 @@ export const getAllBookings = async (_: Request, res: Response) => {
  * @param {Response} res Response
  */
 export const getSpecificBooking = async (req: Request, res: Response) => {
+
   const bookingId = req.params.bookingId;
-  const bookingRepository = await getRepository(Booking);
+  const bookingRepository = getRepository(Booking);
 
   try {
-    const foundBooking = bookingRepository.findOneOrFail({
-      relations: ["user", "vehicle"],
+    const foundBooking = await bookingRepository.findOneOrFail({
+      relations: ['vehicle', 'user'],
       where: { bookingId: bookingId },
     });
-    res.send({ data: foundBooking });
+    res.status(200).send({
+       data: foundBooking, 
+    });
   } catch (error) {
-    res.status(404).send({ status: "not_found" });
+    res.status(404).send({
+      status: "not_found" });
   }
 };
 
