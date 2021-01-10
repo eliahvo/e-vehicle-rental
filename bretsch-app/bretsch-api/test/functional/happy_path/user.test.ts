@@ -16,7 +16,7 @@ describe('Tests for the User class', () => {
 		await helper.shutdown();
     });
 
-    it('createUser Test', async (done) => {
+    it('createUser Test Happy Path', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
 
@@ -49,7 +49,7 @@ describe('Tests for the User class', () => {
     /*
      * If bookings are also deleted, this test works 
      *
-    it('deleteUser Test', async (done) => {
+    it('deleteUser Test Happy Path', async (done) => {
 		await helper.resetDatabase();
         await helper.loadFixtures();
 
@@ -75,7 +75,7 @@ describe('Tests for the User class', () => {
      *
      */
 
-    it('getAllUser Test', async (done) => {
+    it('getAllUser Test Happy Path', async (done) => {
 		await helper.resetDatabase();
         await helper.loadFixtures();
         
@@ -96,7 +96,7 @@ describe('Tests for the User class', () => {
 			});
     });
 
-    it('getBookingsByUserId Test', async (done) => {
+    it('getBookingsByUserId Test Happy Path', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
 
@@ -122,7 +122,7 @@ describe('Tests for the User class', () => {
     });
 
     
-    it('getSpecificUser Test', async (done) => {
+    it('getSpecificUser Test Happy Path', async (done) => {
 		await helper.resetDatabase();
         await helper.loadFixtures();
         
@@ -150,7 +150,7 @@ describe('Tests for the User class', () => {
 			});
     });
     
-    it('updateUser Test', async (done) => {
+    it('updateUser Test Happy Path', async (done) => {
 		await helper.resetDatabase();
         await helper.loadFixtures();
         

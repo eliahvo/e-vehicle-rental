@@ -192,7 +192,7 @@ export const updateUser = async (req: Request, res: Response) =>{
 	const userRepository = getRepository(User);
 
 	try {
-		let user = await userRepository.findOneOrFail(userId);
+		let user = await userRepository.findOneOrFail(userId, { relations: ['bookings'] });
 		user.email = email;
         user.hashedPassword = hashedPassword;
         user.firstName = firstName;
@@ -204,7 +204,6 @@ export const updateUser = async (req: Request, res: Response) =>{
 
 		user = await userRepository.save(user);
 
-		
 		res.status(200).send({
 			data: user,
 		});
