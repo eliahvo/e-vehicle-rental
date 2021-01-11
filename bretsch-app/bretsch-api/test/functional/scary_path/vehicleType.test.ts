@@ -1,5 +1,6 @@
 import { Helper } from "../../helper";
 import request from "supertest";
+import { VehicleType } from "../../../src/entity/VehicleType.entity";
 
 const helper = new Helper();
 helper.init();
@@ -49,9 +50,12 @@ describe("Tests for the VehicleType class Scary Path", () => {
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
       .expect(404)
-      .end((err, res) => {
+      .end(async (err) => {
         if (err) throw err;
-        expect(res.body.status).toBe("Error: " + err);
+        const [, vehicleTypeCount] = await helper
+          .getRepo(VehicleType)
+          .findAndCount();
+        expect(vehicleTypeCount).toBe(3);
         done();
       });
   });
@@ -68,9 +72,12 @@ describe("Tests for the VehicleType class Scary Path", () => {
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
       .expect(404)
-      .end(async (err, res) => {
+      .end(async (err) => {
         if (err) throw err;
-        expect(res.body.status).toBe("Error: " + err);
+        const [, vehicleTypeCount] = await helper
+          .getRepo(VehicleType)
+          .findAndCount();
+        expect(vehicleTypeCount).toBe(3);
         done();
       });
   });
@@ -87,9 +94,12 @@ describe("Tests for the VehicleType class Scary Path", () => {
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
       .expect(404)
-      .end(async (err, res) => {
+      .end(async (err) => {
         if (err) throw err;
-        expect(res.body.status).toBe("Error: " + err);
+        const [, vehicleTypeCount] = await helper
+          .getRepo(VehicleType)
+          .findAndCount();
+        expect(vehicleTypeCount).toBe(3);
         done();
       });
   });
@@ -109,9 +119,12 @@ describe("Tests for the VehicleType class Scary Path", () => {
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
       .expect(404)
-      .end(async (err, res) => {
+      .end(async (err) => {
         if (err) throw err;
-        expect(res.body.status).toBe("Error: " + err);
+        const [, vehicleTypeCount] = await helper
+          .getRepo(VehicleType)
+          .findAndCount();
+        expect(vehicleTypeCount).toBe(3);
         done();
       });
   });

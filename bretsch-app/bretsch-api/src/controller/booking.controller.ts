@@ -55,7 +55,7 @@ export const createBooking = async (req: Request, res: Response) => {
     });
     booking.user = foundUser;
   } catch (error) {
-    res.status(404).send({ status: "not_found" });
+    res.status(404).send({ status: 'Error: ' + error, });
     return;
   }
   try {
@@ -64,7 +64,7 @@ export const createBooking = async (req: Request, res: Response) => {
     });
     booking.vehicle = foundVehicle;
   } catch (error) {
-    res.status(404).send({ status: "not_found" });
+    res.status(404).send({ status: 'Error: ' + error, });
     return;
   }
   const createdBooking = await bookingRepository.save(booking);
@@ -89,7 +89,7 @@ export const deleteBooking = async (req: Request, res: Response) => {
     await bookingRepository.remove(foundBooking);
     res.send({});
   } catch (error) {
-    res.status(404).send({ status: "not_found" });
+    res.status(404).send({ status: 'Error: ' + error, });
   }
 };
 
@@ -132,7 +132,7 @@ export const getSpecificBooking = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: "not_found" });
+      status: 'Error: ' + error, });
   }
 };
 
@@ -166,7 +166,7 @@ export const updateBooking = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: "not_found",
+      status: 'Error: ' + error,
     });
   }
 };

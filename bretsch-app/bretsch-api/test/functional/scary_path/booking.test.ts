@@ -56,9 +56,10 @@ describe('Tests for the Booking class Scary Path', () => {
 			.set('Content-Type', 'application/json')
 			.set('Accept', 'application/json')
 			.expect(404)
-			.end(async (err, res) => {
+			.end(async (err) => {
 				if (err) throw err;
-				expect(res.body.status).toBe('not_found');
+				const [, booking] = await helper.getRepo(Booking).findAndCount();
+                expect(booking).toBe(3);
 				done();
 			});
     });
