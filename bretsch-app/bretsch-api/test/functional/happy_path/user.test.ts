@@ -46,9 +46,7 @@ describe('Tests for the User class', () => {
 				done();
 			});
     });
-    /*
-     * If bookings are also deleted, this test works 
-     *
+
     it('deleteUser Test Happy Path', async (done) => {
 		await helper.resetDatabase();
         await helper.loadFixtures();
@@ -72,9 +70,6 @@ describe('Tests for the User class', () => {
 				done();
 			});
     });
-     *
-     */
-
     it('getAllUser Test Happy Path', async (done) => {
 		await helper.resetDatabase();
         await helper.loadFixtures();
