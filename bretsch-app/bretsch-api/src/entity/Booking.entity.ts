@@ -19,10 +19,10 @@ export class Booking {
   @Column()
   price: number;
 
-  @ManyToOne(() => Vehicle, vehicle => vehicle.bookings)
+  @ManyToOne(() => Vehicle, vehicle => vehicle.bookings, {onDelete: "CASCADE"})
   vehicle: Vehicle;
 
-  @ManyToOne(() => User, user => user.bookings)
+  @ManyToOne(() => User, user => user.bookings, {onDelete: "CASCADE"})
   user: User;
 
   @CreateDateColumn()
