@@ -18,7 +18,7 @@ export const createVehicleType = async (req: Request, res: Response) => {
 
   if (!type || !pricePerMinute || !minimalBatteryLevel) {
     res.status(400).send({
-      status: 'Error: parameter missing!',
+      status: 'Error: Parameter missing!',
     });
     return;
   }

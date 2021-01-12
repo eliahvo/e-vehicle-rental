@@ -40,7 +40,7 @@ export const createUser = async (req: Request, res: Response) =>{
 		!streetPlusNumber ||
 		!city) {
 		res.status(400).send({
-			status: 'Error: Parameter fehlt!',
+			status: 'Error: Parameter missing!',
 		});
 		return;
     }
@@ -192,7 +192,7 @@ export const updateUser = async (req: Request, res: Response) =>{
 	const userRepository = getRepository(User);
 
 	try {
-		let user = await userRepository.findOneOrFail(userId);
+		let user = await userRepository.findOneOrFail(userId, { relations: ['bookings'] });
 		user.email = email;
         user.hashedPassword = hashedPassword;
         user.firstName = firstName;
