@@ -3,6 +3,13 @@ import { getRepository } from 'typeorm';
 import { Vehicle } from '../entity/Vehicle.entity';
 import { VehicleType } from '../entity/VehicleType.entity';
 
+// to have consistent values for the status
+enum vehicle_status {
+  used,
+  free,
+  'not available',
+}
+
 export const createVehicle = async (req: Request, res: Response) => {
   const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
   if (!licencePlate || !status || !positionLongitude || !positionLatitude || !batteryLevel || !vehicleType) {
@@ -12,18 +19,25 @@ export const createVehicle = async (req: Request, res: Response) => {
     return;
   }
   const vehicle = new Vehicle();
+  // because of enum
+  if (!isNaN(status) && status > 0 && status < 4) {
+    vehicle.status = vehicle_status[status].toString();
+  } else {
+    res.status(400).send({
+      status: 'Error: Parameter status is wrong',
+    });
+    return;
+  }
   vehicle.licencePlate = licencePlate;
-  vehicle.status = status;
   vehicle.positionLongitude = positionLongitude;
   vehicle.positionLatitude = positionLatitude;
   vehicle.batteryLevel = batteryLevel;
   // VehicleType by Id
   const repVehicleType = await getRepository(VehicleType);
   try {
-    const vType = await repVehicleType.findOneOrFail({
+    vehicle.vehicleType = await repVehicleType.findOneOrFail({
       where: { vehicleTypeId: vehicleType },
     });
-    vehicle.vehicleType = vType;
   } catch (error) {
     res.status(404).send({ status: 'Vehicle Type not_found' });
     return;
@@ -95,12 +109,6 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
 export const updateVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
-  if (!licencePlate || !status || !positionLongitude || !positionLatitude || !batteryLevel || !vehicleType) {
-    res.status(400).send({
-      status: 'Error: Missing parameter!',
-    });
-    return;
-  }
   const vehicleRep = getRepository(Vehicle);
 
   try {
@@ -114,10 +122,9 @@ export const updateVehicle = async (req: Request, res: Response) => {
     // get update wanted VehicleType
     const repVehicleType = await getRepository(VehicleType);
     try {
-      const vType = await repVehicleType.findOneOrFail({
+      vehicle.vehicleType = await repVehicleType.findOneOrFail({
         where: { vehicleTypeId: vehicleType },
       });
-      vehicle.vehicleType = vType;
     } catch (error) {
       res.status(404).send({ status: 'Vehicle Type not_found' });
       return;
