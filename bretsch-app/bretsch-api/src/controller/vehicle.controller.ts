@@ -10,6 +10,19 @@ enum vehicle_status {
   'not available',
 }
 
+/**
+ * Create vehicle
+ * Method: POST
+ * Expected as a parameter: ---
+ * Expected in the body:licencePlate,
+ *                      status,
+ *                      positionLongitude,
+ *                      positionLatitude,
+ *                      batteryLevel,
+ *                      vehicleType
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const createVehicle = async (req: Request, res: Response) => {
   const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
   if (!licencePlate || !status || !positionLongitude || !positionLatitude || !batteryLevel || !vehicleType) {
@@ -49,6 +62,14 @@ export const createVehicle = async (req: Request, res: Response) => {
   });
 };
 
+/**
+ * Delete Vehicle
+ * Method: DELETE
+ * Expected as a parameter: vehicleId
+ * Expected in the body: ---
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const deleteVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRepository = getRepository(Vehicle);
@@ -64,6 +85,14 @@ export const deleteVehicle = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Get all bookings by vehicle Id
+ * Method: GET
+ * Expected as a parameter: vehicleId
+ * Expected in the body: ---
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const getAllBookingsByVehicleId = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRep = await getRepository(Vehicle);
@@ -79,6 +108,14 @@ export const getAllBookingsByVehicleId = async (req: Request, res: Response) => 
   }
 };
 
+/**
+ * Get all Vehicles
+ * Method: GET
+ * Expected as a parameter: ---
+ * Expected in the body: ---
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 // tslint:disable-next-line:variable-name
 export const getAllVehicle = async (_req: Request, res: Response) => {
   const vehicleRep = getRepository(Vehicle);
@@ -89,6 +126,14 @@ export const getAllVehicle = async (_req: Request, res: Response) => {
   });
 };
 
+/**
+ * Get specific vehicle
+ * Method: GET
+ * Expected as a parameter: vehicleId
+ * Expected in the body: ---
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const getSpecificVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRep = getRepository(Vehicle);
@@ -106,6 +151,21 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Update Vehicle
+ * Method: PATCH
+ * Expected as a parameter: vehicleId;
+ * Expected in the body: at least one of the following
+ *                    licencePlate,
+ *                    status,
+ *                    positionLongitude,
+ *                    positionLatitude,
+ *                    batteryLevel,
+ *                    vehicleType
+ *
+ * @param {Request} req Request
+ * @param {Response} res Response
+ */
 export const updateVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
