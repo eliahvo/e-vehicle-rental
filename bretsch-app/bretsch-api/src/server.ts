@@ -5,6 +5,8 @@ import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
 import 'reflect-metadata';
+
+import { authMiddleware } from './middleware/authentication';
 import { globalRouter } from './router/global.router';
 import { createDBConnection } from './util/connectDB.util';
 import { Logger } from './util/logger.util';
@@ -22,6 +24,7 @@ export const run = async () => {
 
     app.use(morgan('combined'));
     app.use(bodyParser.json());
+    app.use(authMiddleware);
     app.use('/api', globalRouter);
 
     app.listen(port, () => {
