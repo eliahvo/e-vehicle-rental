@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Marker, MarkerClusterer } from '@react-google-maps/api';
 import { useSnackbar } from 'notistack';
 
@@ -11,25 +11,71 @@ const center = {
   lat: 49.871575,
   lng: 8.651596
 };
+export interface User {
+	userId: number;
+  email: string;
+  hashedPassword: string;
+  userRole: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  preferedPayment: string;
+  streetPlusNumber: string;
+  city: string;
+  bookings: Booking[];
+  createdAt: string;
+  updatedAt: string;
+}
+export interface Booking {
+  bookingId: number;
+  createdAt: string;
+  endDate: string;
+  paymentStatus: string;
+  price: number;
+  startDate: string;
+  updatedAt: string;
+}
+export interface VehicleType {
+	vehicleTypeId: number;
+  type: string;
+  pricePerMinute: number;
+  minimalBatteryLevel: number;
+  vehicles: Vehicle[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface Vehicle {
-  positionLatitude: number;
-  positionLongitude: number;
-  vehicleType: string;
+  batteryLevel: number;
+  bookings: Booking[];
+  createdAt: string;
+  licencePlate: string;
+  positionLatitude: string;
+  positionLongitude: string;
+  status: string;
+  updatedAt: string;
+  vehicleId: number;
+  vehicleType: VehicleType;
 }
 
 export const DashboardPage = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([{
-    positionLatitude: 49.865158,
-    positionLongitude: 8.648249,
-    vehicleType: "scooter",
-  }, {
-    positionLatitude: 49.875158,
-    positionLongitude: 8.648249,
-    vehicleType: "car",
-  }]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
+  const fetchVehicle = async function() {
+    const vehicleRequest = await fetch(`api/vehicle`, {
+        method: 'GET',
+        headers: { 'content-type': 'application/json' },
+      },
+    );
+    if (vehicleRequest.status === 200) {
+			const vehicleJSON = await vehicleRequest.json();
+			setVehicles(vehicleJSON.data);
+		}
+  };
+  useEffect(() => {
+    fetchVehicle();
+  },[]);
 
   return (
     <LoadScript
@@ -46,12 +92,12 @@ export const DashboardPage = () => {
           return (
             <Marker
               position={{
-                lat: vehicle.positionLatitude,
-                lng: vehicle.positionLongitude,
+                lat: parseFloat(vehicle.positionLatitude),
+                lng: parseFloat(vehicle.positionLongitude),
               }}
               onClick={_ => 
-                enqueueSnackbar(`${vehicle.vehicleType} bretscht davon!`, { variant: 'success' })}
-              icon={`./icons/${vehicle.vehicleType}.png`}
+                enqueueSnackbar(`${vehicle.vehicleType.type} bretscht davon!`, { variant: 'success' })}
+              icon={`./icons/${vehicle.vehicleType.type}.png`}
             />
           );
         })}

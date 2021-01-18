@@ -3,24 +3,24 @@ items:
   Vehicle1:
     licencePlate: DA-BR-001
     status: inUse
-    positionLongitude: N11
-    positionLatitude: O11
+    positionLongitude: 8.648249
+    positionLatitude: 49.865158
     batteryLevel: 50
     vehicleType: '@VehicleType1'
 
   Vehicle2:
     licencePlate: DA-BR-002
     status: free
-    positionLongitude: N22
-    positionLatitude: O22
+    positionLongitude: 8.651596
+    positionLatitude: 49.871575
     batteryLevel: 80
     vehicleType: '@VehicleType2'
 
   Vehicle3:
     licencePlate: DA-BR-003
     status: inUse
-    positionLongitude: N33
-    positionLatitude: O33
+    positionLongitude: 8.648249
+    positionLatitude: 49.866158
     batteryLevel: 20
-    vehicleType: '@VehicleType3'
+    vehicleType: '@VehicleType1'
 
