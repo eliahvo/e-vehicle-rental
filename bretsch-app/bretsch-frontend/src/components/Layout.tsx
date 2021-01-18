@@ -22,8 +22,9 @@ const Main = styled.main`
 const Footer = styled.footer`
   height: ${footerHeight};
   bottom: 0;
-  left: 0.5rem;
+  left: 5rem;
   position: fixed;
+  z-index: 999;
 `;
 
 interface LayoutProps {
