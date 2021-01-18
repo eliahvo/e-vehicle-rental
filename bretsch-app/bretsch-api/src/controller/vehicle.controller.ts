@@ -25,7 +25,7 @@ enum vehicle_status {
  */
 export const createVehicle = async (req: Request, res: Response) => {
   const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
-  if (!licencePlate || !status || !positionLongitude || !positionLatitude || !batteryLevel || !vehicleType) {
+  if (!licencePlate || !status || !batteryLevel || !vehicleType) {
     res.status(400).send({
       status: 'Error: Missing parameter!',
     });
@@ -42,8 +42,19 @@ export const createVehicle = async (req: Request, res: Response) => {
     return;
   }
   vehicle.licencePlate = licencePlate;
-  vehicle.positionLongitude = positionLongitude;
-  vehicle.positionLatitude = positionLatitude;
+  var positions = randomLocationGenerate();
+    if(!positionLongitude){
+      vehicle.positionLongitude = positions[0].toString();
+    }
+    else{
+      vehicle.positionLongitude = positionLongitude;
+    }
+    if(!positionLatitude){
+      vehicle.positionLatitude = positions[1].toString();
+      }
+    else{
+      vehicle.positionLatitude = positionLatitude;
+      }
   vehicle.batteryLevel = batteryLevel;
   // VehicleType by Id
   const repVehicleType = await getRepository(VehicleType);
@@ -175,8 +186,20 @@ export const updateVehicle = async (req: Request, res: Response) => {
     const vehicle = await vehicleRep.findOneOrFail(vehicleId);
     vehicle.licencePlate = licencePlate;
     vehicle.status = status;
-    vehicle.positionLongitude = positionLongitude;
-    vehicle.positionLatitude = positionLatitude;
+    var positions = randomLocationGenerate();
+    if(!positionLongitude){
+      vehicle.positionLongitude = positions[0].toString();
+    }
+    else{
+      vehicle.positionLongitude = positionLongitude;
+    }
+    if(!positionLatitude){
+      vehicle.positionLatitude = positions[1].toString();
+      }
+    else{
+      vehicle.positionLatitude = positionLatitude;
+      }
+    
     vehicle.batteryLevel = batteryLevel;
 
     // get update wanted VehicleType
@@ -202,3 +225,13 @@ export const updateVehicle = async (req: Request, res: Response) => {
     });
   }
 };
+
+function randomLocationGenerate() {
+
+    const positionLongitude = 8.630 + (Math.random() * 0.046);
+    const positionLatitude = 49.855 + (Math.random() * 0.031);
+        
+    var positions = [positionLongitude, positionLatitude]
+    return positions;
+
+}
