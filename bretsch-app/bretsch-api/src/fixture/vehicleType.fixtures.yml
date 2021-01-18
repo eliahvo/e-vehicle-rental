@@ -9,8 +9,3 @@ items:
     type: car
     pricePerMinute: 10
     minimalBatteryLevel: 10
-
-  VehicleType3:
-    type: hoverboard
-    pricePerMinute: 3
-    minimalBatteryLevel: 20
