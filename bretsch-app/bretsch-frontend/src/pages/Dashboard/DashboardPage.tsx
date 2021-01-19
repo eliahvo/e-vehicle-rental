@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker, MarkerClusterer } from '@react-google-maps/api';
 import { useSnackbar } from 'notistack';
-import { Vehicle } from '../../util/entityInterfaces';
+import { Vehicle } from '../../util/EntityInterfaces';
 import { Layout } from '../../components/Layout';
+import useLocalStorage from '../../util/LocalStorageHook';
 
 const containerStyle = {
-  width: '100%',
   height: '100%',
+  width: '100%',
 };
 
 const center = {
@@ -21,7 +22,7 @@ const options = {
 
 export const DashboardPage = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [vehicles, setVehicles] = useLocalStorage<Vehicle[]>('Dashboard.vehicles', []);
 
   const fetchVehicle = async () => {
     const vehicleRequest = await fetch(`api/vehicle`, {

@@ -26,6 +26,10 @@ import MapIcon from '@material-ui/icons/Map';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import { useHistory } from 'react-router-dom';
+import CachedIcon from '@material-ui/icons/Cached';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Brightness3Icon from '@material-ui/icons/Brightness3';
+import WbSunnyIcon from '@material-ui/icons/WbSunny';
 
 const drawerWidth = 240;
 
@@ -36,6 +40,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     menuButton: {
       marginRight: theme.spacing(2),
+    },
+    menuIcon: {
+      marginRight: theme.spacing(1),
+    },
+    menuDivider: {
+      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(1),
     },
     root: {
       flexGrow: 1,
@@ -130,6 +141,10 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
     localStorage.clear();
   };
 
+  const reloadAllData = () => {
+    enqueueSnackbar(`Reloading all data...`, { variant: 'info' });
+  };
+
   return (
     <>
       <AppBar
@@ -163,12 +178,25 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
               <DarkModeContext.Consumer>
                 {({ darkMode, toggleDarkMode }) => (
                   <MenuItem onClick={toggleDarkMode}>
+                    {darkMode ? (
+                      <Brightness3Icon className={classes.menuIcon} />
+                    ) : (
+                      <WbSunnyIcon className={classes.menuIcon} />
+                    )}
                     Darkmode:
-                    <Switch checked={darkMode} onChange={toggleDarkMode} />
+                    <Switch size="small" checked={darkMode} onChange={toggleDarkMode} />
                   </MenuItem>
                 )}
               </DarkModeContext.Consumer>
-              <MenuItem onClick={resetLocalStorage}>Clear local storage</MenuItem>
+              <Divider className={classes.menuDivider} />
+              <MenuItem onClick={resetLocalStorage}>
+                <DeleteIcon className={classes.menuIcon} />
+                Clear local storage
+              </MenuItem>
+              <MenuItem onClick={reloadAllData}>
+                <CachedIcon className={classes.menuIcon} />
+                Reload all data
+              </MenuItem>
             </Menu>
           </div>
         </Toolbar>
