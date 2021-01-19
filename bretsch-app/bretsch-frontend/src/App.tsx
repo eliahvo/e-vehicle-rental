@@ -4,20 +4,14 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { DashboardPage } from './pages/Dashboard/DashboardPage';
-import { DarkModeContext } from './contexts/DarkModeContext';
+import { AppContext } from './contexts/AppContext';
 import useLocalStorage from './util/LocalStorageHook';
+import { Vehicle } from './util/EntityInterfaces';
+import { fetchVehicles } from './util/RequestHelper';
 
 export const App = () => {
   const [darkModeState, setDarkModeState] = useLocalStorage('App.darkModeState', true);
-
-  const toggleDarkModeState = () => {
-    setDarkModeState(!darkModeState);
-  };
-
-  const darkMode = {
-    darkMode: darkModeState,
-    toggleDarkMode: toggleDarkModeState,
-  };
+  const [vehicles, setVehicles] = useLocalStorage<Vehicle[]>('App.vehicles', []);
 
   const theme = React.useMemo(
     () =>
@@ -39,17 +33,32 @@ export const App = () => {
     [darkModeState],
   );
 
+  const toggleDarkModeState = () => {
+    setDarkModeState(!darkModeState);
+  };
+
+  const loadVehicles = async () => {
+    setVehicles(fetchVehicles());
+  };
+
+  const context = {
+    darkMode: darkModeState,
+    reloadVehicles: loadVehicles,
+    toggleDarkMode: toggleDarkModeState,
+    vehicleData: vehicles,
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider maxSnack={10} anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}>
         <CssBaseline />
-        <DarkModeContext.Provider value={darkMode}>
+        <AppContext.Provider value={context}>
           <BrowserRouter>
             <Switch>
               <Route path="/" component={DashboardPage} />
             </Switch>
           </BrowserRouter>
-        </DarkModeContext.Provider>
+        </AppContext.Provider>
       </SnackbarProvider>
     </ThemeProvider>
   );

@@ -6,7 +6,7 @@ import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/sty
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { DarkModeContext } from '../contexts/DarkModeContext';
+import { AppContext } from '../contexts/AppContext';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useSnackbar } from 'notistack';
 import clsx from 'clsx';
@@ -35,19 +35,59 @@ const drawerWidth = 240;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    appBar: {
+      transition: theme.transitions.create(['width', 'margin'], {
+        duration: theme.transitions.duration.leavingScreen,
+        easing: theme.transitions.easing.sharp,
+      }),
+      zIndex: theme.zIndex.drawer + 1,
+    },
+    appBarShift: {
+      marginLeft: drawerWidth,
+      transition: theme.transitions.create(['width', 'margin'], {
+        duration: theme.transitions.duration.enteringScreen,
+        easing: theme.transitions.easing.sharp,
+      }),
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
+    drawer: {
+      flexShrink: 0,
+      whiteSpace: 'nowrap',
+      width: drawerWidth,
+    },
+    drawerClose: {
+      overflowX: 'hidden',
+      transition: theme.transitions.create('width', {
+        duration: theme.transitions.duration.leavingScreen,
+        easing: theme.transitions.easing.sharp,
+      }),
+      width: theme.spacing(7) + 1,
+      [theme.breakpoints.up('sm')]: {
+        width: theme.spacing(9) + 1,
+      },
+    },
+    drawerOpen: {
+      transition: theme.transitions.create('width', {
+        duration: theme.transitions.duration.enteringScreen,
+        easing: theme.transitions.easing.sharp,
+      }),
+      width: drawerWidth,
+    },
+
     icons: {
       color: 'black',
     },
     menuButton: {
       marginRight: theme.spacing(2),
     },
-    menuIcon: {
-      marginRight: theme.spacing(1),
-    },
     menuDivider: {
       marginBottom: theme.spacing(1),
       marginTop: theme.spacing(1),
     },
+    menuIcon: {
+      marginRight: theme.spacing(1),
+    },
+
     root: {
       flexGrow: 1,
     },
@@ -55,50 +95,14 @@ const useStyles = makeStyles((theme: Theme) =>
       color: 'black',
       flexGrow: 1,
     },
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-      transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-    appBarShift: {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
+
     hide: {
       display: 'none',
     },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-      whiteSpace: 'nowrap',
-    },
-    drawerOpen: {
-      width: drawerWidth,
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    drawerClose: {
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      overflowX: 'hidden',
-      width: theme.spacing(7) + 1,
-      [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9) + 1,
-      },
-    },
+
     toolbar: {
-      display: 'flex',
       alignItems: 'center',
+      display: 'flex',
       justifyContent: 'flex-end',
       padding: theme.spacing(0, 1),
       // necessary for content to be below app bar
@@ -175,7 +179,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
               <MoreVertIcon />
             </IconButton>
             <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleMenuClose}>
-              <DarkModeContext.Consumer>
+              <AppContext.Consumer>
                 {({ darkMode, toggleDarkMode }) => (
                   <MenuItem onClick={toggleDarkMode}>
                     {darkMode ? (
@@ -187,7 +191,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
                     <Switch size="small" checked={darkMode} onChange={toggleDarkMode} />
                   </MenuItem>
                 )}
-              </DarkModeContext.Consumer>
+              </AppContext.Consumer>
               <Divider className={classes.menuDivider} />
               <MenuItem onClick={resetLocalStorage}>
                 <DeleteIcon className={classes.menuIcon} />
