@@ -46,6 +46,7 @@
     "typescript": "^4.0.5"
   },
   "dependencies": {
+    "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
     "class-validator": "^0.12.2",
     "dotenv-safe": "^8.2.0",
