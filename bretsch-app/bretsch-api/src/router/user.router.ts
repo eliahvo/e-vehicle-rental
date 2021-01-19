@@ -1,19 +1,22 @@
 import { Router } from 'express';
 import {
-    createUser,
+    registerUser,
     deleteUser,
     getAllUser,
     getBookingsByUserId,
     getSpecificUser,
-    updateUser
+    updateUser,
+    loginUser
 } from '../controller/user.controller';
+import { Authentication } from '../middleware/authentication';
 
 
 export const userRouter = Router({ mergeParams: true });
 
-userRouter.post('/', createUser);
+userRouter.post('/', registerUser);
+userRouter.post('/token', Authentication.verifyAccess, loginUser)
 userRouter.delete('/:userId', deleteUser);
 userRouter.get('/', getAllUser);
-userRouter.get('/:userId/bookings', getBookingsByUserId);
+userRouter.get('/:userId/bookings', Authentication.verifyAccess, getBookingsByUserId);
 userRouter.get('/:userId', getSpecificUser);
-userRouter.patch('/:userId', updateUser);
+userRouter.patch('/:userId', Authentication.verifyAccess, updateUser);
