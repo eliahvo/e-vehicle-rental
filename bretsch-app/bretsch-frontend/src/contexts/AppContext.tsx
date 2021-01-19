@@ -6,7 +6,8 @@ const typedVehicles: Vehicle[] = [];
 
 export const AppContext = React.createContext({
   darkMode: true,
+  reloadAll: () => {},
   reloadVehicles: () => {},
   toggleDarkMode: () => {},
-  vehicleData: typedVehicles,
+  vehicles: typedVehicles,
 });

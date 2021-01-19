@@ -1,6 +1,4 @@
-import { useSnackbar } from 'notistack';
 import { Vehicle } from './EntityInterfaces';
-const { enqueueSnackbar } = useSnackbar();
 
 export const fetchVehicles = async (): Promise<Vehicle[]> => {
   const request = await fetch(`api/vehicle`, {
@@ -11,9 +9,6 @@ export const fetchVehicles = async (): Promise<Vehicle[]> => {
     const vehicleData: Vehicle[] = (await request.json()).data;
     return vehicleData;
   } else {
-    enqueueSnackbar(`Error while fetching vehicle data!`, {
-      variant: 'error',
-    });
     return [];
   }
 };

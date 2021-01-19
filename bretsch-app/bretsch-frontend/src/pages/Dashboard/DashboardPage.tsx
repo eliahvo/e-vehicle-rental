@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker, MarkerClusterer } from '@react-google-maps/api';
 import { useSnackbar } from 'notistack';
 import { Vehicle } from '../../util/EntityInterfaces';
 import { Layout } from '../../components/Layout';
-import useLocalStorage from '../../util/LocalStorageHook';
+import { AppContext } from '../../contexts/AppContext';
+import React from 'react';
 
 const containerStyle = {
   height: '100%',
@@ -22,25 +22,7 @@ const options = {
 
 export const DashboardPage = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const [vehicles, setVehicles] = useLocalStorage<Vehicle[]>('Dashboard.vehicles', []);
-
-  const fetchVehicle = async () => {
-    const vehicleRequest = await fetch(`api/vehicle`, {
-      headers: { 'content-type': 'application/json' },
-      method: 'GET',
-    });
-    if (vehicleRequest.status === 200) {
-      const vehicleJSON = await vehicleRequest.json();
-      setVehicles(vehicleJSON.data);
-    } else {
-      enqueueSnackbar(`Error while fetching vehicle data!`, {
-        variant: 'error',
-      });
-    }
-  };
-  useEffect(() => {
-    fetchVehicle();
-  }, []);
+  const { vehicles } = React.useContext(AppContext);
 
   return (
     <Layout title="Dashboard">
