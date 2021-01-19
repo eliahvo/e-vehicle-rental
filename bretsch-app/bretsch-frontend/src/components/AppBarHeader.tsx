@@ -121,6 +121,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
   const history = useHistory();
 
   const { enqueueSnackbar } = useSnackbar();
+  const { reloadAll } = React.useContext(AppContext);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [navigationDrawer, setNavigationDrawer] = React.useState(false);
 
@@ -147,6 +149,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
 
   const reloadAllData = () => {
     enqueueSnackbar(`Reloading all data...`, { variant: 'info' });
+    reloadAll();
   };
 
   return (
@@ -193,13 +196,13 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
                 )}
               </AppContext.Consumer>
               <Divider className={classes.menuDivider} />
-              <MenuItem onClick={resetLocalStorage}>
-                <DeleteIcon className={classes.menuIcon} />
-                Clear local storage
-              </MenuItem>
               <MenuItem onClick={reloadAllData}>
                 <CachedIcon className={classes.menuIcon} />
                 Reload all data
+              </MenuItem>
+              <MenuItem onClick={resetLocalStorage}>
+                <DeleteIcon className={classes.menuIcon} />
+                Clear local storage
               </MenuItem>
             </Menu>
           </div>
