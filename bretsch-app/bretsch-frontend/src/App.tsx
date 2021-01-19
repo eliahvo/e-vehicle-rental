@@ -1,5 +1,5 @@
 import 'fontsource-roboto';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { DashboardPage } from './pages/Dashboard/DashboardPage';
@@ -7,9 +7,7 @@ import { AppContext } from './contexts/AppContext';
 import useLocalStorage from './util/LocalStorageHook';
 import { Vehicle } from './util/EntityInterfaces';
 import { fetchVehicles } from './util/RequestHelper';
-import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
-import { useState } from 'react';
 
 export const App = () => {
   const { enqueueSnackbar } = useSnackbar();
