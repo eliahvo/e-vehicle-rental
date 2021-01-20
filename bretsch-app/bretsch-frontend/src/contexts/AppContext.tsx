@@ -11,3 +11,8 @@ export const AppContext = React.createContext({
   toggleDarkMode: () => {},
   vehicles: typedVehicles,
 });
+
+export const LoginContext = React.createContext({
+  toggleOpen: () => {},
+  open: false,
+});
