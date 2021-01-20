@@ -63,14 +63,14 @@ export const registerUser = async (req: Request, res: Response) => {
 
   const newUser = new User();
 
-  user.email = email;
-  user.hashedPassword = hashedPassword;
-  user.firstName = firstName;
-  user.lastName = lastName;
-  user.birthDate = birthDate;
-  user.preferedPayment = preferedPayment;
-  user.streetPlusNumber = streetPlusNumber;
-  user.city = city;
+  newUser.email = email;
+  newUser.hashedPassword = hashedPassword;
+  newUser.firstName = firstName;
+  newUser.lastName = lastName;
+  newUser.birthDate = birthDate;
+  newUser.preferedPayment = preferedPayment;
+  newUser.streetPlusNumber = streetPlusNumber;
+  newUser.city = city;
 
   const createdUser = await userRepository.save(newUser);
   delete createdUser.hashedPassword;
@@ -93,12 +93,12 @@ export const loginUser = async (req: Request, res: Response) => {
 	});
   
 	if (!user) {
-	  return res.status(401).send({ status: 'unauthorized' });
+	  return res.status(401).send({ status: 'unauthorized1' });
 	}
   
 	const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(password, user.hashedPassword);
 	if (!matchingPasswords) {
-	  return res.status(401).send({ status: 'unauthorized' });
+	  return res.status(401).send({ status: 'unauthorized2' });
 	}
   
 	const token: string = await Authentication.generateToken({
