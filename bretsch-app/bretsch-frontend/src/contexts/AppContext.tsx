@@ -3,7 +3,6 @@ import React from 'react';
 import { Vehicle } from '../util/EntityInterfaces';
 
 const typedVehicles: Vehicle[] = [];
-const defaultValue: any = '';
 
 export const AppContext = React.createContext({
   darkMode: true,
@@ -14,5 +13,6 @@ export const AppContext = React.createContext({
 });
 
 export const LoginContext = React.createContext({
-  open: defaultValue,
+  toggleOpen: () => {},
+  open: false,
 });

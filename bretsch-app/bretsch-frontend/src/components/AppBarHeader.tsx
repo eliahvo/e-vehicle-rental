@@ -126,7 +126,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [navigationDrawer, setNavigationDrawer] = React.useState(false);
-  const [login, setLogin] = React.useState(false);
+  const [openLogin, setOpenLogin] = React.useState(false);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -154,8 +154,13 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
     reloadAll();
   };
 
+  const toggleOpen = () => {
+    setOpenLogin(!openLogin);
+  };
+
   const loginContext = {
-    open: true,
+    toggleOpen: toggleOpen,
+    open: openLogin,
   };
 
   return (
@@ -227,91 +232,92 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           }),
         }}
       >
-        <div className={classes.toolbar}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </div>
-        <Divider />
-        {/* ADD REFS TO OTHER SITES BELOW */}
-        <List>
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/');
-            }}
-          >
-            <ListItemIcon>
-              <MapIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Dashboard'} />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/booking');
-            }}
-          >
-            <ListItemIcon>
-              <ReceiptIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Booking'} />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/prices');
-            }}
-          >
-            <ListItemIcon>
-              <PaymentIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Prices'} />
-          </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/profile');
-            }}
-          >
-            <ListItemIcon>
-              <AccountCircleIcon />
-            </ListItemIcon>
-            <ListItemText primary={'My Profile'} />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/my-bookings');
-            }}
-          >
-            <ListItemIcon>
-              <TimelineIcon />
-            </ListItemIcon>
-            <ListItemText primary={'My Bookings'} />
-          </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/settings');
-            }}
-          >
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Settings'} />
-          </ListItem>
-          <LoginContext.Provider value={loginContext}>
+        <LoginContext.Provider value={loginContext}>
+          <div className={classes.toolbar}>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </div>
+          <Divider />
+          {/* ADD REFS TO OTHER SITES BELOW */}
+          <List>
             <ListItem
               button
               onClick={() => {
-                setLogin(!login);
+                history.push('/');
+              }}
+            >
+              <ListItemIcon>
+                <MapIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Dashboard'} />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/booking');
+              }}
+            >
+              <ListItemIcon>
+                <ReceiptIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Booking'} />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/prices');
+              }}
+            >
+              <ListItemIcon>
+                <PaymentIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Prices'} />
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/profile');
+              }}
+            >
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText primary={'My Profile'} />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/my-bookings');
+              }}
+            >
+              <ListItemIcon>
+                <TimelineIcon />
+              </ListItemIcon>
+              <ListItemText primary={'My Bookings'} />
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/settings');
+              }}
+            >
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Settings'} />
+            </ListItem>
+
+            <ListItem
+              button
+              onClick={() => {
+                setOpenLogin(true);
               }}
             >
               <ListItemIcon>
@@ -319,9 +325,9 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
               </ListItemIcon>
               <ListItemText primary={'Login'} />
             </ListItem>
-          </LoginContext.Provider>
-        </List>
-        {login && <LoginFormDialog></LoginFormDialog>}
+          </List>
+          <LoginFormDialog />
+        </LoginContext.Provider>
       </Drawer>
     </>
   );
