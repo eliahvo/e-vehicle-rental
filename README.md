@@ -103,6 +103,35 @@ Alternatively if you can't use `make`, run:
 docker-compose down
 ```
 
+## Alternative Docker setting
+In some cases the docker script is not working properly.
+
+Replace in the ```command```-field of the .yml file in the images `bretsch-api` and `bretsch-frontend`
+that it look like the following:
+
+```
+command: npm start
+```
+
+Next you just have to setup the images like the following:
+
+**Create the .env file like eplained aboth**
+
+
+**Install npm packages**
+- `docker-compose run [image name] npm install`
+In this case the image name will be `bretsch-api` and `bretsch-frontend`
+
+**Start containers**
+- `docker-compose up` / `docker-compose up -d`
+
+**Sync database schema**
+- `docker-compose exec backend npm run typeorm schema:sync`
+
+**Insert fixtures**
+- `docker-compose exec backend npm run fixtures`
+
+
 # 🔍 Test the project
 
 So we included two separate options for you to test the project:
