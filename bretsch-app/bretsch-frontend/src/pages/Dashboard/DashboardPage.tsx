@@ -43,7 +43,7 @@ export const DashboardPage = () => {
                       variant: 'success',
                     })
                   }
-                  icon={`./icons/${vehicle.vehicleType.type}.png`}
+                  icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
                   clusterer={clusterer}
                 />
               ))
