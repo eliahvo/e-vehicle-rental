@@ -6,7 +6,7 @@ import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/sty
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { AppContext } from '../contexts/AppContext';
+import { AppContext, LoginContext } from '../contexts/AppContext';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useSnackbar } from 'notistack';
 import clsx from 'clsx';
@@ -30,6 +30,7 @@ import CachedIcon from '@material-ui/icons/Cached';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Brightness3Icon from '@material-ui/icons/Brightness3';
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
+import LoginFormDialog from './Login';
 
 const drawerWidth = 240;
 
@@ -125,6 +126,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [navigationDrawer, setNavigationDrawer] = React.useState(false);
+  const [login, setLogin] = React.useState(false);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -150,6 +152,10 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
   const reloadAllData = () => {
     enqueueSnackbar(`Reloading all data...`, { variant: 'info' });
     reloadAll();
+  };
+
+  const loginContext = {
+    open: true,
   };
 
   return (
@@ -301,17 +307,21 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
             </ListItemIcon>
             <ListItemText primary={'Settings'} />
           </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-            }}
-          >
-            <ListItemIcon>
-              <ExitToAppIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Login'} />
-          </ListItem>
+          <LoginContext.Provider value={loginContext}>
+            <ListItem
+              button
+              onClick={() => {
+                setLogin(!login);
+              }}
+            >
+              <ListItemIcon>
+                <ExitToAppIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Login'} />
+            </ListItem>
+          </LoginContext.Provider>
         </List>
+        {login && <LoginFormDialog></LoginFormDialog>}
       </Drawer>
     </>
   );
