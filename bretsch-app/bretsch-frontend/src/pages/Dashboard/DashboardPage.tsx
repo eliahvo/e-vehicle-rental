@@ -16,7 +16,7 @@ export const DashboardPage = () => {
 
   return (
     <Layout title="Dashboard">
-      <LoadScript googleMapsApiKey="">
+      <LoadScript googleMapsApiKey="" language="en" region="en">
         <GoogleMap
           mapContainerStyle={{
             height: '100%',
@@ -24,8 +24,10 @@ export const DashboardPage = () => {
           }}
           center={center}
           zoom={15}
+          mapTypeId="roadmap"
         >
           <MarkerClusterer
+            averageCenter={true}
             options={{
               imagePath: './icons/clusterer/m',
             }}
