@@ -1,23 +1,18 @@
 import 'fontsource-roboto';
-import { SnackbarProvider } from 'notistack';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { DashboardPage } from './pages/Dashboard/DashboardPage';
-import { DarkModeContext } from './contexts/DarkModeContext';
+import { AppContext } from './contexts/AppContext';
 import useLocalStorage from './util/LocalStorageHook';
+import { Vehicle } from './util/EntityInterfaces';
+import { fetchVehicles } from './util/RequestHelper';
+import { useSnackbar } from 'notistack';
 
 export const App = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [darkModeState, setDarkModeState] = useLocalStorage('App.darkModeState', true);
-
-  const toggleDarkModeState = () => {
-    setDarkModeState(!darkModeState);
-  };
-
-  const darkMode = {
-    darkMode: darkModeState,
-    toggleDarkMode: toggleDarkModeState,
-  };
+  const [vehicleData, setVehicleData] = useState<Vehicle[]>([]);
 
   const theme = React.useMemo(
     () =>
@@ -39,18 +34,50 @@ export const App = () => {
     [darkModeState],
   );
 
+  useEffect(() => {
+    (async () => {
+      await loadAll();
+    })();
+  }, []);
+
+  const loadVehicles = async () => {
+    const fetchedData: Vehicle[] = await fetchVehicles();
+    console.log(fetchedData);
+    if (fetchedData.length !== 0) {
+      setVehicleData(fetchedData);
+    } else {
+      enqueueSnackbar(`Error while fetching vehicle data!`, {
+        variant: 'error',
+      });
+    }
+  };
+
+  const loadAll = async () => {
+    await loadVehicles();
+  };
+
+  const toggleDarkModeState = () => {
+    setDarkModeState(!darkModeState);
+  };
+
+  const context = {
+    darkMode: darkModeState,
+    reloadAll: loadAll,
+    reloadVehicles: loadVehicles,
+    toggleDarkMode: toggleDarkModeState,
+    vehicles: vehicleData,
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <SnackbarProvider maxSnack={10} anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}>
-        <CssBaseline />
-        <DarkModeContext.Provider value={darkMode}>
-          <BrowserRouter>
-            <Switch>
-              <Route path="/" component={DashboardPage} />
-            </Switch>
-          </BrowserRouter>
-        </DarkModeContext.Provider>
-      </SnackbarProvider>
+      <CssBaseline />
+      <AppContext.Provider value={context}>
+        <BrowserRouter>
+          <Switch>
+            <Route path="/" component={DashboardPage} />
+          </Switch>
+        </BrowserRouter>
+      </AppContext.Provider>
     </ThemeProvider>
   );
 };

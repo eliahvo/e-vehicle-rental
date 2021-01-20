@@ -1,51 +1,37 @@
-import { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Marker, MarkerClusterer } from '@react-google-maps/api';
 import { useSnackbar } from 'notistack';
-import { Vehicle } from '../../util/entityInterfaces';
+import { Vehicle } from '../../util/EntityInterfaces';
 import { Layout } from '../../components/Layout';
-
-const containerStyle = {
-  width: '100%',
-  height: '100%',
-};
+import { AppContext } from '../../contexts/AppContext';
+import React from 'react';
 
 const center = {
   lat: 49.871575,
   lng: 8.651596,
 };
 
-const options = {
-  // m1.png, m2.png, m3.png, m4.png, m5.png and m6.png have to be in that folder
-  imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-};
-
 export const DashboardPage = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-
-  const fetchVehicle = async () => {
-    const vehicleRequest = await fetch(`api/vehicle`, {
-      headers: { 'content-type': 'application/json' },
-      method: 'GET',
-    });
-    if (vehicleRequest.status === 200) {
-      const vehicleJSON = await vehicleRequest.json();
-      setVehicles(vehicleJSON.data);
-    } else {
-      enqueueSnackbar(`Error while fetching vehicle data!`, {
-        variant: 'error',
-      });
-    }
-  };
-  useEffect(() => {
-    fetchVehicle();
-  }, []);
+  const { vehicles } = React.useContext(AppContext);
 
   return (
     <Layout title="Dashboard">
-      <LoadScript googleMapsApiKey="">
-        <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={15}>
-          <MarkerClusterer options={options}>
+      <LoadScript googleMapsApiKey="" language="en" region="en">
+        <GoogleMap
+          mapContainerStyle={{
+            height: '100%',
+            width: '100%',
+          }}
+          center={center}
+          zoom={15}
+          mapTypeId="roadmap"
+        >
+          <MarkerClusterer
+            averageCenter={true}
+            options={{
+              imagePath: './icons/clusterer/m',
+            }}
+          >
             {(clusterer) =>
               vehicles.map((vehicle: Vehicle) => (
                 <Marker
@@ -59,7 +45,7 @@ export const DashboardPage = () => {
                       variant: 'success',
                     })
                   }
-                  icon={`./icons/${vehicle.vehicleType.type}.png`}
+                  icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
                   clusterer={clusterer}
                 />
               ))
