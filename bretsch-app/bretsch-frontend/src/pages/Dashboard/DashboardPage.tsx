@@ -25,6 +25,19 @@ export const DashboardPage = () => {
           center={center}
           zoom={15}
           mapTypeId="roadmap"
+          options={{
+            maxZoom: 20,
+            minZoom: 13,
+            restriction: {
+              strictBounds: true,
+              latLngBounds: {
+                north: 49.984304,
+                south: 49.758828,
+                east: 8.960182,
+                west: 8.291636,
+              },
+            },
+          }}
         >
           <MarkerClusterer
             averageCenter={true}
