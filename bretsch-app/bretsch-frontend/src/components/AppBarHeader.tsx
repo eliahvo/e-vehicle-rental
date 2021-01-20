@@ -268,7 +268,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           <ListItem
             button
             onClick={() => {
-              history.push('/my-profile');
+              history.push('/profile');
             }}
           >
             <ListItemIcon>
@@ -304,13 +304,12 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           <ListItem
             button
             onClick={() => {
-              history.push('/logout');
             }}
           >
             <ListItemIcon>
               <ExitToAppIcon />
             </ListItemIcon>
-            <ListItemText primary={'Logout'} />
+            <ListItemText primary={'Login'} />
           </ListItem>
         </List>
       </Drawer>
