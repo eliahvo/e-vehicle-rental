@@ -8,6 +8,11 @@ import useLocalStorage from './util/LocalStorageHook';
 import { Vehicle } from './util/EntityInterfaces';
 import { fetchVehicles } from './util/RequestHelper';
 import { useSnackbar } from 'notistack';
+import { BookingPage } from './pages/Booking/BookingPage';
+import { PricePage } from './pages/Prices/PricesPage';
+import { SettingPage } from './pages/Settings/SettingPage';
+import { MyBookingPage } from './pages/MyBookings/MyBookingPage';
+import { ProfilePage } from './pages/Profile/ProfilePage';
 
 export const App = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -74,7 +79,12 @@ export const App = () => {
       <AppContext.Provider value={context}>
         <BrowserRouter>
           <Switch>
-            <Route path="/" component={DashboardPage} />
+            <Route exact path="/" component={DashboardPage} />
+            <Route exact path="/booking" component={BookingPage} />
+            <Route exact path="/prices" component={PricePage} />
+            <Route exact path="/profile" component={ProfilePage} />
+            <Route exact path="/my-bookings" component={MyBookingPage} />
+            <Route exact path="/settings" component={SettingPage} />
           </Switch>
         </BrowserRouter>
       </AppContext.Provider>
