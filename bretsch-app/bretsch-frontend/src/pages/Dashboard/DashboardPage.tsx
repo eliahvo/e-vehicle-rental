@@ -3,9 +3,16 @@ import { useSnackbar } from 'notistack';
 import { Vehicle } from '../../util/EntityInterfaces';
 import { Layout } from '../../components/Layout';
 import { AppContext } from '../../contexts/AppContext';
-import React from 'react';
-import { useTheme } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Backdrop, CircularProgress, makeStyles, useTheme } from '@material-ui/core';
 import { useMapStyle } from './util/mapStyle';
+
+const useStyles = makeStyles((theme) => ({
+  backdrop: {
+    zIndex: 0,
+    color: theme.palette.primary.main,
+  },
+}));
 
 const center = {
   lat: 49.871575,
@@ -14,14 +21,26 @@ const center = {
 
 export const DashboardPage = () => {
   const theme = useTheme();
+  const classes = useStyles();
   const mapStyle = useMapStyle();
   const { enqueueSnackbar } = useSnackbar();
   const { vehicles } = React.useContext(AppContext);
+  const [loading, setLoading] = useState(true);
 
   return (
     <Layout title="Dashboard">
-      <LoadScript googleMapsApiKey="AIzaSyATr3q52hdyJ7sbnPIw69sp4k8rGGehO2Y" language="en" region="en">
+      <Backdrop className={classes.backdrop} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <LoadScript
+        googleMapsApiKey="AIzaSyATr3q52hdyJ7sbnPIw69sp4k8rGGehO2Y"
+        language="en"
+        region="en"
+        onLoad={() => setLoading(true)}
+      >
         <GoogleMap
+          onLoad={() => setLoading(true)}
+          onTilesLoaded={() => setLoading(false)}
           mapContainerStyle={{
             height: '100%',
             width: '100%',
