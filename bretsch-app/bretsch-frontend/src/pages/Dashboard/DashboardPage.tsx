@@ -4,6 +4,8 @@ import { Vehicle } from '../../util/EntityInterfaces';
 import { Layout } from '../../components/Layout';
 import { AppContext } from '../../contexts/AppContext';
 import React from 'react';
+import { useTheme } from '@material-ui/core';
+import { useMapStyle } from './util/mapStyle';
 
 const center = {
   lat: 49.871575,
@@ -11,12 +13,14 @@ const center = {
 };
 
 export const DashboardPage = () => {
+  const theme = useTheme();
+  const mapStyle = useMapStyle();
   const { enqueueSnackbar } = useSnackbar();
   const { vehicles } = React.useContext(AppContext);
 
   return (
     <Layout title="Dashboard">
-      <LoadScript googleMapsApiKey="" language="en" region="en">
+      <LoadScript googleMapsApiKey="AIzaSyATr3q52hdyJ7sbnPIw69sp4k8rGGehO2Y" language="en" region="en">
         <GoogleMap
           mapContainerStyle={{
             height: '100%',
@@ -26,17 +30,20 @@ export const DashboardPage = () => {
           zoom={15}
           mapTypeId="roadmap"
           options={{
+            backgroundColor: theme.palette.background,
+            disableDefaultUI: true,
             maxZoom: 20,
             minZoom: 13,
             restriction: {
-              strictBounds: true,
               latLngBounds: {
+                east: 8.960182,
                 north: 49.984304,
                 south: 49.758828,
-                east: 8.960182,
                 west: 8.291636,
               },
+              strictBounds: true,
             },
+            styles: mapStyle,
           }}
         >
           <MarkerClusterer
