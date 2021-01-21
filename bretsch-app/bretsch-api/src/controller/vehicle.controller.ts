@@ -5,10 +5,10 @@ import { VehicleType } from '../entity/VehicleType.entity';
 
 // to have consistent values for the status
 enum vehicle_status {
-  used,
-  free,
-  'not available',
-  reserved
+  Used,
+  Free,
+  Not_available,
+  Reserved,
 }
 
 /**
@@ -25,7 +25,14 @@ enum vehicle_status {
  * @param {Response} res Response
  */
 export const createVehicle = async (req: Request, res: Response) => {
-  const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
+  const {
+    licencePlate,
+    status,
+    positionLongitude,
+    positionLatitude,
+    batteryLevel,
+    vehicleType,
+  } = req.body;
   if (!licencePlate || !status || !batteryLevel || !vehicleType) {
     res.status(400).send({
       status: 'Error: Missing parameter!',
@@ -105,11 +112,16 @@ export const deleteVehicle = async (req: Request, res: Response) => {
  * @param {Request} req Request
  * @param {Response} res Response
  */
-export const getAllBookingsByVehicleId = async (req: Request, res: Response) => {
+export const getAllBookingsByVehicleId = async (
+  req: Request,
+  res: Response
+) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRep = await getRepository(Vehicle);
   try {
-    const vehicle = await vehicleRep.findOneOrFail(vehicleId, { relations: ['bookings'] });
+    const vehicle = await vehicleRep.findOneOrFail(vehicleId, {
+      relations: ['bookings'],
+    });
     res.send({
       data: vehicle.bookings,
     });
@@ -131,7 +143,9 @@ export const getAllBookingsByVehicleId = async (req: Request, res: Response) => 
 // tslint:disable-next-line:variable-name
 export const getAllVehicle = async (_req: Request, res: Response) => {
   const vehicleRep = getRepository(Vehicle);
-  const vehicles = await vehicleRep.find({ relations: ['bookings', 'vehicleType'] });
+  const vehicles = await vehicleRep.find({
+    relations: ['bookings', 'vehicleType'],
+  });
 
   res.status(200).send({
     data: vehicles,
@@ -151,7 +165,9 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
   const vehicleRep = getRepository(Vehicle);
 
   try {
-    const vehicle = await vehicleRep.findOneOrFail(vehicleId, { relations: ['bookings', 'vehicleType'] });
+    const vehicle = await vehicleRep.findOneOrFail(vehicleId, {
+      relations: ['bookings', 'vehicleType'],
+    });
     res.status(200).send({
       data: vehicle,
     });
@@ -180,11 +196,20 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
  */
 export const updateVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
-  const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
+  const {
+    licencePlate,
+    status,
+    positionLongitude,
+    positionLatitude,
+    batteryLevel,
+    vehicleType,
+  } = req.body;
   const vehicleRep = getRepository(Vehicle);
   try {
     // actual vehicle
-    const vehicle = await vehicleRep.findOneOrFail(vehicleId, { relations: ['bookings', 'vehicleType'] });
+    const vehicle = await vehicleRep.findOneOrFail(vehicleId, {
+      relations: ['bookings', 'vehicleType'],
+    });
     vehicle.licencePlate = licencePlate;
     vehicle.status = status;
     const positions = randomLocationGenerate();

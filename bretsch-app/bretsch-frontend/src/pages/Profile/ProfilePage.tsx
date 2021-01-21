@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { User } from '../../util/EntityInterfaces';
 import { Divider, Grid, makeStyles } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
+import EditIcon from '@material-ui/icons/Edit';
 
 const useStyles = makeStyles((theme) => ({
   headings: {
@@ -54,9 +55,10 @@ export const ProfilePage = () => {
   return (
     <Layout title="My Profile">
       <MyProfile>
-        <AccountCircleTwoToneIcon style={{ fontSize: 100, color: '#5CE533' }} />
+        <AccountCircleTwoToneIcon style={{ fontSize: 100 }} className={classes.headings} />
         <ProfileName>
           {profile?.firstName} {profile?.lastName}
+          <EditIcon style={{ margin: '0 0 0 0.5rem', fontSize: 30 }} className={classes.headings} />
         </ProfileName>
         <Box mt={2}>
           <Divider />
@@ -68,51 +70,51 @@ export const ProfilePage = () => {
           </Box>
         </SectionTitle>
         <Section>
-          <Grid container spacing={3}>
+          <Grid container spacing={9}>
             <Grid item xs={3}>
               Email:
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               {profile?.email}
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
+          <Grid container spacing={9}>
             <Grid item xs={3}>
               Password:
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               {profile?.hashedPassword}
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
+          <Grid container spacing={9}>
             <Grid item xs={3}>
               Birth Date:
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               {profile?.birthDate}
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
+          <Grid container spacing={9}>
             <Grid item xs={3}>
               Adress:
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               {profile?.streetPlusNumber}
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
+          <Grid container spacing={9}>
             <Grid item xs={3}>
               City:
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               {profile?.city}
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
+          <Grid container spacing={9}>
             <Grid item xs={3}>
               Prefered Payment:
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               {profile?.preferedPayment}
             </Grid>
           </Grid>
