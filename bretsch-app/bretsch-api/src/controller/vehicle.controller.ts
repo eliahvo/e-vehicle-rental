@@ -42,19 +42,19 @@ export const createVehicle = async (req: Request, res: Response) => {
     return;
   }
   vehicle.licencePlate = licencePlate;
-  var positions = randomLocationGenerate();
-    if(!positionLongitude){
-      vehicle.positionLongitude = positions[0].toString();
-    }
-    else{
-      vehicle.positionLongitude = positionLongitude;
-    }
-    if(!positionLatitude){
-      vehicle.positionLatitude = positions[1].toString();
-      }
-    else{
-      vehicle.positionLatitude = positionLatitude;
-      }
+  const positions = randomLocationGenerate();
+  // tslint:disable-next-line:prefer-conditional-expression
+  if (!positionLongitude) {
+    vehicle.positionLongitude = positions[0].toString();
+  } else {
+    vehicle.positionLongitude = positionLongitude;
+  }
+  // tslint:disable-next-line:prefer-conditional-expression
+  if (!positionLatitude) {
+    vehicle.positionLatitude = positions[1].toString();
+  } else {
+    vehicle.positionLatitude = positionLatitude;
+  }
   vehicle.batteryLevel = batteryLevel;
   // VehicleType by Id
   const repVehicleType = await getRepository(VehicleType);
@@ -181,40 +181,47 @@ export const updateVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
   const vehicleRep = getRepository(Vehicle);
-
   try {
-    const vehicle = await vehicleRep.findOneOrFail(vehicleId);
+    // actual vehicle
+    const vehicle = await vehicleRep.findOneOrFail(vehicleId, { relations: ['bookings', 'vehicleType'] });
     vehicle.licencePlate = licencePlate;
     vehicle.status = status;
-    var positions = randomLocationGenerate();
-    if(!positionLongitude){
+    const positions = randomLocationGenerate();
+    if (!positionLongitude) {
       vehicle.positionLongitude = positions[0].toString();
-    }
-    else{
+    } else {
       vehicle.positionLongitude = positionLongitude;
     }
-    if(!positionLatitude){
+    if (!positionLatitude) {
       vehicle.positionLatitude = positions[1].toString();
-      }
-    else{
+    } else {
       vehicle.positionLatitude = positionLatitude;
-      }
-    
-    vehicle.batteryLevel = batteryLevel;
+    }
 
-    // get update wanted VehicleType
-    const repVehicleType = await getRepository(VehicleType);
-    try {
-      vehicle.vehicleType = await repVehicleType.findOneOrFail({
-        where: { vehicleTypeId: vehicleType },
+    // because of enum
+    if (status && !isNaN(status) && status > 0 && status < 4) {
+      vehicle.status = vehicle_status[status].toString();
+    } else {
+      res.status(400).send({
+        status: 'Error: Parameter status is wrong',
       });
-    } catch (error) {
-      res.status(404).send({ status: 'Vehicle Type not_found' });
       return;
     }
 
+    vehicle.batteryLevel = batteryLevel;
+    if (vehicleType) {
+      // get update wanted VehicleType
+      const repVehicleType = await getRepository(VehicleType);
+      try {
+        vehicle.vehicleType = await repVehicleType.findOneOrFail({
+          where: { vehicleTypeId: vehicleType },
+        });
+      } catch (error) {
+        res.status(404).send({ status: 'Vehicle Type not_found' });
+        return;
+      }
+    }
     const savedVehicle = await vehicleRep.save(vehicle);
-
     res.status(200).send({
       data: savedVehicle,
     });
@@ -227,11 +234,9 @@ export const updateVehicle = async (req: Request, res: Response) => {
 };
 
 function randomLocationGenerate() {
+  const positionLongitude = 8.63 + Math.random() * 0.046;
+  const positionLatitude = 49.855 + Math.random() * 0.031;
 
-    const positionLongitude = 8.630 + (Math.random() * 0.046);
-    const positionLatitude = 49.855 + (Math.random() * 0.031);
-        
-    var positions = [positionLongitude, positionLatitude]
-    return positions;
-
+  const positions = [positionLongitude, positionLatitude];
+  return positions;
 }
