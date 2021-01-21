@@ -68,51 +68,51 @@ export const ProfilePage = () => {
           </Box>
         </SectionTitle>
         <Section>
-          <Grid container spacing={9}>
+          <Grid container spacing={3}>
             <Grid item xs={3}>
               Email:
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               {profile?.email}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
+          <Grid container spacing={3}>
             <Grid item xs={3}>
               Password:
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               {profile?.hashedPassword}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
+          <Grid container spacing={3}>
             <Grid item xs={3}>
               Birth Date:
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               {profile?.birthDate}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
+          <Grid container spacing={3}>
             <Grid item xs={3}>
               Adress:
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               {profile?.streetPlusNumber}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
+          <Grid container spacing={3}>
             <Grid item xs={3}>
               City:
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               {profile?.city}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
+          <Grid container spacing={3}>
             <Grid item xs={3}>
               Prefered Payment:
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               {profile?.preferedPayment}
             </Grid>
           </Grid>
