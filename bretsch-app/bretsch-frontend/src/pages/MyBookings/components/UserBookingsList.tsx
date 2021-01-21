@@ -28,10 +28,8 @@ export interface UserBookingProps {
 export const UserBookingItem: React.FC<UserBookingProps> = ({ booking }) => {
   const classes = useStyles();
   const { bookingId, createdAt, updatedAt, startDate, endDate, paymentStatus, price, vehicle } = booking;
-  const [userBookings, setUserBookings] = React.useState<Booking[]>([]);
-
-  const onPauseResume = () => {};
-
+    const start = new Date(startDate).toLocaleString();
+    const end = new Date(endDate).toLocaleString();
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -41,10 +39,38 @@ export const UserBookingItem: React.FC<UserBookingProps> = ({ booking }) => {
           </Grid>
           <Grid item xs>
             <Typography>
-              {price} <br />
-              {startDate} <br />
-              {endDate} <br />
-              {vehicle.vehicleType.type}
+              <Grid container spacing={3}>
+                <Grid item xs={5}>
+                  Price:
+                </Grid>
+                <Grid item xs={6}>
+                  {price}
+                </Grid>
+              </Grid>
+              <Grid container spacing={3}>
+                <Grid item xs={5}>
+                  Start date:
+                </Grid>
+                <Grid item xs={7}>
+                  {start}
+                </Grid>
+              </Grid>
+              <Grid container spacing={3}>
+                <Grid item xs={5}>
+                  End date:
+                </Grid>
+                <Grid item xs={7}>
+                  {end}
+                </Grid>
+              </Grid>
+              <Grid container spacing={3}>
+                <Grid item xs={5}>
+                  Vehicle type:
+                </Grid>
+                <Grid item xs={6}>
+                  {vehicle.vehicleType.type}
+                </Grid>
+              </Grid>
             </Typography>
           </Grid>
         </Grid>
