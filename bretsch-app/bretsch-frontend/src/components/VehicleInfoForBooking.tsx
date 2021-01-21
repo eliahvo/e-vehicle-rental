@@ -11,6 +11,7 @@ import useLocalStorage from '../util/LocalStorageHook';
 import styled from 'styled-components';
 import WarningIcon from '@material-ui/icons/Warning';
 import { makeStyles, useTheme } from '@material-ui/core';
+import { setVehicleStatus } from '../pages/Dashboard/DashboardPage';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -29,7 +30,8 @@ export const Section = styled.div`
 export default function VehicleInfoFormDialog() {
   const vehicleInfoContext = useContext(VehicleInfoContext);
   const [vehicle, setVehicle] = useState<Vehicle>();
-  const [reservedVehicle, setReservedVehicle] = useLocalStorage('Booking.reservedVehicle', -1);
+  const [submit, setSubmit] = useState(false);
+  const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
   const history = useHistory();
 
   const classes = useStyles();
@@ -51,43 +53,50 @@ export default function VehicleInfoFormDialog() {
     if (vehicleInfoContext.vehicleId != -1) fetchVehicle();
   }, [vehicleInfoContext.vehicleId]);
 
-  const handleClose = () => {
+  const handleClose = (submit: boolean) => {
     vehicleInfoContext.toggleOpen();
+    console.log("handleClose ");
+    if(submit) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
+    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free);
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setSubmit(true);
+/*
     await fetch('/api/vehicle/' + vehicleInfoContext.vehicleId, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         status: vehicle_status.Reserved,
       }),
-    });
-    handleClose();
-    setReservedVehicle(vehicleInfoContext.vehicleId);
+    });*/
+    handleClose(true);
+    //create new Booking
+    //to do
+
+    setBookedVehicle(vehicleInfoContext.vehicleId);
     history.push('/booking');
   };
 
   return (
     <div>
-      <Dialog  open={vehicleInfoContext.open} onClose={handleClose} aria-labelledby="form-dialog-vehicleInfo">
-        <DialogTitle style={{ textAlign: "center" }} id="form-dialog-vehicleInfo">{`${vehicle?.licencePlate}`}</DialogTitle>
+      <Dialog  open={vehicleInfoContext.open} onClose={() => handleClose(false)} aria-labelledby="form-dialog-vehicleInfo">
+        <DialogTitle style={{ textAlign: "center" }} id="form-dialog-vehicleInfo">{`${vehicle?.licencePlate} ${vehicle?.vehicleId}`}</DialogTitle>
         <form onSubmit={onSubmitForm}>
           <Section>
             <Box className={classes.modal} mt={1}> Batterylevel: {vehicle?.batteryLevel}%</Box>
             <Box className={classes.modal} mt={1}> Type: {vehicle?.vehicleType.type}</Box>
           </Section>
           <Divider />
-          {reservedVehicle != -1 ? <Chip className={classes.modal}
-            label="You already reserved a vehicle!"
+          {bookedVehicle != -1 ? <Chip className={classes.modal}
+            label="You already booked a vehicle!"
             size="small"
             avatar={<WarningIcon style={{ fill: 'white' }} />}
             style={{ color: 'white', backgroundColor: 'red' }}
           /> : ""}
           <DialogActions>
-            <Button type="submit" disabled={reservedVehicle != -1} color="primary">
+            <Button type="submit" disabled={bookedVehicle != -1} color="primary">
               BOOK NOW!
           </Button>
           </DialogActions>
