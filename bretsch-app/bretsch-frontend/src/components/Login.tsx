@@ -1,47 +1,70 @@
-// tslint:disable: no-submodule-imports
-import React from 'react';
-import styled from 'styled-components/macro';
-import { Chip } from '@material-ui/core';
-import CopyrightIcon from '@material-ui/icons/Copyright';
-import { AppBarHeader } from './AppBarHeader';
+import React, { useContext, useState, ChangeEvent } from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { LoginContext } from '../contexts/LoginContext';
+import { Divider } from '@material-ui/core';
 
-const headerHeight = '3.65rem';
-const footerHeight = '2rem';
+export default function LoginFormDialog() {
+  const loginContext = useContext(LoginContext);
+  const [values, setValues] = useState({
+    name: '',
+    description: '',
+  });
 
-const Header = styled.header`
-  height: ${headerHeight};
-  width: 100%;
-  align-items: center;
-`;
+  const handleClose = () => {
+    loginContext.toggleOpen();
+  };
+  const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+  const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (format.test(e.target.value)) {
+      alert('Sonderzeichen sind im Namen nicht erlaubt!');
+      e.target.value = '';
+    } else {
+      setValues({ ...values, [e.target.name]: e.target.value });
+    }
+  };
 
-const Main = styled.main`
-  height: calc(100vh - ${headerHeight});
-`;
-// If Main shouldn't overlap the footer use: height: calc(100vh - ${headerHeight} - ${footerHeight});
+  const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-const Footer = styled.footer`
-  height: ${footerHeight};
-  bottom: 0;
-  left: 5rem;
-  position: fixed;
-  z-index: 999;
-`;
+    await fetch('/api/user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...values,
+      }),
+    });
+    handleClose();
+  };
 
-interface LayoutProps {
-  children: React.ReactNode;
-  title?: string;
-}
-
-export const Layout = ({ children, title }: LayoutProps) => {
   return (
-    <>
-      <Header data-testid="header">
-        <AppBarHeader title={title} />
-      </Header>
-      <Main>{children}</Main>
-      <Footer data-testid="footer">
-        <Chip style={{ color: 'black' }} color="primary" size="small" icon={<CopyrightIcon />} label="2021 BRETSCH™" />
-      </Footer>
-    </>
+    <div>
+      <Dialog open={loginContext.open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Welcome to BRETSCH!</DialogTitle>
+        <form onSubmit={onSubmitForm} data-testid="create-task-form">
+          <DialogContent>
+            <TextField autoFocus margin="dense" id="name" label="Email Address" type="email" fullWidth required />
+            <TextField autoFocus margin="dense" id="name" label="Password" type="password" fullWidth required />
+          </DialogContent>
+          <DialogActions>
+            <Button type="submit" color="primary">
+              Sign In
+            </Button>
+          </DialogActions>
+        </form>
+        <Divider />
+        <DialogActions>
+          <DialogContentText> Not BRETSCHing yet?</DialogContentText>
+          <Button onClick={handleClose} color="primary">
+            Register NOW!
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
-};
+}

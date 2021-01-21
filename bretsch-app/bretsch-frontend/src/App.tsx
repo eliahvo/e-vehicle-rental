@@ -47,7 +47,6 @@ export const App = () => {
 
   const loadVehicles = async () => {
     const fetchedData: Vehicle[] = await fetchVehicles();
-    console.log(fetchedData);
     if (fetchedData.length !== 0) {
       setVehicleData(fetchedData);
     } else {
