@@ -1,6 +1,6 @@
 import { GoogleMap, LoadScript, Marker, MarkerClusterer } from '@react-google-maps/api';
 import { useSnackbar } from 'notistack';
-import { Vehicle } from '../../util/EntityInterfaces';
+import { Vehicle, vehicle_status } from '../../util/EntityInterfaces';
 import { Layout } from '../../components/Layout';
 import { AppContext } from '../../contexts/AppContext';
 import React, { useState } from 'react';
@@ -19,6 +19,16 @@ const useStyles = makeStyles((theme) => ({
 const center = {
   lat: 49.871575,
   lng: 8.651596,
+};
+
+export const setVehicleStatus = async function (vId: any, status: vehicle_status) {
+  await fetch('/api/vehicle/' + vId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      status: status,
+    }),
+  });
 };
 
 export const DashboardPage = () => {
@@ -100,6 +110,7 @@ export const DashboardPage = () => {
                     onClick={(_) => {
                       setOpenVehicleInfo(true);
                       setCurrenVehicleIdForInfo(vehicle.vehicleId);
+                      setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
                     }}
                     icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
                     clusterer={clusterer}
