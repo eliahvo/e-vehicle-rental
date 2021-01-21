@@ -6,10 +6,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { LoginContext } from '../contexts/AppContext';
+import { LoginContext } from '../contexts/LoginContext';
 import { Divider } from '@material-ui/core';
 
-export default function FormDialog() {
+export default function LoginFormDialog() {
   const loginContext = useContext(LoginContext);
   const [values, setValues] = useState({
     name: '',
