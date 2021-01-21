@@ -62,18 +62,11 @@ export default function VehicleInfoFormDialog() {
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setSubmit(true);
-/*
-    await fetch('/api/vehicle/' + vehicleInfoContext.vehicleId, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        status: vehicle_status.Reserved,
-      }),
-    });*/
     handleClose(true);
-    //create new Booking
-    //to do
+    /* create new Booking */
+    // to do
 
     setBookedVehicle(vehicleInfoContext.vehicleId);
     history.push('/booking');
