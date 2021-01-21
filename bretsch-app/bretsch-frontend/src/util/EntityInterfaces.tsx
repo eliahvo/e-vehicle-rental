@@ -16,11 +16,12 @@ export interface User {
 export interface Booking {
   bookingId: number;
   createdAt: string;
-  endDate: string;
+  endDate: Date;
   paymentStatus: string;
   price: number;
-  startDate: string;
+  startDate: Date;
   updatedAt: string;
+  vehicle: Vehicle;
 }
 export interface VehicleType {
   vehicleTypeId: number;
