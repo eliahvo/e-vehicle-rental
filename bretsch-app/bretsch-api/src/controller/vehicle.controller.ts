@@ -8,6 +8,7 @@ enum vehicle_status {
   used,
   free,
   'not available',
+  reserved
 }
 
 /**

@@ -44,3 +44,10 @@ export interface Vehicle {
   vehicleId: number;
   vehicleType: VehicleType;
 }
+
+export enum vehicle_status {
+  Used,
+  Free,
+  Not_available,
+  Reserved
+}
