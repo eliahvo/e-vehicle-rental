@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react';
 import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
 import styled from 'styled-components';
 import { User } from '../../util/EntityInterfaces';
-import { Divider, Grid, makeStyles } from '@material-ui/core';
+import { Divider, Grid, makeStyles, TextField } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import EditIcon from '@material-ui/icons/Edit';
+import CancelIcon from '@material-ui/icons/Cancel';
+import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles((theme) => ({
   headings: {
@@ -33,6 +35,10 @@ export const Section = styled.div`
 
 export const ProfilePage = () => {
   const [profile, setProfile] = useState<User>();
+  const [editNameSettings, setEditNameSettings] = React.useState(false);
+  const [editMainSettings, setEditMainSettings] = React.useState(false);
+  const [editPersonalSettings, setEditPersonalSettings] = React.useState(false);
+  const [editPaymentSettings, setEditPaymentSettings] = React.useState(false);
   const classes = useStyles();
 
   const fetchProfile = async function () {
@@ -57,8 +63,41 @@ export const ProfilePage = () => {
       <MyProfile>
         <AccountCircleTwoToneIcon style={{ fontSize: 100 }} className={classes.headings} />
         <ProfileName>
-          {profile?.firstName} {profile?.lastName}
-          <EditIcon style={{ margin: '0 0 0 0.5rem', fontSize: 30 }} className={classes.headings} />
+          {editNameSettings ? (
+            <TextField autoFocus margin="dense" id="name" value={profile?.firstName} type="text" fullWidth />
+          ) : (
+            profile?.firstName + ' '
+          )}
+          {editNameSettings ? (
+            <TextField autoFocus margin="dense" id="name" value={profile?.lastName} type="text" fullWidth />
+          ) : (
+            profile?.lastName
+          )}
+
+          {editNameSettings ? (
+            <>
+              <CancelIcon
+                style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                className={classes.headings}
+                onClick={() => {
+                  setEditNameSettings(false);
+                }}
+              />
+              <CheckIcon
+                style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                className={classes.headings}
+                onClick={() => {}}
+              />
+            </>
+          ) : (
+            <EditIcon
+              style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+              className={classes.headings}
+              onClick={() => {
+                setEditNameSettings(true);
+              }}
+            />
+          )}
         </ProfileName>
         <Box mt={2}>
           <Divider />
@@ -66,77 +105,169 @@ export const ProfilePage = () => {
 
         <SectionTitle className={classes.headings}>
           Main Settings
-          <Box mt={1}>
+          {editMainSettings ? (
+            <>
+              <CancelIcon
+                style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                className={classes.headings}
+                onClick={() => {
+                  setEditMainSettings(false);
+                }}
+              />
+              <CheckIcon
+                style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                className={classes.headings}
+                onClick={() => {}}
+              />
+            </>
+          ) : (
+            <EditIcon
+              style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+              className={classes.headings}
+              onClick={() => {
+                setEditMainSettings(true);
+              }}
+            />
+          )}
+          <Box mt={1} mb={1}>
             <Divider />
           </Box>
         </SectionTitle>
         <Section>
           <Grid container spacing={3}>
             <Grid item xs={4}>
-              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Email:
             </Grid>
             <Grid item xs={4}>
-              {profile?.email}
+              {editMainSettings ? (
+                <TextField autoFocus margin="dense" id="name" value={profile?.email} type="text" fullWidth />
+              ) : (
+                profile?.email
+              )}
             </Grid>
           </Grid>
           <Grid container spacing={3}>
             <Grid item xs={4}>
-              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Password:
             </Grid>
             <Grid item xs={4}>
-              {profile?.hashedPassword}
+              {editMainSettings ? (
+                <TextField autoFocus margin="dense" id="name" value={profile?.hashedPassword} type="text" fullWidth />
+              ) : (
+                profile?.hashedPassword
+              )}
             </Grid>
           </Grid>
-
+        </Section>
+        <Section>
           <SectionTitle className={classes.headings}>
             Personal Settings
-            <Box mt={1}>
+            {editPersonalSettings ? (
+              <>
+                <CancelIcon
+                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                  className={classes.headings}
+                  onClick={() => {
+                    setEditPersonalSettings(false);
+                  }}
+                />
+                <CheckIcon
+                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                  className={classes.headings}
+                  onClick={() => {}}
+                />
+              </>
+            ) : (
+              <EditIcon
+                style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                className={classes.headings}
+                onClick={() => {
+                  setEditPersonalSettings(true);
+                }}
+              />
+            )}
+            <Box mt={1} mb={1}>
               <Divider />
             </Box>
           </SectionTitle>
           <Grid container spacing={3}>
             <Grid item xs={4}>
-              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Birth Date:
             </Grid>
             <Grid item xs={4}>
-              {profile?.birthDate}
+              {editPersonalSettings ? (
+                <TextField autoFocus margin="dense" id="name" value={profile?.birthDate} type="text" fullWidth />
+              ) : (
+                profile?.birthDate
+              )}
             </Grid>
           </Grid>
           <Grid container spacing={3}>
             <Grid item xs={4}>
-              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Adress:
             </Grid>
             <Grid item xs={4}>
-              {profile?.streetPlusNumber}
+              {editPersonalSettings ? (
+                <TextField autoFocus margin="dense" id="name" value={profile?.streetPlusNumber} type="text" fullWidth />
+              ) : (
+                profile?.streetPlusNumber
+              )}
             </Grid>
           </Grid>
           <Grid container spacing={3}>
             <Grid item xs={4}>
-              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               City:
             </Grid>
             <Grid item xs={4}>
-              {profile?.city}
+              {editPersonalSettings ? (
+                <TextField autoFocus margin="dense" id="name" value={profile?.city} type="text" fullWidth />
+              ) : (
+                profile?.city
+              )}
             </Grid>
           </Grid>
-
+        </Section>
+        <Section>
           <SectionTitle className={classes.headings}>
             Payment Settings
-            <Box mt={1}>
+            {editPaymentSettings ? (
+              <>
+                <CancelIcon
+                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                  className={classes.headings}
+                  onClick={() => {
+                    setEditPaymentSettings(false);
+                  }}
+                />
+                <CheckIcon
+                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                  className={classes.headings}
+                  onClick={() => {}}
+                />
+              </>
+            ) : (
+              <EditIcon
+                style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                className={classes.headings}
+                onClick={() => {
+                  setEditPaymentSettings(true);
+                }}
+              />
+            )}
+            <Box mt={1} mb={1}>
               <Divider />
             </Box>
           </SectionTitle>
           <Grid container spacing={3}>
             <Grid item xs={4}>
-              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Payment:
             </Grid>
             <Grid item xs={4}>
-              {profile?.preferedPayment}
+              {editPaymentSettings ? (
+                <TextField autoFocus margin="dense" id="name" value={profile?.preferedPayment} type="text" fullWidth />
+              ) : (
+                profile?.preferedPayment
+              )}
             </Grid>
           </Grid>
         </Section>
