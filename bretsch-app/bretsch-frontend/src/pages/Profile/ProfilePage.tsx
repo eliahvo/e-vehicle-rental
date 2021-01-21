@@ -63,6 +63,7 @@ export const ProfilePage = () => {
         <Box mt={2}>
           <Divider />
         </Box>
+
         <SectionTitle className={classes.headings}>
           Main Settings
           <Box mt={1}>
@@ -70,49 +71,69 @@ export const ProfilePage = () => {
           </Box>
         </SectionTitle>
         <Section>
-          <Grid container spacing={9}>
-            <Grid item xs={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
+              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Email:
             </Grid>
             <Grid item xs={4}>
               {profile?.email}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
-            <Grid item xs={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
+              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Password:
             </Grid>
             <Grid item xs={4}>
               {profile?.hashedPassword}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
-            <Grid item xs={3}>
+
+          <SectionTitle className={classes.headings}>
+            Personal Settings
+            <Box mt={1}>
+              <Divider />
+            </Box>
+          </SectionTitle>
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
+              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Birth Date:
             </Grid>
             <Grid item xs={4}>
               {profile?.birthDate}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
-            <Grid item xs={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
+              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               Adress:
             </Grid>
             <Grid item xs={4}>
               {profile?.streetPlusNumber}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
-            <Grid item xs={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
+              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
               City:
             </Grid>
             <Grid item xs={4}>
               {profile?.city}
             </Grid>
           </Grid>
-          <Grid container spacing={9}>
-            <Grid item xs={3}>
-              Prefered Payment:
+
+          <SectionTitle className={classes.headings}>
+            Payment Settings
+            <Box mt={1}>
+              <Divider />
+            </Box>
+          </SectionTitle>
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
+              <EditIcon style={{ margin: '0 0.5rem 0 0', fontSize: 20 }} className={classes.headings} />
+              Payment:
             </Grid>
             <Grid item xs={4}>
               {profile?.preferedPayment}
