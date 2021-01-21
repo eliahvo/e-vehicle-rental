@@ -1,5 +1,5 @@
 import { Layout } from '../../components/Layout';
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
 import styled from 'styled-components';
 import { User } from '../../util/EntityInterfaces';
@@ -48,9 +48,9 @@ export const ProfilePage = () => {
     });
 
     if (profileRequest.status === 200) {
-      const taskJSON = await profileRequest.json();
-      console.log(taskJSON.data);
-      setProfile(taskJSON.data);
+      const profileJSON = await profileRequest.json();
+      console.log(profileJSON.data);
+      setProfile(profileJSON.data);
     }
   };
 
@@ -58,18 +58,62 @@ export const ProfilePage = () => {
     fetchProfile();
   }, []);
 
+  const [values, setValues] = useState({
+    firstName: profile?.firstName,
+    lastName: profile?.lastName,
+    email: profile?.email,
+    hashedPassword: profile?.hashedPassword,
+    streetPlusNumber: profile?.streetPlusNumber,
+    city: profile?.city,
+    preferedPayment: profile?.preferedPayment,
+  });
+
+  const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.name, '+', e.target.value);
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+  const onSubmitForm = async () => {
+    console.log('Is drinn');
+
+    await fetch(`/api/user/1`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...values,
+      }),
+    });
+    setEditNameSettings(false);
+    setEditMainSettings(false);
+    setEditPersonalSettings(false);
+    setEditPaymentSettings(false);
+  };
+
   return (
     <Layout title="My Profile">
       <MyProfile>
         <AccountCircleTwoToneIcon style={{ fontSize: 100 }} className={classes.headings} />
         <ProfileName>
           {editNameSettings ? (
-            <TextField autoFocus margin="dense" id="name" value={profile?.firstName} type="text" fullWidth />
+            <TextField
+              onChange={fieldDidChange}
+              margin="dense"
+              name="firstName"
+              label={profile?.firstName}
+              type="text"
+              fullWidth
+            />
           ) : (
             profile?.firstName + ' '
           )}
           {editNameSettings ? (
-            <TextField autoFocus margin="dense" id="name" value={profile?.lastName} type="text" fullWidth />
+            <TextField
+              onChange={fieldDidChange}
+              margin="dense"
+              name="lastName"
+              label={profile?.lastName}
+              type="text"
+              fullWidth
+            />
           ) : (
             profile?.lastName
           )}
@@ -86,7 +130,9 @@ export const ProfilePage = () => {
               <CheckIcon
                 style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                 className={classes.headings}
-                onClick={() => {}}
+                onClick={() => {
+                  onSubmitForm();
+                }}
               />
             </>
           ) : (
@@ -115,9 +161,12 @@ export const ProfilePage = () => {
                 }}
               />
               <CheckIcon
+                type="submit"
                 style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                 className={classes.headings}
-                onClick={() => {}}
+                onClick={() => {
+                  onSubmitForm();
+                }}
               />
             </>
           ) : (
@@ -140,7 +189,15 @@ export const ProfilePage = () => {
             </Grid>
             <Grid item xs={4}>
               {editMainSettings ? (
-                <TextField autoFocus margin="dense" id="name" value={profile?.email} type="text" fullWidth />
+                <TextField
+                  autoFocus
+                  onChange={fieldDidChange}
+                  margin="dense"
+                  name="email"
+                  label={profile?.email}
+                  type="email"
+                  fullWidth
+                />
               ) : (
                 profile?.email
               )}
@@ -152,9 +209,16 @@ export const ProfilePage = () => {
             </Grid>
             <Grid item xs={4}>
               {editMainSettings ? (
-                <TextField autoFocus margin="dense" id="name" value={profile?.hashedPassword} type="text" fullWidth />
+                <TextField
+                  onChange={fieldDidChange}
+                  margin="dense"
+                  name="hashedPassword"
+                  label={profile?.hashedPassword}
+                  type="password"
+                  fullWidth
+                />
               ) : (
-                profile?.hashedPassword
+                '**********'
               )}
             </Grid>
           </Grid>
@@ -172,9 +236,12 @@ export const ProfilePage = () => {
                   }}
                 />
                 <CheckIcon
+                  type="submit"
                   style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                   className={classes.headings}
-                  onClick={() => {}}
+                  onClick={() => {
+                    onSubmitForm();
+                  }}
                 />
               </>
             ) : (
@@ -196,7 +263,15 @@ export const ProfilePage = () => {
             </Grid>
             <Grid item xs={4}>
               {editPersonalSettings ? (
-                <TextField autoFocus margin="dense" id="name" value={profile?.birthDate} type="text" fullWidth />
+                <TextField
+                  autoFocus
+                  onChange={fieldDidChange}
+                  margin="dense"
+                  name="birthDate"
+                  label={profile?.birthDate}
+                  type="text"
+                  fullWidth
+                />
               ) : (
                 profile?.birthDate
               )}
@@ -208,7 +283,14 @@ export const ProfilePage = () => {
             </Grid>
             <Grid item xs={4}>
               {editPersonalSettings ? (
-                <TextField autoFocus margin="dense" id="name" value={profile?.streetPlusNumber} type="text" fullWidth />
+                <TextField
+                  onChange={fieldDidChange}
+                  margin="dense"
+                  name="streetPlusNumber"
+                  label={profile?.streetPlusNumber}
+                  type="text"
+                  fullWidth
+                />
               ) : (
                 profile?.streetPlusNumber
               )}
@@ -220,7 +302,14 @@ export const ProfilePage = () => {
             </Grid>
             <Grid item xs={4}>
               {editPersonalSettings ? (
-                <TextField autoFocus margin="dense" id="name" value={profile?.city} type="text" fullWidth />
+                <TextField
+                  onChange={fieldDidChange}
+                  margin="dense"
+                  name="city"
+                  label={profile?.city}
+                  type="text"
+                  fullWidth
+                />
               ) : (
                 profile?.city
               )}
@@ -240,9 +329,12 @@ export const ProfilePage = () => {
                   }}
                 />
                 <CheckIcon
+                  type="submit"
                   style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                   className={classes.headings}
-                  onClick={() => {}}
+                  onClick={() => {
+                    onSubmitForm();
+                  }}
                 />
               </>
             ) : (
@@ -264,7 +356,15 @@ export const ProfilePage = () => {
             </Grid>
             <Grid item xs={4}>
               {editPaymentSettings ? (
-                <TextField autoFocus margin="dense" id="name" value={profile?.preferedPayment} type="text" fullWidth />
+                <TextField
+                  autoFocus
+                  onChange={fieldDidChange}
+                  margin="dense"
+                  name="preferedPayment"
+                  label={profile?.preferedPayment}
+                  type="text"
+                  fullWidth
+                />
               ) : (
                 profile?.preferedPayment
               )}
