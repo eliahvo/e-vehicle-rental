@@ -6,7 +6,7 @@ import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/sty
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { AppContext, LoginContext } from '../contexts/AppContext';
+import { AppContext } from '../contexts/AppContext';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useSnackbar } from 'notistack';
 import clsx from 'clsx';
@@ -31,6 +31,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Brightness3Icon from '@material-ui/icons/Brightness3';
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import LoginFormDialog from './Login';
+import { LoginContext } from '../contexts/LoginContext';
 
 const drawerWidth = 240;
 

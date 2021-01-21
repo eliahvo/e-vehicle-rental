@@ -6,6 +6,8 @@ import { AppContext } from '../../contexts/AppContext';
 import React, { useState } from 'react';
 import { Backdrop, CircularProgress, makeStyles, useTheme } from '@material-ui/core';
 import { useMapStyle } from './util/mapStyle';
+import { VehicleInfoContext } from '../../contexts/VehicleInfoContext';
+import VehicleInfoFormDialog from '../../components/VehicleInfoForBooking';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -26,6 +28,18 @@ export const DashboardPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { vehicles } = React.useContext(AppContext);
   const [loading, setLoading] = useState(true);
+  const [openVehicleInfo, setOpenVehicleInfo] = React.useState(false);
+  const [currenVehicleIdForInfo, setCurrenVehicleIdForInfo] = React.useState(-1);
+
+  const toggleOpen = () => {
+    setOpenVehicleInfo(!openVehicleInfo);
+  };
+
+  const vehicleInfoContext = {
+    toggleOpen: toggleOpen,
+    open: openVehicleInfo,
+    vehicleId: currenVehicleIdForInfo,
+  };
 
   return (
     <Layout title="Dashboard">
@@ -38,60 +52,70 @@ export const DashboardPage = () => {
         region="en"
         onLoad={() => setLoading(true)}
       >
-        <GoogleMap
-          onLoad={() => setLoading(true)}
-          onTilesLoaded={() => setLoading(false)}
-          mapContainerStyle={{
-            height: '100%',
-            width: '100%',
-          }}
-          center={center}
-          zoom={15}
-          mapTypeId="roadmap"
-          options={{
-            backgroundColor: theme.palette.background,
-            disableDefaultUI: true,
-            maxZoom: 20,
-            minZoom: 13,
-            restriction: {
-              latLngBounds: {
-                east: 8.960182,
-                north: 49.984304,
-                south: 49.758828,
-                west: 8.291636,
-              },
-              strictBounds: true,
-            },
-            styles: mapStyle,
-          }}
-        >
-          <MarkerClusterer
-            averageCenter={true}
+        <VehicleInfoContext.Provider value={vehicleInfoContext}>
+          <GoogleMap
+            onLoad={() => setLoading(true)}
+            onTilesLoaded={() => setLoading(false)}
+            mapContainerStyle={{
+              height: '100%',
+              width: '100%',
+            }}
+            center={center}
+            zoom={15}
+            mapTypeId="roadmap"
             options={{
-              imagePath: './icons/clusterer/m',
+              backgroundColor: theme.palette.background,
+              disableDefaultUI: true,
+              maxZoom: 20,
+              minZoom: 13,
+              restriction: {
+                latLngBounds: {
+                  east: 8.960182,
+                  north: 49.984304,
+                  south: 49.758828,
+                  west: 8.291636,
+                },
+                strictBounds: true,
+              },
+              styles: mapStyle,
             }}
           >
-            {(clusterer) =>
-              vehicles.map((vehicle: Vehicle) => (
-                <Marker
-                  key={vehicle.vehicleId}
-                  position={{
-                    lat: parseFloat(vehicle.positionLatitude),
-                    lng: parseFloat(vehicle.positionLongitude),
-                  }}
-                  onClick={(_) =>
-                    enqueueSnackbar(`${vehicle.vehicleType.type + vehicle.vehicleId} bretscht davon!`, {
-                      variant: 'success',
-                    })
-                  }
-                  icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
-                  clusterer={clusterer}
-                />
-              ))
-            }
-          </MarkerClusterer>
-        </GoogleMap>
+
+            <MarkerClusterer
+              averageCenter={true}
+              options={{
+                imagePath: './icons/clusterer/m',
+              }}
+            >
+
+              {(clusterer) =>
+                vehicles.map((vehicle: Vehicle) => (
+
+                  <Marker
+                    key={vehicle.vehicleId}
+                    position={{
+                      lat: parseFloat(vehicle.positionLatitude),
+                      lng: parseFloat(vehicle.positionLongitude),
+                    }}
+                    onClick={(_) => {
+                      setOpenVehicleInfo(true);
+                      setCurrenVehicleIdForInfo(vehicle.vehicleId);
+                    }}
+                    icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
+                    clusterer={clusterer}
+                  />
+
+                ))
+              }
+
+            </MarkerClusterer>
+
+          </GoogleMap>
+          <VehicleInfoFormDialog />
+        </VehicleInfoContext.Provider>
       </LoadScript>
+
     </Layout>
+
   );
 };
