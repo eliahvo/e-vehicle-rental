@@ -4,13 +4,13 @@ items:
     email: user1@bretsch.eu
     hashedPassword: bretsch1
     userRole: admin
-    firstName: user1
-    lastName: bretsch1
+    firstName: Ricardo
+    lastName: Dr. Mundo
     birthDate: 10.10.10
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
-    
+
   User2:
     email: user2@bretsch.eu
     hashedPassword: bretsch2
@@ -32,4 +32,3 @@ items:
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
-    
