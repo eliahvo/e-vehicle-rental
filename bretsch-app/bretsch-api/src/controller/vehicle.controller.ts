@@ -5,10 +5,10 @@ import { VehicleType } from '../entity/VehicleType.entity';
 
 // to have consistent values for the status
 enum vehicle_status {
-  used,
-  free,
-  'not available',
-  reserved
+  Used,
+  Free,
+  Not_available,
+  Reserved
 }
 
 /**
