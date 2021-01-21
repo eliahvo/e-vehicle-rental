@@ -13,6 +13,7 @@ import { PricePage } from './pages/Prices/PricesPage';
 import { SettingPage } from './pages/Settings/SettingPage';
 import { MyBookingPage } from './pages/MyBookings/MyBookingPage';
 import { ProfilePage } from './pages/Profile/ProfilePage';
+import { AdminPage } from './pages/Admin/AdminPage';
 
 export const App = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -84,6 +85,7 @@ export const App = () => {
             <Route exact path="/profile" component={ProfilePage} />
             <Route exact path="/my-bookings" component={MyBookingPage} />
             <Route exact path="/settings" component={SettingPage} />
+            <Route exact path="/admin" component={AdminPage} />
           </Switch>
         </BrowserRouter>
       </AppContext.Provider>
