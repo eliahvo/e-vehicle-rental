@@ -21,6 +21,7 @@ export interface Booking {
   price: number;
   startDate: string;
   updatedAt: string;
+  vehicle: Vehicle;
 }
 export interface VehicleType {
   vehicleTypeId: number;

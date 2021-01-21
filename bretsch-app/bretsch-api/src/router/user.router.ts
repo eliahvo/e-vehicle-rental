@@ -17,6 +17,6 @@ userRouter.post('/', registerUser);
 userRouter.post('/token', loginUser)
 userRouter.delete('/:userId', deleteUser);
 userRouter.get('/', Authentication.verifyAccess, getAllUser);
-userRouter.get('/:userId/bookings', Authentication.verifyAccess, getBookingsByUserId);
+userRouter.get('/:userId/bookings', getBookingsByUserId);
 userRouter.get('/:userId', getSpecificUser);
 userRouter.patch('/:userId', Authentication.verifyAccess, updateUser);
