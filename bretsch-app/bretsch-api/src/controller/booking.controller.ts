@@ -22,7 +22,6 @@ export const createBooking = async (req: Request, res: Response) => {
   const {
     startDate,
     paymentStatus,
-    price,
     vehicleId,
     userId,
   } = req.body;
@@ -34,7 +33,6 @@ export const createBooking = async (req: Request, res: Response) => {
   if (
     !startDate ||
     !paymentStatus ||
-    !price ||
     !vehicleId ||
     !userId
   ) {
@@ -44,7 +42,6 @@ export const createBooking = async (req: Request, res: Response) => {
 
   booking.startDate = startDate;
   booking.paymentStatus = paymentStatus;
-  booking.price = price;
 
   try {
     const foundUser = await userRepository.findOneOrFail({
