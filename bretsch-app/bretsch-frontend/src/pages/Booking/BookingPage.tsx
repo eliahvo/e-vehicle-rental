@@ -23,6 +23,13 @@ export const Section = styled.div`
   margin: 1rem 0 0 0;
 `;
 
+export const ButtonStyle = styled.div`
+  font-size: 1.5rem;
+  margin: 1rem 0 0 0;
+  text-align: center;
+`;
+
+
 export const BookingPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [booking, setBooking] = useState<Booking>();
@@ -39,6 +46,25 @@ export const BookingPage = () => {
     }
   };
 
+  const stopBooking = async () => {
+    const bookingPatch = await fetch(`/api/booking/` + booking?.bookingId, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        endDate: new Date().toString(),
+        price: 100, /* must be calculated */
+        paymentStatus: "payed",
+      }),
+    });
+
+    if (bookingPatch.status === 200) {
+      console.log("booking updated");
+    }else {
+      console.log("error by updating booking");
+    }
+    fetchBookings();
+  }
+
   useEffect(() => {
     fetchBookings();
   }, []);
@@ -52,14 +78,14 @@ export const BookingPage = () => {
     }
   }, [bookings]);
 
-  if(booking) {
+  if (booking) {
     return (
       <Layout title="Booking">
         <BookingDiv>
           {/* hypertext with license plate */}
           <Heading>{booking?.vehicle.licencePlate}</Heading>
           <Divider />
-  
+
           {/* vehicle info */}
           <Section>
             <Grid container spacing={3}>
@@ -83,25 +109,29 @@ export const BookingPage = () => {
                 Start date:
               </Grid>
               <Grid item xs={4}>
-                {booking?.startDate.toLocaleString() /* todo: not display timezone*/}
+                {new Date(booking?.startDate).toLocaleString()}
               </Grid>
             </Grid>
             <Divider />
-  
+
             {/* timer */}
             <Time>
               00:00:00
             </Time>
-  
+
             {/* stop booking button */}
             <Box mt={1} mb={1}>
-  
+              <ButtonStyle>
+                <Button onClick={stopBooking}>
+                  Stop
+                </Button>
+              </ButtonStyle>
             </Box>
           </Section>
         </BookingDiv>
       </Layout>
     );
-  }else {
+  } else {
     return (
       <Layout>
         <BookingDiv>
