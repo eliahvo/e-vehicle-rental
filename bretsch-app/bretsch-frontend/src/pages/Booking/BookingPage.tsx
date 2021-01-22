@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Booking } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid } from '@material-ui/core';
+import useLocalStorage from '../../util/LocalStorageHook';
 
 export const BookingDiv = styled.div`
   margin: 5rem 5rem 10rem 10rem;
@@ -33,6 +34,7 @@ export const ButtonStyle = styled.div`
 export const BookingPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [booking, setBooking] = useState<Booking>();
+  const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
 
   const fetchBookings = async function () {
     const bookingsRequest = await fetch(`/api/user/1/bookings`, {
@@ -59,10 +61,11 @@ export const BookingPage = () => {
 
     if (bookingPatch.status === 200) {
       console.log("booking updated");
+      fetchBookings();  /* should reload page but doesn't work yet */
+      setBookedVehicle(-1);
     }else {
       console.log("error by updating booking");
     }
-    fetchBookings();
   }
 
   useEffect(() => {
