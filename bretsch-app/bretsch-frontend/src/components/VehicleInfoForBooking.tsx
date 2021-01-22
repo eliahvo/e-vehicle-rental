@@ -65,8 +65,24 @@ export default function VehicleInfoFormDialog() {
 
     setSubmit(true);
     handleClose(true);
+
     /* create new Booking */
-    // to do
+    const createBookingRequest = await fetch("/api/booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startDate: new Date().toString(),
+        paymentStatus: "not payed",
+        price: 1,
+        vehicleId: vehicle?.vehicleId,
+        userId: 1     /* must be changed later */
+      }),
+    });
+    if (createBookingRequest.status === 200) {
+      console.log("booking created");
+    }else {
+      console.log("error by creating new booking")
+    }
 
     setBookedVehicle(vehicleInfoContext.vehicleId);
     history.push('/booking');
@@ -75,7 +91,7 @@ export default function VehicleInfoFormDialog() {
   return (
     <div>
       <Dialog  open={vehicleInfoContext.open} onClose={() => handleClose(false)} aria-labelledby="form-dialog-vehicleInfo">
-        <DialogTitle style={{ textAlign: "center" }} id="form-dialog-vehicleInfo">{`${vehicle?.licencePlate} ${vehicle?.vehicleId}`}</DialogTitle>
+        <DialogTitle style={{ textAlign: "center" }} id="form-dialog-vehicleInfo">{`${vehicle?.licencePlate}`}</DialogTitle>
         <form onSubmit={onSubmitForm}>
           <Section>
             <Box className={classes.modal} mt={1}> Batterylevel: {vehicle?.batteryLevel}%</Box>

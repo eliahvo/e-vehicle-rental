@@ -25,7 +25,6 @@ describe('Tests for the Booking class', () => {
 			.send({
                 startDate: new Date(),
                 paymentStatus: "payed",
-                price: 1234,
                 vehicleId: 1,
                 userId: 1,
 
