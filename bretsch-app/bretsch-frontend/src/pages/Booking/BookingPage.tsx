@@ -61,8 +61,7 @@ export const BookingPage = () => {
     });
 
     if (bookingPatch.status === 200) {
-      console.log("booking updated");
-      fetchBookings();  /* should reload page but doesn't work yet */
+      fetchBookings();
       setBookedVehicle(-1);
       setVehicleStatus(booking?.vehicle.vehicleId, vehicle_status.Free);
     }else {
@@ -75,6 +74,7 @@ export const BookingPage = () => {
   }, []);
 
   useEffect(() => {
+    setBooking(undefined);
     for (let b of bookings) {
       if (b.paymentStatus == "not payed") {
         setBooking(b);
