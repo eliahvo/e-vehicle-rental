@@ -16,7 +16,7 @@ describe('Tests for the Booking class Scary Path', () => {
 		await helper.shutdown();
     });
 
-    it('createBooking Test Scary Path for missing param', async (done) => {
+    it('Should not create Booking for missing param', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
 
@@ -39,7 +39,7 @@ describe('Tests for the Booking class Scary Path', () => {
 			});
     });
 
-    it('createBooking Test Scary Path for missing vehicle', async (done) => {
+    it('Should not create Booking with missing vehicle', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
 
@@ -65,7 +65,7 @@ describe('Tests for the Booking class Scary Path', () => {
     });
 
         //A nonexistent Booking id is used
-        it('deleteBooking Test Scary Path', async (done) => {
+        it('Should not delete Booking', async (done) => {
             await helper.resetDatabase();
             await helper.loadFixtures();
     
@@ -85,7 +85,7 @@ describe('Tests for the Booking class Scary Path', () => {
         });
         
            //A nonexistent Booking id is used
-           it('getSpecificBooking Test Scary Path', async (done) => {
+           it('Should not get Specific Booking', async (done) => {
             await helper.resetDatabase();
             await helper.loadFixtures();
     
@@ -105,7 +105,7 @@ describe('Tests for the Booking class Scary Path', () => {
         });       
         
         //A nonexistent booking id is used
-        it('updateBooking Test Scary Path', async (done) => {
+        it('Should not update Booking', async (done) => {
             await helper.resetDatabase();
             await helper.loadFixtures();
     
