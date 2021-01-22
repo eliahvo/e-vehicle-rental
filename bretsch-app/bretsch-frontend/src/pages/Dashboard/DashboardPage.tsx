@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack';
 import { Vehicle, vehicle_status } from '../../util/EntityInterfaces';
 import { Layout } from '../../components/Layout';
 import { AppContext } from '../../contexts/AppContext';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Backdrop, CircularProgress, makeStyles, useTheme } from '@material-ui/core';
 import { useMapStyle } from './util/mapStyle';
 import { VehicleInfoContext } from '../../contexts/VehicleInfoContext';
@@ -40,6 +40,11 @@ export const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [openVehicleInfo, setOpenVehicleInfo] = React.useState(false);
   const [currenVehicleIdForInfo, setCurrenVehicleIdForInfo] = React.useState(-1);
+  const { reloadAll } = React.useContext(AppContext);
+
+  useEffect(() => {
+    reloadAll();
+  }, []);
 
   const toggleOpen = () => {
     setOpenVehicleInfo(!openVehicleInfo);
