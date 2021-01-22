@@ -143,7 +143,7 @@ export const getSpecificBooking = async (req: Request, res: Response) => {
  */
 export const updateBooking = async (req: Request, res: Response) => {
   const bookingId = req.params.bookingId;
-  const { endDate, price } = req.body;
+  const { endDate, price, paymentStatus } = req.body;
   const bookingRepository = await getRepository(Booking);
 
   try {
@@ -153,6 +153,7 @@ export const updateBooking = async (req: Request, res: Response) => {
     });
     foundBooking.endDate = endDate;
     foundBooking.price = price;
+    foundBooking.paymentStatus = paymentStatus;
     foundBooking = await bookingRepository.save(foundBooking);
 
     res.send({
