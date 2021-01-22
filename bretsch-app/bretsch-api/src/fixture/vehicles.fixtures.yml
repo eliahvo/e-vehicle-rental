@@ -2,7 +2,7 @@ entity: Vehicle
 items:
   Vehicle1:
     licencePlate: DA-BR-001
-    status: inUse
+    status: Free
     positionLongitude: 8.648249
     positionLatitude: 49.865158
     batteryLevel: 50
@@ -10,7 +10,7 @@ items:
 
   Vehicle2:
     licencePlate: DA-BR-002
-    status: free
+    status: Free
     positionLongitude: 8.651596
     positionLatitude: 49.871575
     batteryLevel: 80
@@ -18,7 +18,7 @@ items:
 
   Vehicle3:
     licencePlate: DA-BR-003
-    status: inUse
+    status: Free
     positionLongitude: 8.648249
     positionLatitude: 49.866158
     batteryLevel: 20

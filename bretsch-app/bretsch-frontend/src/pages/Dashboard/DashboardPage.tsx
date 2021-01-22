@@ -99,24 +99,28 @@ export const DashboardPage = () => {
             >
 
               {(clusterer) =>
-                vehicles.map((vehicle: Vehicle) => (
+                vehicles.map((vehicle: Vehicle) => {
+                  if(vehicle.status === "Free"){
+                  return (
 
-                  <Marker
-                    key={vehicle.vehicleId}
-                    position={{
-                      lat: parseFloat(vehicle.positionLatitude),
-                      lng: parseFloat(vehicle.positionLongitude),
-                    }}
-                    onClick={(_) => {
-                      setOpenVehicleInfo(true);
-                      setCurrenVehicleIdForInfo(vehicle.vehicleId);
-                      setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
-                    }}
-                    icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
-                    clusterer={clusterer}
-                  />
+                    <Marker
+                      key={vehicle.vehicleId}
+                      position={{
+                        lat: parseFloat(vehicle.positionLatitude),
+                        lng: parseFloat(vehicle.positionLongitude),
+                      }}
+                      onClick={(_) => {
+                        setOpenVehicleInfo(true);
+                        setCurrenVehicleIdForInfo(vehicle.vehicleId);
+                        setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
+                      }}
+                      icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
+                      clusterer={clusterer}
+                    />
 
-                ))
+                  )
+                    }
+                })
               }
 
             </MarkerClusterer>

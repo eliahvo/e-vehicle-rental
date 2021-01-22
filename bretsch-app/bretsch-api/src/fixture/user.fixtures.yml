@@ -4,8 +4,8 @@ items:
     email: user1@bretsch.eu
     hashedPassword: bretsch1
     userRole: admin
-    firstName: Ricardo
-    lastName: Dr. Mundo
+    firstName: user1
+    lastName: bretsch1
     birthDate: 10.10.10
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
