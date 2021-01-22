@@ -17,8 +17,8 @@ enum vehicle_status {
  * Expected as a parameter: ---
  * Expected in the body:licencePlate,
  *                      status,
- *                      positionLongitude,
- *                      positionLatitude,
+ *                      positionLongitude, (optional)
+ *                      positionLatitude, (optional)
  *                      batteryLevel,
  *                      vehicleType
  * @param {Request} req Request
@@ -122,7 +122,7 @@ export const getAllBookingsByVehicleId = async (
     const vehicle = await vehicleRep.findOneOrFail(vehicleId, {
       relations: ['bookings'],
     });
-    res.send({
+    res.status(200).send({
       data: vehicle.bookings,
     });
   } catch (e) {
