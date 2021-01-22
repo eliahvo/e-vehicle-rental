@@ -1,9 +1,10 @@
 import { Layout } from '../../components/Layout';
 import React, { useEffect, useState } from 'react';
-import { Booking } from '../../util/EntityInterfaces';
+import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
+import { setVehicleStatus } from '../Dashboard/DashboardPage';
 
 export const BookingDiv = styled.div`
   margin: 5rem 5rem 10rem 10rem;
@@ -63,6 +64,7 @@ export const BookingPage = () => {
       console.log("booking updated");
       fetchBookings();  /* should reload page but doesn't work yet */
       setBookedVehicle(-1);
+      setVehicleStatus(booking?.vehicle.vehicleId, vehicle_status.Free);
     }else {
       console.log("error by updating booking");
     }
