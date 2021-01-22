@@ -16,7 +16,7 @@ describe('Tests for the Booking class', () => {
 		await helper.shutdown();
     });
 
-    it('createBooking Test', async (done) => {
+    it('Should create Booking', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
 
@@ -43,7 +43,7 @@ describe('Tests for the Booking class', () => {
 			});
     });
     
-    it('deleteBooking Test Scary Path for missing param', async (done) => {
+    it('Should delete Booking', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
 
@@ -60,7 +60,7 @@ describe('Tests for the Booking class', () => {
 			});
     });
 
-    it('getAllBookings Test Happy Path', async (done) => {
+    it('Should get all Bookings', async (done) => {
 		await helper.resetDatabase();
         await helper.loadFixtures();
         
@@ -81,7 +81,7 @@ describe('Tests for the Booking class', () => {
 			});
     });
 
-    it('getSpecificBooking Test Happy Path', async (done) => {
+    it('Should get Specific Booking', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
 
@@ -105,7 +105,7 @@ describe('Tests for the Booking class', () => {
 			});
     });
 
-    it('updateBooking Test Happy Path', async (done) => {
+    it('Should update Booking', async (done) => {
 		await helper.resetDatabase();
         await helper.loadFixtures();
         
