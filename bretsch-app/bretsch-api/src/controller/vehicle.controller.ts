@@ -41,7 +41,7 @@ export const createVehicle = async (req: Request, res: Response) => {
   }
   const vehicle = new Vehicle();
   // because of enum
-  if (!isNaN(status) && status > 0 && status < 4) {
+  if (typeof status === 'number' && status >= 0 && status < Object.values(vehicle_status).length / 2) {
     vehicle.status = vehicle_status[status].toString();
   } else {
     res.status(400).send({
@@ -132,10 +132,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
  * @param {Request} req Request
  * @param {Response} res Response
  */
-export const getAllBookingsByVehicleId = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllBookingsByVehicleId = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRep = await getRepository(Vehicle);
   try {
@@ -216,14 +213,7 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
  */
 export const updateVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
-  const {
-    licencePlate,
-    status,
-    positionLongitude,
-    positionLatitude,
-    batteryLevel,
-    vehicleType,
-  } = req.body;
+  const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
   const vehicleRep = getRepository(Vehicle);
   try {
     // actual vehicle
@@ -244,8 +234,10 @@ export const updateVehicle = async (req: Request, res: Response) => {
       vehicle.positionLatitude = positionLatitude;
     }
 
-    // because of enum
-    if (status && !isNaN(status) && status > 0 && status < 4) {
+    console.log(Object.values(vehicle_status).length / 2);
+    console.log(Object.entries(vehicle_status));
+    // because of enum  -  "/2" because enum has the douple size
+    if (typeof status === 'number' && status >= 0 && status < Object.values(vehicle_status).length / 2) {
       vehicle.status = vehicle_status[status].toString();
     } else {
       res.status(400).send({

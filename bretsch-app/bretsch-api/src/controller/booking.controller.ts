@@ -21,7 +21,6 @@ import { User } from "../entity/User.entity";
 export const createBooking = async (req: Request, res: Response) => {
   const {
     startDate,
-    endDate,
     paymentStatus,
     price,
     vehicleId,
@@ -34,7 +33,6 @@ export const createBooking = async (req: Request, res: Response) => {
 
   if (
     !startDate ||
-    !endDate ||
     !paymentStatus ||
     !price ||
     !vehicleId ||
@@ -45,7 +43,6 @@ export const createBooking = async (req: Request, res: Response) => {
   }
 
   booking.startDate = startDate;
-  booking.endDate = endDate;
   booking.paymentStatus = paymentStatus;
   booking.price = price;
 
