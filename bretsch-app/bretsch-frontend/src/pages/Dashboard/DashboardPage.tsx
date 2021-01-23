@@ -1,5 +1,4 @@
 import { GoogleMap, LoadScript, Marker, MarkerClusterer } from '@react-google-maps/api';
-import { useSnackbar } from 'notistack';
 import { Vehicle, vehicle_status } from '../../util/EntityInterfaces';
 import { Layout } from '../../components/Layout';
 import { AppContext } from '../../contexts/AppContext';
@@ -8,11 +7,12 @@ import { Backdrop, CircularProgress, makeStyles, useTheme } from '@material-ui/c
 import { useMapStyle } from './util/mapStyle';
 import { VehicleInfoContext } from '../../contexts/VehicleInfoContext';
 import VehicleInfoFormDialog from '../../components/VehicleInfoForBooking';
+import { setVehicleStatus } from '../../util/RequestHelper';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
-    zIndex: 0,
     color: theme.palette.primary.main,
+    zIndex: 0,
   },
 }));
 
@@ -21,21 +21,10 @@ const center = {
   lng: 8.651596,
 };
 
-export const setVehicleStatus = async function (vId: any, status: vehicle_status) {
-  await fetch('/api/vehicle/' + vId, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      status: status,
-    }),
-  });
-};
-
 export const DashboardPage = () => {
   const theme = useTheme();
   const classes = useStyles();
   const mapStyle = useMapStyle();
-  const { enqueueSnackbar } = useSnackbar();
   const { vehicles } = React.useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [openVehicleInfo, setOpenVehicleInfo] = React.useState(false);
@@ -46,13 +35,13 @@ export const DashboardPage = () => {
     reloadAll();
   }, []);
 
-  const toggleOpen = () => {
+  const toggleVehicleInfo = () => {
     setOpenVehicleInfo(!openVehicleInfo);
   };
 
   const vehicleInfoContext = {
-    toggleOpen: toggleOpen,
     open: openVehicleInfo,
+    toggleOpen: toggleVehicleInfo,
     vehicleId: currenVehicleIdForInfo,
   };
 
@@ -95,47 +84,39 @@ export const DashboardPage = () => {
               styles: mapStyle,
             }}
           >
-
             <MarkerClusterer
               averageCenter={true}
               options={{
                 imagePath: './icons/clusterer/m',
               }}
             >
-
               {(clusterer) =>
                 vehicles.map((vehicle: Vehicle) => {
-                  if(vehicle.status === "Free"){
-                  return (
-
-                    <Marker
-                      key={vehicle.vehicleId}
-                      position={{
-                        lat: parseFloat(vehicle.positionLatitude),
-                        lng: parseFloat(vehicle.positionLongitude),
-                      }}
-                      onClick={(_) => {
-                        setOpenVehicleInfo(true);
-                        setCurrenVehicleIdForInfo(vehicle.vehicleId);
-                        setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
-                      }}
-                      icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
-                      clusterer={clusterer}
-                    />
-
-                  )
-                    }
+                  if (vehicle.status === 'Free') {
+                    return (
+                      <Marker
+                        key={vehicle.vehicleId}
+                        position={{
+                          lat: parseFloat(vehicle.positionLatitude),
+                          lng: parseFloat(vehicle.positionLongitude),
+                        }}
+                        onClick={() => {
+                          setOpenVehicleInfo(true);
+                          setCurrenVehicleIdForInfo(vehicle.vehicleId);
+                          setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
+                        }}
+                        icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
+                        clusterer={clusterer}
+                      />
+                    );
+                  }
                 })
               }
-
             </MarkerClusterer>
-
           </GoogleMap>
           <VehicleInfoFormDialog />
         </VehicleInfoContext.Provider>
       </LoadScript>
-
     </Layout>
-
   );
 };

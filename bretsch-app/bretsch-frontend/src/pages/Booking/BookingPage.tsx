@@ -4,7 +4,7 @@ import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
-import { setVehicleStatus } from '../Dashboard/DashboardPage';
+import { setVehicleStatus } from '../../util/RequestHelper';
 
 export const BookingDiv = styled.div`
   margin: 5rem 5rem 10rem 10rem;
@@ -31,16 +31,15 @@ export const ButtonStyle = styled.div`
   text-align: center;
 `;
 
-
 export const BookingPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [booking, setBooking] = useState<Booking>();
   const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
 
-  const fetchBookings = async function () {
+  const fetchBookings = async () => {
     const bookingsRequest = await fetch(`/api/user/1/bookings`, {
-      method: 'GET',
       headers: { 'content-type': 'application/json' },
+      method: 'GET',
     });
 
     if (bookingsRequest.status === 200) {
@@ -50,24 +49,24 @@ export const BookingPage = () => {
   };
 
   const stopBooking = async () => {
-    const bookingPatch = await fetch(`/api/booking/` + booking?.bookingId, {
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
+    const bookingPatch = await fetch(`/api/booking/${booking?.bookingId}`, {
       body: JSON.stringify({
         endDate: new Date().toString(),
-        price: 100, /* must be calculated */
-        paymentStatus: "payed",
+        paymentStatus: 'payed',
+        price: 100 /* must be calculated */,
       }),
+      headers: { 'content-type': 'application/json' },
+      method: 'PATCH',
     });
 
     if (bookingPatch.status === 200) {
       fetchBookings();
       setBookedVehicle(-1);
       setVehicleStatus(booking?.vehicle.vehicleId, vehicle_status.Free);
-    }else {
-      console.log("error by updating booking");
+    } else {
+      console.log('error by updating booking');
     }
-  }
+  };
 
   useEffect(() => {
     fetchBookings();
@@ -75,8 +74,8 @@ export const BookingPage = () => {
 
   useEffect(() => {
     setBooking(undefined);
-    for (let b of bookings) {
-      if (b.paymentStatus == "not payed") {
+    for (const b of bookings) {
+      if (b.paymentStatus === 'not payed') {
         setBooking(b);
         break;
       }
@@ -120,30 +119,25 @@ export const BookingPage = () => {
             <Divider />
 
             {/* timer */}
-            <Time>
-              00:00:00
-            </Time>
+            <Time>00:00:00</Time>
 
             {/* stop booking button */}
             <Box mt={1} mb={1}>
               <ButtonStyle>
-                <Button onClick={stopBooking}>
-                  Stop
-                </Button>
+                <Button onClick={stopBooking}>Stop</Button>
               </ButtonStyle>
             </Box>
           </Section>
         </BookingDiv>
       </Layout>
     );
-  } else {
-    return (
-      <Layout>
-        <BookingDiv>
-          {/* hypertext with info */}
-          <Heading>No active booking!</Heading>
-        </BookingDiv>
-      </Layout>
-    );
   }
+  return (
+    <Layout>
+      <BookingDiv>
+        {/* hypertext with info */}
+        <Heading>No active booking!</Heading>
+      </BookingDiv>
+    </Layout>
+  );
 };
