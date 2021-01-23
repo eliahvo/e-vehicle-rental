@@ -57,7 +57,7 @@ export default function vehicleInfoFormDialog() {
     vehicleInfoContext.toggleOpen();
     console.log('handleClose ');
     if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
-    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free);
+    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free); // ToDo: Currently vehicle changes position even if booking was cancelled
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
