@@ -75,7 +75,6 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
       width: drawerWidth,
     },
-
     icons: {
       color: 'black',
     },
@@ -89,7 +88,6 @@ const useStyles = makeStyles((theme: Theme) =>
     menuIcon: {
       marginRight: theme.spacing(1),
     },
-
     root: {
       flexGrow: 1,
     },
@@ -97,11 +95,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: 'black',
       flexGrow: 1,
     },
-
     hide: {
       display: 'none',
     },
-
     toolbar: {
       alignItems: 'center',
       display: 'flex',
@@ -155,13 +151,13 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
     reloadAll();
   };
 
-  const toggleOpen = () => {
+  const toggleOpenState = () => {
     setOpenLogin(!openLogin);
   };
 
   const loginContext = {
-    toggleOpen: toggleOpen,
     open: openLogin,
+    toggleOpen: toggleOpenState,
   };
 
   return (
@@ -314,7 +310,6 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
               </ListItemIcon>
               <ListItemText primary={'Settings'} />
             </ListItem>
-
             <ListItem
               button
               onClick={() => {

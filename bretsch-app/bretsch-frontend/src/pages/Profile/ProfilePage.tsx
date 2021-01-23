@@ -1,3 +1,4 @@
+// tslint:disable: no-submodule-imports
 import { Layout } from '../../components/Layout';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
@@ -41,10 +42,10 @@ export const ProfilePage = () => {
   const [editPaymentSettings, setEditPaymentSettings] = React.useState(false);
   const classes = useStyles();
 
-  const fetchProfile = async function () {
+  const fetchProfile = async () => {
     const profileRequest = await fetch(`/api/user/1`, {
-      method: 'GET',
       headers: { 'content-type': 'application/json' },
+      method: 'GET',
     });
 
     if (profileRequest.status === 200) {
@@ -59,13 +60,13 @@ export const ProfilePage = () => {
   }, []);
 
   const [values, setValues] = useState({
-    firstName: profile?.firstName,
-    lastName: profile?.lastName,
-    email: profile?.email,
-    hashedPassword: profile?.hashedPassword,
-    streetPlusNumber: profile?.streetPlusNumber,
     city: profile?.city,
+    email: profile?.email,
+    firstName: profile?.firstName,
+    hashedPassword: profile?.hashedPassword,
+    lastName: profile?.lastName,
     preferedPayment: profile?.preferedPayment,
+    streetPlusNumber: profile?.streetPlusNumber,
   });
 
   const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -76,11 +77,11 @@ export const ProfilePage = () => {
     console.log('Is drinn');
 
     await fetch(`/api/user/1`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...values,
       }),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'PATCH',
     });
     setEditNameSettings(false);
     setEditMainSettings(false);
@@ -103,7 +104,7 @@ export const ProfilePage = () => {
               fullWidth
             />
           ) : (
-            profile?.firstName + ' '
+            `${profile?.firstName} `
           )}
           {editNameSettings ? (
             <TextField
