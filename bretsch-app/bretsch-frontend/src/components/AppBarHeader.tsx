@@ -1,5 +1,5 @@
 // tslint:disable: no-submodule-imports
-import React from 'react';
+import React, { useContext } from 'react';
 import { Breadcrumbs, Drawer, IconButton, Menu, MenuItem, Switch } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
@@ -32,6 +32,7 @@ import Brightness3Icon from '@material-ui/icons/Brightness3';
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import LoginFormDialog from './Login';
 import { LoginContext } from '../contexts/LoginContext';
+import { authContext } from '../contexts/AuthenticationContext';
 
 const drawerWidth = 240;
 
@@ -124,6 +125,10 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [navigationDrawer, setNavigationDrawer] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
+  const {
+    token,
+    actions: { logout },
+  } = useContext(authContext);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -273,8 +278,10 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
             </ListItem>
           </List>
           <Divider />
+          {token?
+          <>
           <List>
-            <ListItem
+            <ListItem 
               button
               onClick={() => {
                 history.push('/profile');
@@ -297,7 +304,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
               <ListItemText primary={'My Bookings'} />
             </ListItem>
           </List>
-          <Divider />
+          <Divider /></>
+          : ''}
           <List>
             <ListItem
               button
@@ -313,13 +321,13 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
             <ListItem
               button
               onClick={() => {
-                setOpenLogin(true);
-              }}
+                token ? logout() : setOpenLogin(true);
+              }} 
             >
               <ListItemIcon>
                 <ExitToAppIcon />
               </ListItemIcon>
-              <ListItemText primary={'Login'} />
+              <ListItemText primary={token ? `Logout` : `Login`} />
             </ListItem>
           </List>
           <LoginFormDialog />

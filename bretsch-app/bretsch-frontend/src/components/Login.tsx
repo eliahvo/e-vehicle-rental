@@ -8,18 +8,17 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { LoginContext } from '../contexts/LoginContext';
 import { Divider } from '@material-ui/core';
+import { authContext, LoginOptions } from '../contexts/AuthenticationContext';
 
 export default function LoginFormDialog() {
+  const auth = useContext(authContext);
   const loginContext = useContext(LoginContext);
-  const [values, setValues] = useState({
-    name: '',
-    description: '',
-  });
+  const [values, setValues] = useState<LoginOptions>({ email: '', password: '' });
 
   const handleClose = () => {
     loginContext.toggleOpen();
   };
-  const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+  const format = /[!#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]+/;
   const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (format.test(e.target.value)) {
       alert('Sonderzeichen sind im Namen nicht erlaubt!');
@@ -31,14 +30,7 @@ export default function LoginFormDialog() {
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    await fetch('/api/user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...values,
-      }),
-    });
+    auth.actions.login(values);
     handleClose();
   };
 
@@ -48,8 +40,28 @@ export default function LoginFormDialog() {
         <DialogTitle id="form-dialog-title">Welcome to BRETSCH!</DialogTitle>
         <form onSubmit={onSubmitForm} data-testid="create-task-form">
           <DialogContent>
-            <TextField autoFocus margin="dense" id="name" label="Email Address" type="email" fullWidth required />
-            <TextField autoFocus margin="dense" id="name" label="Password" type="password" fullWidth required />
+            <TextField
+              autoFocus
+              name="email"
+              margin="dense"
+              id="name"
+              label="Email Address"
+              type="email"
+              fullWidth
+              onChange={fieldDidChange}
+              required
+            />
+            <TextField
+              autoFocus
+              name="password"
+              margin="dense"
+              id="name"
+              label="Password"
+              type="password"
+              fullWidth
+              onChange={fieldDidChange}
+              required
+            />
           </DialogContent>
           <DialogActions>
             <Button type="submit" color="primary">
