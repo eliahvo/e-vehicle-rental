@@ -1,6 +1,6 @@
 import 'fontsource-roboto';
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { BrowserRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { DashboardPage } from './pages/Dashboard/DashboardPage';
 import { AppContext } from './contexts/AppContext';
@@ -13,6 +13,46 @@ import { PricePage } from './pages/Prices/PricesPage';
 import { SettingPage } from './pages/Settings/SettingPage';
 import { MyBookingPage } from './pages/MyBookings/MyBookingPage';
 import { ProfilePage } from './pages/Profile/ProfilePage';
+import { authContext, AuthProvider } from './contexts/AuthenticationContext';
+import { LoginContext } from './contexts/LoginContext';
+
+export const BasePage = () => {
+  const { token } = useContext(authContext);
+  if (token) {
+    return <Redirect to="/booking" />;
+  } else {
+    return <Redirect to="/dashboard" />;
+  }
+};
+
+const UnauthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
+  const { token } = useContext(authContext);
+  if (token === null) {
+    return <Route {...routeProps} />;
+  } else {
+    return <Redirect to="/my-bookings" />;
+  }
+};
+
+const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
+  const {
+    token,
+    actions: { getTokenData, logout },
+  } = useContext(authContext);
+  if (token !== null) {
+    const tokenData = getTokenData();
+    if (tokenData !== null) {
+      const { exp } = tokenData;
+      if (parseInt(exp) * 1000 > Date.now()) {
+        return <Route {...routeProps} />;
+      }
+      logout();
+      return <Redirect to="/" />;
+    }
+  }
+  alert("To do Login on Booking click");
+  return <Redirect to="/" />;
+};
 
 export const App = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -74,19 +114,23 @@ export const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppContext.Provider value={context}>
-        <BrowserRouter>
-          <Switch>
-            <Route exact path="/" component={DashboardPage} />
-            <Route exact path="/booking" component={BookingPage} />
-            <Route exact path="/prices" component={PricePage} />
-            <Route exact path="/profile" component={ProfilePage} />
-            <Route exact path="/my-bookings" component={MyBookingPage} />
-            <Route exact path="/settings" component={SettingPage} />
-          </Switch>
-        </BrowserRouter>
-      </AppContext.Provider>
+      <AuthProvider>
+        <CssBaseline />
+        <AppContext.Provider value={context}>
+          <BrowserRouter>
+            <Switch>
+              <Route exact path="/dashboard" component={DashboardPage} />
+              <AuthenticatedRoute exact path="/booking" component={BookingPage} />
+              <Route exact path="/prices" component={PricePage} />
+              <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
+              <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
+              <AuthenticatedRoute exact path="/settings" component={SettingPage} />
+              <Route path="/" component={BasePage} />
+            </Switch>
+          </BrowserRouter>
+        </AppContext.Provider>
+      </AuthProvider>
     </ThemeProvider>
   );
 };
+//<Route exact path="/" component={DashboardPage} />

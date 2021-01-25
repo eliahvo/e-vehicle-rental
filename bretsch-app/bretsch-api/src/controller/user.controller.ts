@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { User } from '../entity/User.entity';
-import { Authentication } from '../middleware/authentication';
+import { Request, Response } from "express";
+import { getRepository } from "typeorm";
+import { Booking } from "../entity/Booking.entity";
+import { User } from "../entity/User.entity";
+import { Authentication } from "../middleware/authentication";
 
 /**
  * Create User
@@ -20,11 +21,29 @@ import { Authentication } from '../middleware/authentication';
  * @param {Response}res Response
  */
 export const registerUser = async (req: Request, res: Response) => {
-  const { email, password, firstName, lastName, birthDate, preferedPayment, streetPlusNumber, city } = req.body;
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    birthDate,
+    preferedPayment,
+    streetPlusNumber,
+    city,
+  } = req.body;
   const userRepository = getRepository(User);
-  if (!email || !password || !firstName || !lastName || !birthDate || !preferedPayment || !streetPlusNumber || !city) {
+  if (
+    !email ||
+    !password ||
+    !firstName ||
+    !lastName ||
+    !birthDate ||
+    !preferedPayment ||
+    !streetPlusNumber ||
+    !city
+  ) {
     return res.status(400).send({
-      status: 'Error: Parameter missing!',
+      status: "Error: Parameter missing!",
     });
   }
 
@@ -36,7 +55,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
   if (user) {
     return res.status(400).send({
-      status: 'bad_request',
+      status: "bad_request",
     });
   }
 
@@ -67,19 +86,22 @@ export const loginUser = async (req: Request, res: Response) => {
   const userRepository = await getRepository(User);
   // Check if user exists
   const user = await userRepository.findOne({
-    select: ['hashedPassword', 'email', 'firstName', 'lastName', 'userId'],
+    select: ["hashedPassword", "email", "firstName", "lastName", "userId"],
     where: {
       email,
     },
   });
 
   if (!user) {
-    return res.status(401).send({ status: 'unauthorized1' });
+    return res.status(401).send({ status: "unauthorized1" });
   }
 
-  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(password, user.hashedPassword);
+  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(
+    password,
+    user.hashedPassword
+  );
   if (!matchingPasswords) {
-    return res.status(401).send({ status: 'unauthorized2' });
+    return res.status(401).send({ status: "unauthorized2" });
   }
 
   const token: string = await Authentication.generateToken({
@@ -111,7 +133,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(200).send({});
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
 };
@@ -146,7 +168,11 @@ export const getBookingsByUserId = async (req: Request, res: Response) => {
 
   try {
     const user = await userRepository.findOneOrFail(userId, {
-      relations: ['bookings', 'bookings.vehicle', 'bookings.vehicle.vehicleType'],
+      relations: [
+        "bookings",
+        "bookings.vehicle",
+        "bookings.vehicle.vehicleType",
+      ],
     });
     const userBookingList = user.bookings;
     res.status(200).send({
@@ -154,7 +180,7 @@ export const getBookingsByUserId = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
 };
@@ -173,14 +199,14 @@ export const getSpecificUser = async (req: Request, res: Response) => {
 
   try {
     const user = await userRepository.findOneOrFail(userId, {
-      relations: ['bookings'],
+      relations: ["bookings", "actualBooking"],
     });
     res.status(200).send({
       data: user,
     });
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
 };
@@ -203,12 +229,22 @@ export const getSpecificUser = async (req: Request, res: Response) => {
  */
 export const updateUser = async (req: Request, res: Response) => {
   const userId = req.params.userId;
-  const { email, hashedPassword, firstName, lastName, birthDate, preferedPayment, streetPlusNumber, city } = req.body;
+  const {
+    email,
+    hashedPassword,
+    firstName,
+    lastName,
+    birthDate,
+    preferedPayment,
+    streetPlusNumber,
+    city,
+    actualBookingId,
+  } = req.body;
   const userRepository = getRepository(User);
 
   try {
     let user = await userRepository.findOneOrFail(userId, {
-      relations: ['bookings'],
+      relations: ["bookings", "actualBooking"],
     });
     user.email = email;
     user.hashedPassword = hashedPassword;
@@ -219,6 +255,15 @@ export const updateUser = async (req: Request, res: Response) => {
     user.streetPlusNumber = streetPlusNumber;
     user.city = city;
 
+    if (actualBookingId) {
+      const bookingRepository = getRepository(Booking);
+
+      let actualBooking = await bookingRepository.findOneOrFail(
+        actualBookingId
+      );
+      user.actualBooking = actualBooking;
+    }
+
     user = await userRepository.save(user);
 
     res.status(200).send({
@@ -226,7 +271,7 @@ export const updateUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
 };

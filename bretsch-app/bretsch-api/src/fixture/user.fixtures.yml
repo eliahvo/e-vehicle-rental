@@ -10,6 +10,7 @@ items:
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
+    actualBooking: null
 
   User2:
     email: user2@bretsch.eu
@@ -21,6 +22,7 @@ items:
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
+    actualBooking: null
 
   User3:
     email: user3@bretsch.eu
@@ -32,3 +34,4 @@ items:
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
+    actualBooking: null
