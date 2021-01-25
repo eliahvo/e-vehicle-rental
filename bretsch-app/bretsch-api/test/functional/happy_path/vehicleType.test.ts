@@ -16,7 +16,7 @@ describe("Tests for the VehicleType class", () => {
     await helper.shutdown();
   });
 
-  it("createVehicleType Test", async (done) => {
+  it("it should create new vehicle type", async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
 
@@ -33,8 +33,8 @@ describe("Tests for the VehicleType class", () => {
       .expect(200)
       .end(async (err, res) => {
         if (err) throw err;
-        const [, user] = await helper.getRepo(VehicleType).findAndCount();
-        expect(user).toBe(4);
+        const [, vehiclyTypes] = await helper.getRepo(VehicleType).findAndCount();
+        expect(vehiclyTypes).toBe(3);
         expect(res.body.data.type).toBe("Scooter");
         expect(res.body.data.pricePerMinute).toBe(7);
         expect(res.body.data.minimalBatteryLevel).toBe(17);
@@ -42,7 +42,7 @@ describe("Tests for the VehicleType class", () => {
       });
   });
 
-  it("deleteVehicleType Test", async (done) => {
+  it("should delete a vehicle type by id", async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     let vehicleType = new VehicleType();
@@ -58,12 +58,12 @@ describe("Tests for the VehicleType class", () => {
         const [, vehicleTypeCount] = await helper
           .getRepo(VehicleType)
           .findAndCount();
-        expect(vehicleTypeCount).toBe(2);
+        expect(vehicleTypeCount).toBe(1);
         done();
       });
   });
 
-  it("getSpecificVehicleType", async (done) => {
+  it("should get specific type by id", async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     const vehicletype = new VehicleType();
@@ -83,7 +83,7 @@ describe("Tests for the VehicleType class", () => {
       });
   });
 
-  it('getAllVehicleTypes', async (done) => {
+  it('should get all vehicle types', async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     request(helper.app)
@@ -93,14 +93,14 @@ describe("Tests for the VehicleType class", () => {
         .expect(200)
         .end((err, res) => {
             if (err) throw err;
-            expect(res.body.data.length).toBe(3);
+            expect(res.body.data.length).toBe(2);
             expect(res.body.data[1].type).toBe('car');
             done();
         });
 });
 
 
-it("getAllVehiclesByVehicleTypeId Test", async (done) => {
+it("should get all vehicles by vehicle type id", async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     const vehicleTypeId = 2;
@@ -118,7 +118,7 @@ it("getAllVehiclesByVehicleTypeId Test", async (done) => {
       });
   });
 
-  it('updateVehicleType Test', async (done) => {
+  it('should update a vehicle type by id', async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     let vehicleType = new VehicleType();

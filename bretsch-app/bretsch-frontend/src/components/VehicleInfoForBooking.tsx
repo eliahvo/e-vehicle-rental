@@ -1,24 +1,24 @@
-import React, { useContext, useState, ChangeEvent, useEffect } from 'react';
+// tslint:disable: no-submodule-imports
+import React, { useContext, useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { VehicleInfoContext } from '../contexts/VehicleInfoContext';
-import { Box, Chip, DialogContent, DialogContentText, Divider, TextField } from '@material-ui/core';
+import { Box, Chip, Divider, makeStyles } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Vehicle, vehicle_status } from '../util/EntityInterfaces';
 import useLocalStorage from '../util/LocalStorageHook';
 import styled from 'styled-components';
 import WarningIcon from '@material-ui/icons/Warning';
-import { makeStyles, useTheme } from '@material-ui/core';
-import { setVehicleStatus } from '../pages/Dashboard/DashboardPage';
+import { setVehicleStatus } from '../util/RequestHelper';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
+    marginBottom: theme.spacing(1),
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -27,20 +27,20 @@ export const Section = styled.div`
   margin: 1rem 0 0 0;
 `;
 
-export default function VehicleInfoFormDialog() {
+export default function vehicleInfoFormDialog() {
   const vehicleInfoContext = useContext(VehicleInfoContext);
   const [vehicle, setVehicle] = useState<Vehicle>();
-  const [submit, setSubmit] = useState(false);
+  const [submit, setSubmit] = useState(false); // ToDo: What is this used for? Necessary? If not, remove
   const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
   const history = useHistory();
 
   const classes = useStyles();
 
-  const fetchVehicle = async function () {
-    console.log("fetchVehicle");
-    const vehicleRequest = await fetch("/api/vehicle/" + vehicleInfoContext.vehicleId, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
+  const fetchVehicle = async () => {
+    console.log('fetchVehicle');
+    const vehicleRequest = await fetch(`/api/vehicle/${vehicleInfoContext.vehicleId}`, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'GET',
     });
     if (vehicleRequest.status === 200) {
       const vehicleJSON = await vehicleRequest.json();
@@ -49,15 +49,15 @@ export default function VehicleInfoFormDialog() {
   };
 
   useEffect(() => {
-    console.log("useEffect");
-    if (vehicleInfoContext.vehicleId != -1) fetchVehicle();
+    console.log('useEffect');
+    if (vehicleInfoContext.vehicleId !== -1) fetchVehicle();
   }, [vehicleInfoContext.vehicleId]);
 
-  const handleClose = (submit: boolean) => {
+  const handleClose = (submitForm: boolean) => {
     vehicleInfoContext.toggleOpen();
-    console.log("handleClose ");
-    if(submit) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
-    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free);
+    console.log('handleClose ');
+    if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
+    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free); // ToDo: Currently vehicle changes position even if booking was cancelled
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -67,21 +67,21 @@ export default function VehicleInfoFormDialog() {
     handleClose(true);
 
     /* create new Booking */
-    const createBookingRequest = await fetch("/api/booking", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const createBookingRequest = await fetch('/api/booking', {
       body: JSON.stringify({
-        startDate: new Date().toString(),
-        paymentStatus: "not payed",
+        paymentStatus: 'not payed',
         price: 1,
+        startDate: new Date().toString(),
+        userId: 1 /* must be changed later */,
         vehicleId: vehicle?.vehicleId,
-        userId: 1     /* must be changed later */
       }),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
     });
     if (createBookingRequest.status === 200) {
-      console.log("booking created");
-    }else {
-      console.log("error by creating new booking")
+      console.log('booking created');
+    } else {
+      console.log('error by creating new booking');
     }
 
     setBookedVehicle(vehicleInfoContext.vehicleId);
@@ -90,24 +90,42 @@ export default function VehicleInfoFormDialog() {
 
   return (
     <div>
-      <Dialog  open={vehicleInfoContext.open} onClose={() => handleClose(false)} aria-labelledby="form-dialog-vehicleInfo">
-        <DialogTitle style={{ textAlign: "center" }} id="form-dialog-vehicleInfo">{`${vehicle?.licencePlate}`}</DialogTitle>
+      <Dialog
+        open={vehicleInfoContext.open}
+        onClose={() => handleClose(false)}
+        aria-labelledby="form-dialog-vehicleInfo"
+      >
+        <DialogTitle
+          style={{ textAlign: 'center' }}
+          id="form-dialog-vehicleInfo"
+        >{`${vehicle?.licencePlate}`}</DialogTitle>
         <form onSubmit={onSubmitForm}>
           <Section>
-            <Box className={classes.modal} mt={1}> Batterylevel: {vehicle?.batteryLevel}%</Box>
-            <Box className={classes.modal} mt={1}> Type: {vehicle?.vehicleType.type}</Box>
+            <Box className={classes.modal} mt={1}>
+              {' '}
+              Batterylevel: {vehicle?.batteryLevel}%
+            </Box>
+            <Box className={classes.modal} mt={1}>
+              {' '}
+              Type: {vehicle?.vehicleType.type}
+            </Box>
           </Section>
           <Divider />
-          {bookedVehicle != -1 ? <Chip className={classes.modal}
-            label="You already booked a vehicle!"
-            size="small"
-            avatar={<WarningIcon style={{ fill: 'white' }} />}
-            style={{ color: 'white', backgroundColor: 'red' }}
-          /> : ""}
+          {bookedVehicle !== -1 ? (
+            <Chip
+              className={classes.modal}
+              label="You already booked a vehicle!"
+              size="small"
+              avatar={<WarningIcon style={{ fill: 'white' }} />}
+              style={{ color: 'white', backgroundColor: 'red' }}
+            />
+          ) : (
+            ''
+          )}
           <DialogActions>
-            <Button type="submit" disabled={bookedVehicle != -1} color="primary">
+            <Button type="submit" disabled={bookedVehicle !== -1} color="primary">
               BOOK NOW!
-          </Button>
+            </Button>
           </DialogActions>
         </form>
       </Dialog>
