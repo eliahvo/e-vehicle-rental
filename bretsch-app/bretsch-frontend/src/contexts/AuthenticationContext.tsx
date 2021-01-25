@@ -12,7 +12,12 @@ export type JWTTokenData = {
 export type RegisterOptions = {
   email: string;
   password: string;
-  name: string;
+  first_name: string;
+  last_name: string;
+  birth_date: string;
+  preferred_payment: string;
+  street_plus_number: string;
+  city: string;
 };
 
 export type LoginOptions = {
@@ -24,6 +29,7 @@ export type AuthContext = {
   token: string | null;
   actions: {
     login: (options: LoginOptions) => Promise<void>;
+    register: (options: RegisterOptions) => Promise<void>;
     getTokenData: () => JWTTokenData | null;
     logout: () => void;
   };
@@ -33,6 +39,7 @@ export const initialAuthContext = {
   token: null,
   actions: {
     login: async () => {},
+    register: async () => {},
     getTokenData: () => null,
     logout: () => {},
   },
@@ -89,6 +96,6 @@ export const AuthProvider: React.FC = ({ children }) => {
     setToken('');
   };
   return (
-    <authContext.Provider value={{ token, actions: { login, getTokenData, logout } }}>{children}</authContext.Provider>
+    <authContext.Provider value={{ token, actions: { login, register, getTokenData, logout } }}>{children}</authContext.Provider>
   );
 };
