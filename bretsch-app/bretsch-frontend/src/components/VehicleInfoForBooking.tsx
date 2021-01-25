@@ -80,8 +80,30 @@ export default function vehicleInfoFormDialog() {
     });
     if (createBookingRequest.status === 200) {
       console.log('booking created');
+      const createBookingJSON = await createBookingRequest.json();
+      try {
+        const bookingId = createBookingJSON['data']['bookingId'];
+        const updateUserRequest = await fetch('/api/user/1', {
+          /* 1 must be replaced with actual logged in userid */
+          body: JSON.stringify({
+            actualBookingId: bookingId,
+          }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'PATCH',
+        });
+        if (updateUserRequest.status === 200) {
+          console.log('added actualBooking');
+        } else {
+          console.log('error by updating user/ adding actualBooking');
+          return;
+        }
+      } catch (error) {
+        console.log('error by extracting bookingId');
+        return;
+      }
     } else {
       console.log('error by creating new booking');
+      return;
     }
 
     setBookedVehicle(vehicleInfoContext.vehicleId);

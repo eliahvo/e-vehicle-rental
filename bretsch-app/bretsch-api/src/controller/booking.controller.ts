@@ -19,23 +19,13 @@ import { User } from "../entity/User.entity";
  * @param {Response} res Response
  */
 export const createBooking = async (req: Request, res: Response) => {
-  const {
-    startDate,
-    paymentStatus,
-    vehicleId,
-    userId,
-  } = req.body;
+  const { startDate, paymentStatus, vehicleId, userId } = req.body;
   const booking = new Booking();
   const bookingRepository = await getRepository(Booking);
   const userRepository = await getRepository(User);
   const vehicleRepository = await getRepository(Vehicle);
 
-  if (
-    !startDate ||
-    !paymentStatus ||
-    !vehicleId ||
-    !userId
-  ) {
+  if (!startDate || !paymentStatus || !vehicleId || !userId) {
     res.status(400).send({ status: "Error: Parameter missing!" });
     return;
   }
@@ -49,7 +39,7 @@ export const createBooking = async (req: Request, res: Response) => {
     });
     booking.user = foundUser;
   } catch (error) {
-    res.status(404).send({ status: 'Error: ' + error, });
+    res.status(404).send({ status: "Error: " + error });
     return;
   }
   try {
@@ -58,7 +48,7 @@ export const createBooking = async (req: Request, res: Response) => {
     });
     booking.vehicle = foundVehicle;
   } catch (error) {
-    res.status(404).send({ status: 'Error: ' + error, });
+    res.status(404).send({ status: "Error: " + error });
     return;
   }
   const createdBooking = await bookingRepository.save(booking);
@@ -83,7 +73,7 @@ export const deleteBooking = async (req: Request, res: Response) => {
     await bookingRepository.remove(foundBooking);
     res.send({});
   } catch (error) {
-    res.status(404).send({ status: 'Error: ' + error, });
+    res.status(404).send({ status: "Error: " + error });
   }
 };
 
@@ -112,21 +102,21 @@ export const getAllBookings = async (_: Request, res: Response) => {
  * @param {Response} res Response
  */
 export const getSpecificBooking = async (req: Request, res: Response) => {
-
   const bookingId = req.params.bookingId;
   const bookingRepository = getRepository(Booking);
 
   try {
     const foundBooking = await bookingRepository.findOneOrFail({
-      relations: ['vehicle', 'user'],
+      relations: ["vehicle", "user", "vehicle.vehicleType"],
       where: { bookingId: bookingId },
     });
     res.status(200).send({
-       data: foundBooking, 
+      data: foundBooking,
     });
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error, });
+      status: "Error: " + error,
+    });
   }
 };
 
@@ -161,7 +151,7 @@ export const updateBooking = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
 };
