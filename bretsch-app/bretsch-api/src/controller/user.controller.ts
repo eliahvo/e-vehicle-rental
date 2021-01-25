@@ -256,12 +256,16 @@ export const updateUser = async (req: Request, res: Response) => {
     user.city = city;
 
     if (actualBookingId) {
-      const bookingRepository = getRepository(Booking);
+      if (actualBookingId == -1) {
+        user.actualBooking = null;
+      } else {
+        const bookingRepository = getRepository(Booking);
 
-      let actualBooking = await bookingRepository.findOneOrFail(
-        actualBookingId
-      );
-      user.actualBooking = actualBooking;
+        let actualBooking = await bookingRepository.findOneOrFail(
+          actualBookingId
+        );
+        user.actualBooking = actualBooking;
+      }
     }
 
     user = await userRepository.save(user);

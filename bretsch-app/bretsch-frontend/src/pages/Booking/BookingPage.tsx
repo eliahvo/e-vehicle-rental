@@ -32,23 +32,38 @@ export const ButtonStyle = styled.div`
 `;
 
 export const BookingPage = () => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
   const [booking, setBooking] = useState<Booking>();
   const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
 
-  const fetchBookings = async () => {
-    const bookingsRequest = await fetch(`/api/user/1/bookings`, {
+  const fetchBooking = async () => {
+    console.log('fetchBooking');
+    const userRequest = await fetch(`/api/user/1`, {
+      /* 1 must be replaced with actual logged in userId */
       headers: { 'content-type': 'application/json' },
       method: 'GET',
     });
 
-    if (bookingsRequest.status === 200) {
-      const bookingsJSON = await bookingsRequest.json();
-      setBookings(bookingsJSON.data);
+    if (userRequest.status === 200) {
+      const userJSON = await userRequest.json();
+      if (userJSON.data.actualBooking) {
+        console.log('in booking');
+        const bookingRequest = await fetch(`/api/booking/${userJSON.data.actualBooking.bookingId}`, {
+          headers: { 'content-type': 'application/json' },
+          method: 'GET',
+        });
+
+        if (bookingRequest.status === 200) {
+          const bookingJSON = await bookingRequest.json();
+          setBooking(bookingJSON.data);
+        }
+      }
     }
   };
 
   const stopBooking = async () => {
+    {
+      /* updating booking */
+    }
     const bookingPatch = await fetch(`/api/booking/${booking?.bookingId}`, {
       body: JSON.stringify({
         endDate: new Date().toString(),
@@ -60,29 +75,38 @@ export const BookingPage = () => {
     });
 
     if (bookingPatch.status === 200) {
-      fetchBookings();
       setBookedVehicle(-1);
       setVehicleStatus(booking?.vehicle.vehicleId, vehicle_status.Free);
+
+      {
+        /* updating user */
+      }
+      const userPatch = await fetch(`/api/user/1`, {
+        /* 1 must be changed to logged in userId */
+        body: JSON.stringify({
+          actualBookingId: -1,
+        }),
+        headers: { 'content-type': 'application/json' },
+        method: 'PATCH',
+      });
+
+      if (userPatch.status === 200) {
+        setBooking(undefined);
+        fetchBooking();
+      } else {
+        console.log('error by updating user');
+      }
     } else {
       console.log('error by updating booking');
     }
   };
 
   useEffect(() => {
-    fetchBookings();
+    fetchBooking();
   }, []);
 
-  useEffect(() => {
-    setBooking(undefined);
-    for (const b of bookings) {
-      if (b.paymentStatus === 'not payed') {
-        setBooking(b);
-        break;
-      }
-    }
-  }, [bookings]);
-
   if (booking) {
+    console.log(booking);
     return (
       <Layout title="Booking">
         <BookingDiv>
