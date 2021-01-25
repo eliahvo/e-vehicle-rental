@@ -1,10 +1,19 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { Booking } from "./Booking.entity";
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-	userId: number;
+  userId: number;
 
   @Column()
   email: string;
@@ -33,8 +42,12 @@ export class User {
   @Column()
   city: string;
 
-  @OneToMany(() => Booking, booking => booking.user)
+  @OneToMany(() => Booking, (booking) => booking.user)
   bookings: Booking[];
+
+  @OneToOne(() => Booking, (booking) => booking.user)
+  @JoinColumn()
+  actualBooking: Booking;
 
   @CreateDateColumn()
   createdAt: string;
