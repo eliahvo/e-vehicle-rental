@@ -19,7 +19,7 @@ import { LoginContext } from './contexts/LoginContext';
 export const BasePage = () => {
   const { token } = useContext(authContext);
   if (token) {
-    return <Redirect to="/booking" />;
+    return <Redirect to="/dashboard" />;
   } else {
     return <Redirect to="/dashboard" />;
   }
