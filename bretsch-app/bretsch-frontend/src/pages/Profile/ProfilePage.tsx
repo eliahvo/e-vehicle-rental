@@ -101,7 +101,8 @@ export const ProfilePage = () => {
               onChange={fieldDidChange}
               margin="dense"
               name="firstName"
-              label={profile?.firstName}
+              label="First Name"
+              defaultValue={profile?.firstName}
               type="text"
               fullWidth
             />
@@ -113,7 +114,8 @@ export const ProfilePage = () => {
               onChange={fieldDidChange}
               margin="dense"
               name="lastName"
-              label={profile?.lastName}
+              label="Last Name"
+              defaultValue={profile?.lastName}
               type="text"
               fullWidth
             />
@@ -197,7 +199,8 @@ export const ProfilePage = () => {
                   onChange={fieldDidChange}
                   margin="dense"
                   name="email"
-                  label={profile?.email}
+                  label="Email"
+                  defaultValue={profile?.email}
                   type="email"
                   fullWidth
                 />
@@ -216,7 +219,8 @@ export const ProfilePage = () => {
                   onChange={fieldDidChange}
                   margin="dense"
                   name="hashedPassword"
-                  label={profile?.hashedPassword}
+                  label="´Password"
+                  defaultValue={profile?.hashedPassword}
                   type="password"
                   fullWidth
                 />
@@ -271,7 +275,8 @@ export const ProfilePage = () => {
                   onChange={fieldDidChange}
                   margin="dense"
                   name="birthDate"
-                  label={profile?.birthDate}
+                  label="Birthdate"
+                  defaultValue={profile?.birthDate}
                   type="text"
                   fullWidth
                 />
@@ -290,7 +295,8 @@ export const ProfilePage = () => {
                   onChange={fieldDidChange}
                   margin="dense"
                   name="streetPlusNumber"
-                  label={profile?.streetPlusNumber}
+                  label="Adress"
+                  defaultValue={profile?.streetPlusNumber}
                   type="text"
                   fullWidth
                 />
@@ -309,7 +315,8 @@ export const ProfilePage = () => {
                   onChange={fieldDidChange}
                   margin="dense"
                   name="city"
-                  label={profile?.city}
+                  label="City"
+                  defaultValue={profile?.city}
                   type="text"
                   fullWidth
                 />
@@ -364,7 +371,8 @@ export const ProfilePage = () => {
                   onChange={fieldDidChange}
                   margin="dense"
                   name="preferedPayment"
-                  label={profile?.preferedPayment}
+                  label="Prefered Payment"
+                  defaultValue={profile?.preferedPayment}
                   type="text"
                   fullWidth
                 />
