@@ -87,6 +87,8 @@ export const ProfilePage = () => {
     setEditMainSettings(false);
     setEditPersonalSettings(false);
     setEditPaymentSettings(false);
+
+    fetchProfile();
   };
 
   return (
