@@ -17,24 +17,11 @@ import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
 
 export const BasePage = () => {
-  const { token } = useContext(authContext);
-  if (token) {
-    return <Redirect to="/dashboard" />;
-  } else {
-    return <Redirect to="/dashboard" />;
-  }
-};
-
-const UnauthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
-  const { token } = useContext(authContext);
-  if (token === null) {
-    return <Route {...routeProps} />;
-  } else {
-    return <Redirect to="/my-bookings" />;
-  }
+  return <Redirect to="/dashboard" />;
 };
 
 const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
+  const loginContext = useContext(LoginContext);
   const {
     token,
     actions: { getTokenData, logout },
@@ -43,14 +30,14 @@ const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) =
     const tokenData = getTokenData();
     if (tokenData !== null) {
       const { exp } = tokenData;
-      if (parseInt(exp) * 1000 > Date.now()) {
+      if (parseInt(exp, 10) * 1000 > Date.now()) {
         return <Route {...routeProps} />;
       }
       logout();
       return <Redirect to="/" />;
     }
   }
-  alert("To do Login on Booking click");
+  loginContext.toggleOpen();
   return <Redirect to="/" />;
 };
 
@@ -58,6 +45,7 @@ export const App = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [darkModeState, setDarkModeState] = useLocalStorage('App.darkModeState', true);
   const [vehicleData, setVehicleData] = useState<Vehicle[]>([]);
+  const [openLogin, setOpenLogin] = React.useState(false);
 
   const theme = React.useMemo(
     () =>
@@ -104,6 +92,15 @@ export const App = () => {
     setDarkModeState(!darkModeState);
   };
 
+  const toggleOpenState = () => {
+    setOpenLogin(!openLogin);
+  };
+
+  const loginContext = {
+    open: openLogin,
+    toggleOpen: toggleOpenState,
+  };
+
   const context = {
     darkMode: darkModeState,
     reloadAll: loadAll,
@@ -117,20 +114,21 @@ export const App = () => {
       <AuthProvider>
         <CssBaseline />
         <AppContext.Provider value={context}>
-          <BrowserRouter>
-            <Switch>
-              <Route exact path="/dashboard" component={DashboardPage} />
-              <AuthenticatedRoute exact path="/booking" component={BookingPage} />
-              <Route exact path="/prices" component={PricePage} />
-              <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
-              <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
-              <AuthenticatedRoute exact path="/settings" component={SettingPage} />
-              <Route path="/" component={BasePage} />
-            </Switch>
-          </BrowserRouter>
+          <LoginContext.Provider value={loginContext}>
+            <BrowserRouter>
+              <Switch>
+                <Route exact path="/dashboard" component={DashboardPage} />
+                <AuthenticatedRoute exact path="/booking" component={BookingPage} />
+                <Route exact path="/prices" component={PricePage} />
+                <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
+                <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
+                <AuthenticatedRoute exact path="/settings" component={SettingPage} />
+                <Route path="/" component={BasePage} />
+              </Switch>
+            </BrowserRouter>
+          </LoginContext.Provider>
         </AppContext.Provider>
       </AuthProvider>
     </ThemeProvider>
   );
 };
-//<Route exact path="/" component={DashboardPage} />

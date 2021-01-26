@@ -68,11 +68,11 @@ export const AuthProvider: React.FC = ({ children }) => {
   };
 
   const register = async (values: RegisterOptions) => {
-    const registerRequest = await fetch("/api/user", {
-      method: "POST",
+    const registerRequest = await fetch('/api/user', {
+      method: 'POST',
       body: JSON.stringify(values),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
 
@@ -80,10 +80,9 @@ export const AuthProvider: React.FC = ({ children }) => {
       const { data } = await registerRequest.json();
       await login({ email: values.email, password: values.password });
     } else {
-      throw new Error("Error while registering");
+      throw new Error('Error while registering');
     }
   };
-
 
   const getTokenData = () => {
     if (token) {
@@ -96,6 +95,8 @@ export const AuthProvider: React.FC = ({ children }) => {
     setToken('');
   };
   return (
-    <authContext.Provider value={{ token, actions: { login, register, getTokenData, logout } }}>{children}</authContext.Provider>
+    <authContext.Provider value={{ token, actions: { login, register, getTokenData, logout } }}>
+      {children}
+    </authContext.Provider>
   );
 };
