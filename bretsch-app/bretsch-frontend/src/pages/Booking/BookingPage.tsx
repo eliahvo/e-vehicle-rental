@@ -1,10 +1,11 @@
 import { Layout } from '../../components/Layout';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
 import { setVehicleStatus } from '../../util/RequestHelper';
+import { authContext } from '../../contexts/AuthenticationContext';
 
 export const BookingDiv = styled.div`
   margin: 5rem 5rem 10rem 10rem;
@@ -34,10 +35,13 @@ export const ButtonStyle = styled.div`
 export const BookingPage = () => {
   const [booking, setBooking] = useState<Booking>();
   const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
+  const {
+    actions: { getTokenData },
+  } = useContext(authContext);
 
   const fetchBooking = async () => {
     console.log('fetchBooking');
-    const userRequest = await fetch(`/api/user/1`, {
+    const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
       /* 1 must be replaced with actual logged in userId */
       headers: { 'content-type': 'application/json' },
       method: 'GET',
@@ -81,7 +85,7 @@ export const BookingPage = () => {
       {
         /* updating user */
       }
-      const userPatch = await fetch(`/api/user/1`, {
+      const userPatch = await fetch(`/api/user/${getTokenData()?.id}`, {
         /* 1 must be changed to logged in userId */
         body: JSON.stringify({
           actualBookingId: -1,

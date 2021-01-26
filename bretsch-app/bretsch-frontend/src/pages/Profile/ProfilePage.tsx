@@ -1,6 +1,6 @@
 // tslint:disable: no-submodule-imports
 import { Layout } from '../../components/Layout';
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
 import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
 import styled from 'styled-components';
 import { User } from '../../util/EntityInterfaces';
@@ -10,6 +10,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CheckIcon from '@material-ui/icons/Check';
 import { useSnackbar } from 'notistack';
+import { authContext } from '../../contexts/AuthenticationContext';
 
 const useStyles = makeStyles((theme) => ({
   headings: {
@@ -43,9 +44,12 @@ export const ProfilePage = () => {
   const [editMainSettings, setEditMainSettings] = React.useState(false);
   const [editPersonalSettings, setEditPersonalSettings] = React.useState(false);
   const [editPaymentSettings, setEditPaymentSettings] = React.useState(false);
+  const {
+    actions: { getTokenData },
+  } = useContext(authContext);
 
   const fetchProfile = async () => {
-    const profileRequest = await fetch(`/api/user/1`, {
+    const profileRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
       headers: { 'content-type': 'application/json' },
       method: 'GET',
     });
@@ -88,7 +92,7 @@ export const ProfilePage = () => {
 
   const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await fetch(`/api/user/1`, {
+    await fetch(`/api/user/${getTokenData()?.id}`, {
       body: JSON.stringify({
         ...values,
       }),
