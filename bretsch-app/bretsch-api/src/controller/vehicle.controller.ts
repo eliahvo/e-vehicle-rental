@@ -17,16 +17,23 @@ enum vehicle_status {
  * Expected as a parameter: ---
  * Expected in the body:licencePlate,
  *                      status,
- *                      positionLongitude,
- *                      positionLatitude,
+ *                      positionLongitude, (optional)
+ *                      positionLatitude, (optional)
  *                      batteryLevel,
  *                      vehicleType
  * @param {Request} req Request
  * @param {Response} res Response
  */
 export const createVehicle = async (req: Request, res: Response) => {
-  const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
-  if (!licencePlate || !status || !batteryLevel || !vehicleType) {
+  const {
+    licencePlate,
+    status,
+    positionLongitude,
+    positionLatitude,
+    batteryLevel,
+    vehicleType,
+  } = req.body;
+  if ( !status || !batteryLevel || !vehicleType) {
     res.status(400).send({
       status: 'Error: Missing parameter!',
     });
@@ -42,7 +49,27 @@ export const createVehicle = async (req: Request, res: Response) => {
     });
     return;
   }
-  vehicle.licencePlate = licencePlate;
+  if (!licencePlate) {
+    try {
+      const vehicleRep = getRepository(Vehicle);
+      const vehicles = await vehicleRep.find({
+      relations: ['bookings', 'vehicleType'],
+  });
+    const lastvehicle = vehicles.pop();
+    const licenceNumber = lastvehicle.vehicleId + 1;
+    const generatedLicencePlate = "DA-BR-" + licenceNumber;
+    vehicle.licencePlate = generatedLicencePlate;
+    } catch (error) {
+      
+    }
+    
+    
+    
+  }
+  else{
+    vehicle.licencePlate = licencePlate;
+  }
+  
   const positions = randomLocationGenerate();
   // tslint:disable-next-line:prefer-conditional-expression
   if (!positionLongitude) {
@@ -112,7 +139,7 @@ export const getAllBookingsByVehicleId = async (req: Request, res: Response) => 
     const vehicle = await vehicleRep.findOneOrFail(vehicleId, {
       relations: ['bookings'],
     });
-    res.send({
+    res.status(200).send({
       data: vehicle.bookings,
     });
   } catch (e) {

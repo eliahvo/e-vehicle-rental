@@ -2,18 +2,19 @@ entity: User
 items:
   User1:
     email: user1@bretsch.eu
-    hashedPassword: bretsch1
+    hashedPassword: $2b$10$gWYo9in8xBDH0IBhlGmHlO8k6FQ27ltzME/dHPbIzHftuybiX30GC
     userRole: admin
-    firstName: Ricardo
-    lastName: Dr. Mundo
+    firstName: user1
+    lastName: bretsch1
     birthDate: 10.10.10
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
+    actualBooking: null
 
   User2:
     email: user2@bretsch.eu
-    hashedPassword: bretsch2
+    hashedPassword: $2b$10$ezgvxVBevnWtKO5YJt8wjexQEs5TtDnuQGgI4V4MQRpyeavxqsm5G
     userRole: normal user
     firstName: user2
     lastName: bretsch2
@@ -21,10 +22,11 @@ items:
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
+    actualBooking: null
 
   User3:
     email: user3@bretsch.eu
-    hashedPassword: bretsch3
+    hashedPassword: $2b$10$FubzMT4kvfbNY8EjD/4.yOlliQ/IJl.Y0ODLSo6yXFnQrbwdRHRTC
     userRole: developer
     firstName: user3
     lastName: bretsch
@@ -32,3 +34,4 @@ items:
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
+    actualBooking: null

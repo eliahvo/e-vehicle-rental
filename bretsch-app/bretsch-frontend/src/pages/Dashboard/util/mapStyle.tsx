@@ -43,8 +43,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'administrative',
         elementType: 'geometry',
+        featureType: 'administrative',
         stylers: [
           {
             color: '#757575',
@@ -52,8 +52,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'administrative.country',
         elementType: 'labels.text.fill',
+        featureType: 'administrative.country',
         stylers: [
           {
             color: '#9e9e9e',
@@ -69,8 +69,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'administrative.locality',
         elementType: 'labels.text.fill',
+        featureType: 'administrative.locality',
         stylers: [
           {
             color: '#bdbdbd',
@@ -78,8 +78,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'poi',
         elementType: 'labels.text.fill',
+        featureType: 'poi',
         stylers: [
           {
             color: '#757575',
@@ -87,8 +87,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'poi.park',
         elementType: 'geometry',
+        featureType: 'poi.park',
         stylers: [
           {
             color: '#181818',
@@ -96,8 +96,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'poi.park',
         elementType: 'labels.text.fill',
+        featureType: 'poi.park',
         stylers: [
           {
             color: '#616161',
@@ -105,8 +105,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'poi.park',
         elementType: 'labels.text.stroke',
+        featureType: 'poi.park',
         stylers: [
           {
             color: '#1b1b1b',
@@ -114,8 +114,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'road',
         elementType: 'geometry.fill',
+        featureType: 'road',
         stylers: [
           {
             color: '#2c2c2c',
@@ -123,8 +123,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'road',
         elementType: 'labels.text.fill',
+        featureType: 'road',
         stylers: [
           {
             color: '#8a8a8a',
@@ -132,8 +132,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'road.arterial',
         elementType: 'geometry',
+        featureType: 'road.arterial',
         stylers: [
           {
             color: '#373737',
@@ -141,8 +141,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'road.highway',
         elementType: 'geometry',
+        featureType: 'road.highway',
         stylers: [
           {
             color: '#3c3c3c',
@@ -150,8 +150,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'road.highway.controlled_access',
         elementType: 'geometry',
+        featureType: 'road.highway.controlled_access',
         stylers: [
           {
             color: '#4e4e4e',
@@ -159,8 +159,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'road.local',
         elementType: 'labels.text.fill',
+        featureType: 'road.local',
         stylers: [
           {
             color: '#616161',
@@ -168,8 +168,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'transit',
         elementType: 'labels.text.fill',
+        featureType: 'transit',
         stylers: [
           {
             color: '#757575',
@@ -177,8 +177,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'water',
         elementType: 'geometry',
+        featureType: 'water',
         stylers: [
           {
             color: '#000000',
@@ -186,8 +186,8 @@ export const useMapStyle = (): (
         ],
       },
       {
-        featureType: 'water',
         elementType: 'labels.text.fill',
+        featureType: 'water',
         stylers: [
           {
             color: '#3d3d3d',
@@ -230,8 +230,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'administrative.land_parcel',
       elementType: 'labels.text.fill',
+      featureType: 'administrative.land_parcel',
       stylers: [
         {
           color: '#bdbdbd',
@@ -239,8 +239,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'poi',
       elementType: 'geometry',
+      featureType: 'poi',
       stylers: [
         {
           color: '#eeeeee',
@@ -248,8 +248,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'poi',
       elementType: 'labels.text.fill',
+      featureType: 'poi',
       stylers: [
         {
           color: '#757575',
@@ -257,8 +257,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'poi.park',
       elementType: 'geometry',
+      featureType: 'poi.park',
       stylers: [
         {
           color: '#e5e5e5',
@@ -266,8 +266,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'poi.park',
       elementType: 'labels.text.fill',
+      featureType: 'poi.park',
       stylers: [
         {
           color: '#9e9e9e',
@@ -275,8 +275,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'road',
       elementType: 'geometry',
+      featureType: 'road',
       stylers: [
         {
           color: '#ffffff',
@@ -284,8 +284,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'road.arterial',
       elementType: 'labels.text.fill',
+      featureType: 'road.arterial',
       stylers: [
         {
           color: '#757575',
@@ -293,8 +293,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'road.highway',
       elementType: 'geometry',
+      featureType: 'road.highway',
       stylers: [
         {
           color: '#dadada',
@@ -302,8 +302,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'road.highway',
       elementType: 'labels.text.fill',
+      featureType: 'road.highway',
       stylers: [
         {
           color: '#616161',
@@ -311,8 +311,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'road.local',
       elementType: 'labels.text.fill',
+      featureType: 'road.local',
       stylers: [
         {
           color: '#9e9e9e',
@@ -320,8 +320,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'transit.line',
       elementType: 'geometry',
+      featureType: 'transit.line',
       stylers: [
         {
           color: '#e5e5e5',
@@ -329,8 +329,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'transit.station',
       elementType: 'geometry',
+      featureType: 'transit.station',
       stylers: [
         {
           color: '#eeeeee',
@@ -338,8 +338,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'water',
       elementType: 'geometry',
+      featureType: 'water',
       stylers: [
         {
           color: '#c9c9c9',
@@ -347,8 +347,8 @@ export const useMapStyle = (): (
       ],
     },
     {
-      featureType: 'water',
       elementType: 'labels.text.fill',
+      featureType: 'water',
       stylers: [
         {
           color: '#9e9e9e',

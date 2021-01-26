@@ -1,13 +1,17 @@
 import { Layout } from '../../components/Layout';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Booking } from '../../util/EntityInterfaces';
 import { UserBookingItem } from './components/UserBookingsList';
+import { authContext } from '../../contexts/AuthenticationContext';
 
 export const MyBookingPage = () => {
   const [userBookings, setUserBookings] = React.useState<Booking[]>([]);
+  const {
+    actions: { getTokenData },
+  } = useContext(authContext);
 
   const fetchUserBookings = async () => {
-    const userBookingsRequest = await fetch(`api/user/1/bookings`, {
+    const userBookingsRequest = await fetch(`api/user/${getTokenData()?.id}/bookings`, {
       headers: { 'content-type': 'application/json' },
       method: 'GET',
     });

@@ -1,7 +1,6 @@
+// tslint:disable: no-submodule-imports
 import { Booking } from '../../../util/EntityInterfaces';
-import styled from 'styled-components/macro';
 import React from 'react';
-import { Layout } from '../../../components/Layout';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -9,15 +8,15 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
+  paper: {
+    margin: `${theme.spacing(1)}px auto`,
+    maxWidth: 400,
+    padding: theme.spacing(2),
+  },
   root: {
     flexGrow: 1,
     overflow: 'hidden',
     padding: theme.spacing(0, 3),
-  },
-  paper: {
-    maxWidth: 400,
-    margin: `${theme.spacing(1)}px auto`,
-    padding: theme.spacing(2),
   },
 }));
 
@@ -27,9 +26,9 @@ export interface UserBookingProps {
 
 export const UserBookingItem: React.FC<UserBookingProps> = ({ booking }) => {
   const classes = useStyles();
-  const { bookingId, createdAt, updatedAt, startDate, endDate, paymentStatus, price, vehicle } = booking;
-    const start = new Date(startDate).toLocaleString();
-    const end = new Date(endDate).toLocaleString();
+  const { startDate, endDate, price, vehicle } = booking;
+  const start = new Date(startDate).toLocaleString();
+  const end = new Date(endDate).toLocaleString();
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>

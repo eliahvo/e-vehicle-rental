@@ -24,7 +24,7 @@ describe('Tests for the User class', () => {
 			.post('/api/user')
 			.send({
 				email: 'userTest@bretsch.eu',
-                hashedPassword: 'bretschTest',
+                password: 'bretschTest',
                 userRole: 'admin',
                 firstName: 'user Test',
                 lastName: 'bretsch Test',

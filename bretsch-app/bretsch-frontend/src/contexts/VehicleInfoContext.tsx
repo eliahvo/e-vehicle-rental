@@ -1,7 +1,8 @@
-import React from "react";
+import React from 'react';
 
 export const VehicleInfoContext = React.createContext({
-  toggleOpen: () => {},
   open: false,
+  // tslint:disable-next-line: no-empty
+  toggleOpen: () => {},
   vehicleId: -1,
 });
