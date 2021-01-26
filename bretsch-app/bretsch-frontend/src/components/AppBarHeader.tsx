@@ -33,6 +33,7 @@ import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import LoginFormDialog from './Login';
 import { LoginContext } from '../contexts/LoginContext';
 import { authContext } from '../contexts/AuthenticationContext';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 
 const drawerWidth = 240;
 
@@ -316,9 +317,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
               token ? logout() : loginContext.toggleOpen();
             }}
           >
-            <ListItemIcon>
-              <ExitToAppIcon />
-            </ListItemIcon>
+            <ListItemIcon>{token ? <ExitToAppIcon /> : <VpnKeyIcon />}</ListItemIcon>
             <ListItemText primary={token ? `Logout` : `Login`} />
           </ListItem>
         </List>

@@ -68,7 +68,8 @@ export const ProfilePage = () => {
     city: profile?.city,
     email: profile?.email,
     firstName: profile?.firstName,
-    hashedPassword: profile?.hashedPassword,
+    password: '',
+    passwordShadow: '',
     lastName: profile?.lastName,
     preferedPayment: profile?.preferedPayment,
     streetPlusNumber: profile?.streetPlusNumber,
@@ -76,6 +77,13 @@ export const ProfilePage = () => {
 
   const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+    if (e.target.name === 'passwordShadow') {
+      if (values.password === e.target.value) {
+        e.target.setCustomValidity('');
+      } else {
+        e.target.setCustomValidity("Passwords don't match!");
+      }
+    }
   };
 
   const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
@@ -90,12 +98,11 @@ export const ProfilePage = () => {
     enqueueSnackbar(`Saved changes!`, {
       variant: 'success',
     });
-
     setEditNameSettings(false);
     setEditMainSettings(false);
+    setValues({ ...values, ['password']: '' });
     setEditPersonalSettings(false);
     setEditPaymentSettings(false);
-
     fetchProfile();
   };
 
@@ -113,7 +120,6 @@ export const ProfilePage = () => {
                 label="First Name"
                 defaultValue={profile?.firstName}
                 type="text"
-                fullWidth
                 required
               />
             ) : (
@@ -127,7 +133,6 @@ export const ProfilePage = () => {
                 label="Last Name"
                 defaultValue={profile?.lastName}
                 type="text"
-                fullWidth
                 required
               />
             ) : (
@@ -136,13 +141,15 @@ export const ProfilePage = () => {
 
             {editNameSettings ? (
               <>
-                <CancelIcon
-                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
-                  className={classes.headings}
-                  onClick={() => {
-                    setEditNameSettings(false);
-                  }}
-                />
+                <IconButton>
+                  <CancelIcon
+                    style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                    className={classes.headings}
+                    onClick={() => {
+                      setEditNameSettings(false);
+                    }}
+                  />
+                </IconButton>
                 <IconButton type="submit">
                   <CheckIcon
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
@@ -152,13 +159,17 @@ export const ProfilePage = () => {
                 </IconButton>
               </>
             ) : (
-              <EditIcon
-                style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
-                className={classes.headings}
-                onClick={() => {
-                  setEditNameSettings(true);
-                }}
-              />
+              <IconButton
+                disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
+              >
+                <EditIcon
+                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                  className={classes.headings}
+                  onClick={() => {
+                    setEditNameSettings(true);
+                  }}
+                />
+              </IconButton>
             )}
           </ProfileName>
           <Box mt={2}>
@@ -169,13 +180,16 @@ export const ProfilePage = () => {
             Main Settings
             {editMainSettings ? (
               <>
-                <CancelIcon
-                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
-                  className={classes.headings}
-                  onClick={() => {
-                    setEditMainSettings(false);
-                  }}
-                />
+                <IconButton>
+                  <CancelIcon
+                    style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                    className={classes.headings}
+                    onClick={() => {
+                      setEditMainSettings(false);
+                      setValues({ ...values, ['password']: '' });
+                    }}
+                  />
+                </IconButton>
                 <IconButton type="submit">
                   <CheckIcon
                     type="submit"
@@ -185,13 +199,17 @@ export const ProfilePage = () => {
                 </IconButton>
               </>
             ) : (
-              <EditIcon
-                style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
-                className={classes.headings}
-                onClick={() => {
-                  setEditMainSettings(true);
-                }}
-              />
+              <IconButton
+                disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
+              >
+                <EditIcon
+                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                  className={classes.headings}
+                  onClick={() => {
+                    setEditMainSettings(true);
+                  }}
+                />
+              </IconButton>
             )}
             <Box mt={1} mb={1}>
               <Divider />
@@ -230,15 +248,26 @@ export const ProfilePage = () => {
                   <TextField
                     onChange={fieldDidChange}
                     margin="dense"
-                    name="hashedPassword"
-                    label="´Password"
-                    defaultValue={profile?.hashedPassword}
+                    name="password"
+                    label="Password"
+                    type="password"
+                    fullWidth
+                  />
+                ) : (
+                  '**********'
+                )}
+                {values.password ? (
+                  <TextField
+                    onChange={fieldDidChange}
+                    margin="dense"
+                    name="passwordShadow"
+                    label="Confirm Password"
                     type="password"
                     fullWidth
                     required
                   />
                 ) : (
-                  '**********'
+                  ''
                 )}
               </Grid>
             </Grid>
@@ -248,13 +277,16 @@ export const ProfilePage = () => {
               Personal Settings
               {editPersonalSettings ? (
                 <>
-                  <CancelIcon
-                    style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
-                    className={classes.headings}
-                    onClick={() => {
-                      setEditPersonalSettings(false);
-                    }}
-                  />
+                  <IconButton>
+                    <CancelIcon
+                      style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                      className={classes.headings}
+                      onClick={() => {
+                        setEditPersonalSettings(false);
+                      }}
+                    />
+                  </IconButton>
+
                   <IconButton type="submit">
                     <CheckIcon
                       type="submit"
@@ -264,13 +296,17 @@ export const ProfilePage = () => {
                   </IconButton>
                 </>
               ) : (
-                <EditIcon
-                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
-                  className={classes.headings}
-                  onClick={() => {
-                    setEditPersonalSettings(true);
-                  }}
-                />
+                <IconButton
+                  disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
+                >
+                  <EditIcon
+                    style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                    className={classes.headings}
+                    onClick={() => {
+                      setEditPersonalSettings(true);
+                    }}
+                  />
+                </IconButton>
               )}
               <Box mt={1} mb={1}>
                 <Divider />
@@ -346,13 +382,15 @@ export const ProfilePage = () => {
               Payment Settings
               {editPaymentSettings ? (
                 <>
-                  <CancelIcon
-                    style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
-                    className={classes.headings}
-                    onClick={() => {
-                      setEditPaymentSettings(false);
-                    }}
-                  />
+                  <IconButton>
+                    <CancelIcon
+                      style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                      className={classes.headings}
+                      onClick={() => {
+                        setEditPaymentSettings(false);
+                      }}
+                    />
+                  </IconButton>
                   <IconButton type="submit">
                     <CheckIcon
                       type="submit"
@@ -362,13 +400,17 @@ export const ProfilePage = () => {
                   </IconButton>
                 </>
               ) : (
-                <EditIcon
-                  style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
-                  className={classes.headings}
-                  onClick={() => {
-                    setEditPaymentSettings(true);
-                  }}
-                />
+                <IconButton
+                  disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
+                >
+                  <EditIcon
+                    style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
+                    className={classes.headings}
+                    onClick={() => {
+                      setEditPaymentSettings(true);
+                    }}
+                  />
+                </IconButton>
               )}
               <Box mt={1} mb={1}>
                 <Divider />
