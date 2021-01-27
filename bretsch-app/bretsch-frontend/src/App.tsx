@@ -15,6 +15,7 @@ import { MyBookingPage } from './pages/MyBookings/MyBookingPage';
 import { ProfilePage } from './pages/Profile/ProfilePage';
 import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
+import { AdminPage } from './pages/Admin/AdminPage';
 import RegisterModal from './components/Register';
 
 export const BasePage = () => {
@@ -118,6 +119,7 @@ export const App = () => {
           <LoginContext.Provider value={loginContext}>
             <BrowserRouter>
               <Switch>
+                <Route path="/admin" component={AdminPage} />
                 <Route exact path="/dashboard" component={DashboardPage} />
                 <AuthenticatedRoute exact path="/booking" component={BookingPage} />
                 <Route exact path="/prices" component={PricePage} />
@@ -125,11 +127,25 @@ export const App = () => {
                 <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
                 <AuthenticatedRoute exact path="/settings" component={SettingPage} />
                 <Route path="/" component={BasePage} />
+
               </Switch>
             </BrowserRouter>
           </LoginContext.Provider>
         </AppContext.Provider>
       </AuthProvider>
+      <CssBaseline />
+      <AppContext.Provider value={context}>
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/" component={DashboardPage} />
+            <Route exact path="/booking" component={BookingPage} />
+            <Route exact path="/prices" component={PricePage} />
+            <Route exact path="/profile" component={ProfilePage} />
+            <Route exact path="/my-bookings" component={MyBookingPage} />
+            <Route exact path="/settings" component={SettingPage} />
+          </Switch>
+        </BrowserRouter>
+      </AppContext.Provider>
     </ThemeProvider>
   );
 };
