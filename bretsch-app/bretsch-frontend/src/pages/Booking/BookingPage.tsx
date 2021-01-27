@@ -34,7 +34,7 @@ export const ButtonStyle = styled.div`
 
 export const BookingPage = () => {
   const [booking, setBooking] = useState<Booking>();
-  const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
+  //const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
   const {
     actions: { getTokenData },
   } = useContext(authContext);
@@ -79,7 +79,7 @@ export const BookingPage = () => {
     });
 
     if (bookingPatch.status === 200) {
-      setBookedVehicle(-1);
+      //setBookedVehicle(-1);
       setVehicleStatus(booking?.vehicle.vehicleId, vehicle_status.Free);
 
       {
