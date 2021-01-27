@@ -127,7 +127,6 @@ export const App = () => {
               <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
               <AuthenticatedRoute exact path="/settings" component={SettingPage} />
               <Route path="/" component={BasePage} />
-              <Route path="/register" component={RegisterModal} />
             </Switch>
           </BrowserRouter>
         </AppContext.Provider>
