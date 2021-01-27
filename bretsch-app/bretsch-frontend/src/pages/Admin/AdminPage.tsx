@@ -2,7 +2,7 @@ import { Layout } from '../../components/Layout';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import styled from 'styled-components';
-import {ColDef, DataGrid, FilterModel} from '@material-ui/data-grid';
+import { ColDef, DataGrid, FilterModel } from '@material-ui/data-grid';
 import { MyProfile } from '../Profile/ProfilePage';
 import { Vehicle } from '../../util/EntityInterfaces';
 
@@ -52,15 +52,13 @@ export const AdminPage = () => {
     vehicleRows.push({
       battery: vehicle.batteryLevel,
       id: vehicle.vehicleId,
-      username: vehicle.licencePlate,
+      license_plate: vehicle.licencePlate,
       status: vehicle.status,
       bookings: vehicle.bookings.length,
       type: vehicle.vehicleType.type,
-      position: vehicle.positionLatitude + '/' + vehicle.positionLongitude,
+      position: vehicle.positionLatitude + ' / ' + vehicle.positionLongitude,
     });
   }
-
-  console.log(vehicleRows);
 
   return (
     <Layout title="Admin">
@@ -71,15 +69,15 @@ export const AdminPage = () => {
             columns={[
               { field: 'id', hide: true },
               {
-                field: 'username',
-                headerName: 'Username',
-                width: 200,
+                field: 'license_plate',
+                headerName: 'License Plate',
+                width: 150,
               },
-              { field: 'status', headerName: 'Status', width: 200 },
+              { field: 'status', headerName: 'Status', width: 150 },
               { field: 'battery', headerName: 'Battery' },
               { field: 'bookings', headerName: 'Number of bookings' },
               { field: 'type', headerName: 'Type' },
-              { field: 'position', headerName: 'Position' },
+              { field: 'position', headerName: 'Position', width: 300},
               { field: 'button', headerName: 'Button' },
             ]}
             rows={vehicleRows}
