@@ -9,12 +9,62 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { RegisterContext } from '../contexts/RegisterContext';
 import { Divider } from '@material-ui/core';
 import { authContext, RegisterOptions } from '../contexts/AuthenticationContext';
+import { makeStyles } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 
 
 
+const PaymentMethod = [
+  {
+    value: 'Paypal',
+    label: 'Paypal',
+  },
+  {
+    value: 'Visa',
+    label: 'Visa',
+  },
+  {
+    value: 'Bitcoin',
+    label: 'Bitcoin',
+  },
+  {
+    value: 'Mastercard',
+    label: 'Mastercard',
+  },
+];
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiTextField-root': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
+}));
+
+const useDateStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
+  },
+}));
 
 export default function RegisterModal() {
+
+  const dateStyle = useDateStyles();
+  const classes = useStyles();
+  const [chosenPayment, setChosenPayment] = React.useState('EUR');
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setChosenPayment(e.target.value);
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
 
 
   const auth = useContext(authContext);
@@ -43,7 +93,15 @@ export default function RegisterModal() {
       e.target.value = '';
     } else {
       setValues({ ...values, [e.target.name]: e.target.value });
+      
     }
+  };
+  
+  const dateFieldChange =  (e: ChangeEvent<HTMLInputElement>) => {
+    
+      setValues({ ...values, [e.target.name]: e.target.value });
+      
+    
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,6 +112,7 @@ export default function RegisterModal() {
   };
 
 
+    
 
 
   return (
@@ -107,27 +166,38 @@ export default function RegisterModal() {
               required
             />
             <TextField
-              autoFocus
+              id="birthDate"
               name="birthDate"
               margin="dense"
-              id="birthDate"
-              label="Birthdate"
-              type="text"
-              fullWidth
-              onChange={fieldDidChange}
+              onChange={dateFieldChange}
               required
-            />
+              fullWidth
+              label="Birthday"
+              type="date"
+              defaultValue="2000-01-01"
+              className={dateStyle.textField}
+              InputLabelProps={{
+                shrink: true,
+        }}
+      />
             <TextField
               autoFocus
               name="preferedPayment"
               margin="dense"
               id="preferedPayment"
-              label="prefered payment"
+              select
+              label="Prefered Payment"
               type="text"
-              fullWidth
-              onChange={fieldDidChange}
-              required
-            />
+              value={chosenPayment}
+              onChange={handleChange}
+              helperText="Please select your favourite payment method"
+            >
+              {PaymentMethod.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+              </MenuItem>
+              ))}
+            </TextField>
         <TextField
               autoFocus
               name="streetPlusNumber"

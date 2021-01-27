@@ -7,11 +7,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { VehicleInfoContext } from '../contexts/VehicleInfoContext';
 import { Box, Chip, Divider, makeStyles } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { Vehicle, vehicle_status } from '../util/EntityInterfaces';
+import { Booking, Vehicle, vehicle_status } from '../util/EntityInterfaces';
 import useLocalStorage from '../util/LocalStorageHook';
 import styled from 'styled-components';
 import WarningIcon from '@material-ui/icons/Warning';
 import { setVehicleStatus } from '../util/RequestHelper';
+import { authContext } from '../contexts/AuthenticationContext';
+import { LoginContext } from '../contexts/LoginContext';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -30,9 +32,13 @@ export const Section = styled.div`
 export default function vehicleInfoFormDialog() {
   const vehicleInfoContext = useContext(VehicleInfoContext);
   const [vehicle, setVehicle] = useState<Vehicle>();
-  const [submit, setSubmit] = useState(false); // ToDo: What is this used for? Necessary? If not, remove
-  const [bookedVehicle, setBookedVehicle] = useLocalStorage('Booking.bookedVehicle', -1);
+  const [actualBooking, setActualBooking] = useState<Booking | null>(null);
+  const loginContext = useContext(LoginContext);
   const history = useHistory();
+  const {
+    token,
+    actions: { getTokenData, logout },
+  } = useContext(authContext);
 
   const classes = useStyles();
 
@@ -48,9 +54,27 @@ export default function vehicleInfoFormDialog() {
     }
   };
 
+  const fetchActualBooking = async () => {
+    console.log('fetchActualBooking');
+    if (getTokenData()?.id) {
+      /* ToDo: check if token is valid */
+      const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
+        headers: { 'Content-Type': 'application/json' },
+        method: 'GET',
+      });
+      if (userRequest.status === 200) {
+        const userJSON = await userRequest.json();
+        setActualBooking(userJSON.data.actualBooking);
+      }
+    }
+  };
+
   useEffect(() => {
     console.log('useEffect');
-    if (vehicleInfoContext.vehicleId !== -1) fetchVehicle();
+    if (vehicleInfoContext.vehicleId !== -1) {
+      fetchVehicle();
+      fetchActualBooking();
+    }
   }, [vehicleInfoContext.vehicleId]);
 
   const handleClose = (submitForm: boolean) => {
@@ -63,51 +87,61 @@ export default function vehicleInfoFormDialog() {
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setSubmit(true);
-    handleClose(true);
+    /* check if user is logged in */
+    if (token !== null) {
+      const tokenData = getTokenData();
+      if (tokenData !== null) {
+        const { exp } = tokenData;
+        if (parseInt(exp, 10) * 1000 > Date.now()) {
+          /* create new Booking */
+          const createBookingRequest = await fetch('/api/booking', {
+            body: JSON.stringify({
+              paymentStatus: 'not payed',
+              price: 1,
+              startDate: new Date().toString(),
+              userId: 1 /* must be changed later */,
+              vehicleId: vehicle?.vehicleId,
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+          });
+          if (createBookingRequest.status === 200) {
+            console.log('booking created');
+            const createBookingJSON = await createBookingRequest.json();
+            try {
+              const bookingId = createBookingJSON['data']['bookingId'];
+              const updateUserRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
+                body: JSON.stringify({
+                  actualBookingId: bookingId,
+                }),
+                headers: { 'Content-Type': 'application/json' },
+                method: 'PATCH',
+              });
+              if (updateUserRequest.status === 200) {
+                console.log('added actualBooking');
+                handleClose(true);
+              } else {
+                console.log('error by updating user/ adding actualBooking');
+                handleClose(false);
+                return;
+              }
+            } catch (error) {
+              console.log('error by extracting bookingId');
+              handleClose(false);
+              return;
+            }
+          } else {
+            console.log('error by creating new booking');
+            handleClose(false);
+            return;
+          }
+          history.push('/booking');
 
-    /* create new Booking */
-    const createBookingRequest = await fetch('/api/booking', {
-      body: JSON.stringify({
-        paymentStatus: 'not payed',
-        price: 1,
-        startDate: new Date().toString(),
-        userId: 1 /* must be changed later */,
-        vehicleId: vehicle?.vehicleId,
-      }),
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
-    });
-    if (createBookingRequest.status === 200) {
-      console.log('booking created');
-      const createBookingJSON = await createBookingRequest.json();
-      try {
-        const bookingId = createBookingJSON['data']['bookingId'];
-        const updateUserRequest = await fetch('/api/user/1', {
-          /* 1 must be replaced with actual logged in userid */
-          body: JSON.stringify({
-            actualBookingId: bookingId,
-          }),
-          headers: { 'Content-Type': 'application/json' },
-          method: 'PATCH',
-        });
-        if (updateUserRequest.status === 200) {
-          console.log('added actualBooking');
-        } else {
-          console.log('error by updating user/ adding actualBooking');
           return;
         }
-      } catch (error) {
-        console.log('error by extracting bookingId');
-        return;
       }
-    } else {
-      console.log('error by creating new booking');
-      return;
     }
-
-    setBookedVehicle(vehicleInfoContext.vehicleId);
-    history.push('/booking');
+    loginContext.toggleOpen();
   };
 
   return (
@@ -133,7 +167,7 @@ export default function vehicleInfoFormDialog() {
             </Box>
           </Section>
           <Divider />
-          {bookedVehicle !== -1 ? (
+          {actualBooking !== null ? (
             <Chip
               className={classes.modal}
               label="You already booked a vehicle!"
@@ -145,7 +179,7 @@ export default function vehicleInfoFormDialog() {
             ''
           )}
           <DialogActions>
-            <Button type="submit" disabled={bookedVehicle !== -1} color="primary">
+            <Button type="submit" disabled={actualBooking !== null} color="primary">
               BOOK NOW!
             </Button>
           </DialogActions>
