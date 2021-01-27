@@ -21,27 +21,9 @@ import { Authentication } from "../middleware/authentication";
  * @param {Response}res Response
  */
 export const registerUser = async (req: Request, res: Response) => {
-  const {
-    email,
-    password,
-    firstName,
-    lastName,
-    birthDate,
-    preferedPayment,
-    streetPlusNumber,
-    city,
-  } = req.body;
+  const { email, password, firstName, lastName, birthDate, preferedPayment, streetPlusNumber, city } = req.body;
   const userRepository = getRepository(User);
-  if (
-    !email ||
-    !password ||
-    !firstName ||
-    !lastName ||
-    !birthDate ||
-    !preferedPayment ||
-    !streetPlusNumber ||
-    !city
-  ) {
+  if (!email || !password || !firstName || !lastName || !birthDate || !preferedPayment || !streetPlusNumber || !city) {
     return res.status(400).send({
       status: "Error: Parameter missing!",
     });
@@ -96,10 +78,7 @@ export const loginUser = async (req: Request, res: Response) => {
     return res.status(401).send({ status: "unauthorized1" });
   }
 
-  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(
-    password,
-    user.hashedPassword
-  );
+  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(password, user.hashedPassword);
   if (!matchingPasswords) {
     return res.status(401).send({ status: "unauthorized2" });
   }
@@ -168,11 +147,7 @@ export const getBookingsByUserId = async (req: Request, res: Response) => {
 
   try {
     const user = await userRepository.findOneOrFail(userId, {
-      relations: [
-        "bookings",
-        "bookings.vehicle",
-        "bookings.vehicle.vehicleType",
-      ],
+      relations: ["bookings", "bookings.vehicle", "bookings.vehicle.vehicleType"],
     });
     const userBookingList = user.bookings;
     res.status(200).send({
@@ -231,7 +206,7 @@ export const updateUser = async (req: Request, res: Response) => {
   const userId = req.params.userId;
   const {
     email,
-    hashedPassword,
+    password,
     firstName,
     lastName,
     birthDate,
@@ -247,7 +222,6 @@ export const updateUser = async (req: Request, res: Response) => {
       relations: ["bookings", "actualBooking"],
     });
     user.email = email;
-    user.hashedPassword = hashedPassword;
     user.firstName = firstName;
     user.lastName = lastName;
     user.birthDate = birthDate;
@@ -256,12 +230,19 @@ export const updateUser = async (req: Request, res: Response) => {
     user.city = city;
 
     if (actualBookingId) {
-      const bookingRepository = getRepository(Booking);
+      if (actualBookingId == -1) {
+        user.actualBooking = null;
+      } else {
+        const bookingRepository = getRepository(Booking);
 
-      let actualBooking = await bookingRepository.findOneOrFail(
-        actualBookingId
-      );
-      user.actualBooking = actualBooking;
+        let actualBooking = await bookingRepository.findOneOrFail(actualBookingId);
+        user.actualBooking = actualBooking;
+      }
+    }
+
+    if (password) {
+      const hashedPassword: string = await Authentication.hashPassword(password);
+      user.hashedPassword = hashedPassword;
     }
 
     user = await userRepository.save(user);

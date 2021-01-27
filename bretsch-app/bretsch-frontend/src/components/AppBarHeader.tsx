@@ -33,6 +33,7 @@ import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import LoginFormDialog from './Login';
 import { LoginContext } from '../contexts/LoginContext';
 import { authContext } from '../contexts/AuthenticationContext';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 
 const drawerWidth = 240;
 
@@ -118,13 +119,12 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
   const classes = useStyles();
   const theme = useTheme();
   const history = useHistory();
-
   const { enqueueSnackbar } = useSnackbar();
   const { reloadAll } = React.useContext(AppContext);
-
+  const loginContext = useContext(LoginContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [navigationDrawer, setNavigationDrawer] = React.useState(false);
-  const [openLogin, setOpenLogin] = React.useState(false);
+
   const {
     token,
     actions: { logout },
@@ -154,15 +154,6 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
   const reloadAllData = () => {
     enqueueSnackbar(`Reloading all data...`, { variant: 'info' });
     reloadAll();
-  };
-
-  const toggleOpenState = () => {
-    setOpenLogin(!openLogin);
-  };
-
-  const loginContext = {
-    open: openLogin,
-    toggleOpen: toggleOpenState,
   };
 
   return (
@@ -234,104 +225,103 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           }),
         }}
       >
-        <LoginContext.Provider value={loginContext}>
-          <div className={classes.toolbar}>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
-          </div>
-          <Divider />
-          {/* ADD REFS TO OTHER SITES BELOW */}
-          <List>
-            <ListItem
-              button
-              onClick={() => {
-                history.push('/');
-              }}
-            >
-              <ListItemIcon>
-                <MapIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Dashboard'} />
-            </ListItem>
-            <ListItem
-              button
-              onClick={() => {
-                history.push('/booking');
-              }}
-            >
-              <ListItemIcon>
-                <ReceiptIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Booking'} />
-            </ListItem>
-            <ListItem
-              button
-              onClick={() => {
-                history.push('/prices');
-              }}
-            >
-              <ListItemIcon>
-                <PaymentIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Prices'} />
-            </ListItem>
-          </List>
-          <Divider />
-          {token?
+        <div className={classes.toolbar}>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
+        </div>
+        <Divider />
+        {/* ADD REFS TO OTHER SITES BELOW */}
+        <List>
+          <ListItem
+            button
+            onClick={() => {
+              history.push('/');
+            }}
+          >
+            <ListItemIcon>
+              <MapIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Dashboard'} />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              history.push('/booking');
+            }}
+          >
+            <ListItemIcon>
+              <ReceiptIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Booking'} />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              history.push('/prices');
+            }}
+          >
+            <ListItemIcon>
+              <PaymentIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Prices'} />
+          </ListItem>
+        </List>
+        <Divider />
+        {token ? (
           <>
-          <List>
-            <ListItem 
-              button
-              onClick={() => {
-                history.push('/profile');
-              }}
-            >
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText primary={'My Profile'} />
-            </ListItem>
-            <ListItem
-              button
-              onClick={() => {
-                history.push('/my-bookings');
-              }}
-            >
-              <ListItemIcon>
-                <TimelineIcon />
-              </ListItemIcon>
-              <ListItemText primary={'My Bookings'} />
-            </ListItem>
-          </List>
-          <Divider /></>
-          : ''}
-          <List>
-            <ListItem
-              button
-              onClick={() => {
-                history.push('/settings');
-              }}
-            >
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Settings'} />
-            </ListItem>
-            <ListItem
-              button
-              onClick={() => {
-                token ? logout() : setOpenLogin(true);
-              }} 
-            >
-              <ListItemIcon>
-                <ExitToAppIcon />
-              </ListItemIcon>
-              <ListItemText primary={token ? `Logout` : `Login`} />
-            </ListItem>
-          </List>
-          <LoginFormDialog />
-        </LoginContext.Provider>
+            <List>
+              <ListItem
+                button
+                onClick={() => {
+                  history.push('/profile');
+                }}
+              >
+                <ListItemIcon>
+                  <AccountCircleIcon />
+                </ListItemIcon>
+                <ListItemText primary={'My Profile'} />
+              </ListItem>
+              <ListItem
+                button
+                onClick={() => {
+                  history.push('/my-bookings');
+                }}
+              >
+                <ListItemIcon>
+                  <TimelineIcon />
+                </ListItemIcon>
+                <ListItemText primary={'My Bookings'} />
+              </ListItem>
+            </List>
+            <Divider />
+          </>
+        ) : (
+          ''
+        )}
+        <List>
+          <ListItem
+            button
+            onClick={() => {
+              history.push('/settings');
+            }}
+          >
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Settings'} />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              token ? logout() : loginContext.toggleOpen();
+            }}
+          >
+            <ListItemIcon>{token ? <ExitToAppIcon /> : <VpnKeyIcon />}</ListItemIcon>
+            <ListItemText primary={token ? `Logout` : `Login`} />
+          </ListItem>
+        </List>
+        <LoginFormDialog />
       </Drawer>
     </>
   );

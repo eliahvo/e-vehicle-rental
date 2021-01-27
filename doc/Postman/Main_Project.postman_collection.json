@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "9887ac7d-c12f-4a24-bbfd-45ff43fda642",
-		"name": "Main_Project",
+		"_postman_id": "06b26da2-6ace-4382-8b80-bc7531e4b1b2",
+		"name": "Main_Project Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -146,7 +146,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n     \"email\": \"123@gmail.com\",\r\n     \"hashedPassword\":  \"User hashedPassword\",\r\n     \"firstName\": \"User firstName\",\r\n     \"lastName\":  \"User lastName\",\r\n     \"birthDate\": \"User birthDate\",\r\n     \"preferedPayment\":  \"User preferedPayment\",\r\n     \"streetPlusNumber\":  \"User streetPlusNumber\",\r\n     \"city\":  \"User city\"\r\n}",
+							"raw": "{\r\n     \"email\": \"123@gmail.com\",\r\n     \"password\":  \"User password\",\r\n     \"firstName\": \"User firstName\",\r\n     \"lastName\":  \"User lastName\",\r\n     \"birthDate\": \"User birthDate\",\r\n     \"preferedPayment\":  \"User preferedPayment\",\r\n     \"streetPlusNumber\":  \"User streetPlusNumber\",\r\n     \"city\":  \"User city\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
