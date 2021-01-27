@@ -118,6 +118,7 @@ export const App = () => {
           <LoginContext.Provider value={loginContext}>
             <BrowserRouter>
               <Switch>
+                <Route path="/admin" component={AdminPage} />
                 <Route exact path="/dashboard" component={DashboardPage} />
                 <AuthenticatedRoute exact path="/booking" component={BookingPage} />
                 <Route exact path="/prices" component={PricePage} />
@@ -125,6 +126,7 @@ export const App = () => {
                 <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
                 <AuthenticatedRoute exact path="/settings" component={SettingPage} />
                 <Route path="/" component={BasePage} />
+
               </Switch>
             </BrowserRouter>
           </LoginContext.Provider>
@@ -140,7 +142,6 @@ export const App = () => {
             <Route exact path="/profile" component={ProfilePage} />
             <Route exact path="/my-bookings" component={MyBookingPage} />
             <Route exact path="/settings" component={SettingPage} />
-            <Route exact path="/admin" component={AdminPage} />
           </Switch>
         </BrowserRouter>
       </AppContext.Provider>

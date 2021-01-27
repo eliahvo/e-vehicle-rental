@@ -1,15 +1,16 @@
 import { Layout } from '../../components/Layout';
-import React from 'react';
-import {makeStyles} from "@material-ui/core";
-import styled from "styled-components";
-import { DataGrid, FilterModel } from '@material-ui/data-grid';
-import {MyProfile} from "../Profile/ProfilePage";
+import React, { useEffect, useState } from 'react';
+import { makeStyles } from '@material-ui/core';
+import styled from 'styled-components';
+import {ColDef, DataGrid, FilterModel} from '@material-ui/data-grid';
+import { MyProfile } from '../Profile/ProfilePage';
+import { Vehicle } from '../../util/EntityInterfaces';
 
 // TODO Object destruction -> concret Table
 const useStyles = makeStyles((theme) => ({
-    headings: {
-        color: theme.palette.primary.main,
-    },
+  headings: {
+    color: theme.palette.primary.main,
+  },
 }));
 
 export const MyAdmin = styled.div`
@@ -17,23 +18,75 @@ export const MyAdmin = styled.div`
 `;
 
 const riceFilterModel: FilterModel = {
-    items: [{ columnField: 'commodity', operatorValue: 'contains', value: 'rice' }],
+  items: [{ columnField: 'commodity', operatorValue: 'contains', value: 'rice' }],
 };
+//
 
-export function BasicToolbarFilteringGrid() {
+/*export function BasicToolbarFilteringGrid() {
     const { data } = ""
-    });
+    });*/
 
 export const AdminPage = () => {
-    const classes = useStyles();
+  const [vehicles, setVehiles] = useState<Vehicle[]>([]);
 
-    return(
+  useEffect(() => {
+    allVehicles();
+  }, []);
+
+  const allVehicles = async () => {
+    const vehicleRequest = await fetch(`/api/vehicle/`, {
+      headers: { 'content-type': 'application/json' },
+      method: 'GET',
+    });
+    if (vehicleRequest.status === 200) {
+      const vehicleJSON = await vehicleRequest.json();
+      setVehiles(vehicleJSON.data);
+    }
+  };
+
+  const classes = useStyles();
+
+  // all Vehicles
+  const vehicleRows: any[] = [];
+  for (const vehicle of vehicles) {
+    vehicleRows.push({
+      battery: vehicle.batteryLevel,
+      id: vehicle.vehicleId,
+      username: vehicle.licencePlate,
+      status: vehicle.status,
+      bookings: vehicle.bookings.length,
+      type: vehicle.vehicleType.type,
+      position: vehicle.positionLatitude + '/' + vehicle.positionLongitude,
+    });
+  }
+
+  console.log(vehicleRows);
+
+  return (
     <Layout title="Admin">
-        <MyAdmin>
-            <div className={classes.headings}>Test</div>
-            <div style={{ height: 400, width: '100%' }}>
-                <DataGrid {...data} filterModel={riceFilterModel} showToolbar />
-            </div>
-        </MyAdmin>
-    </Layout>);
+      <MyAdmin>
+        <div className={classes.headings}>Vehicles</div>
+        <div style={{ height: 400, width: '100%' }}>
+          <DataGrid
+            columns={[
+              { field: 'id', hide: true },
+              {
+                field: 'username',
+                headerName: 'Username',
+                width: 200,
+              },
+              { field: 'status', headerName: 'Status', width: 200 },
+              { field: 'battery', headerName: 'Battery' },
+              { field: 'bookings', headerName: 'Number of bookings' },
+              { field: 'type', headerName: 'Type' },
+              { field: 'position', headerName: 'Position' },
+              { field: 'button', headerName: 'Button' },
+            ]}
+            rows={vehicleRows}
+            disableColumnMenu
+          />
+        </div>
+      </MyAdmin>
+    </Layout>
+  );
 };

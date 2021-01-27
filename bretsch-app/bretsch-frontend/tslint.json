@@ -18,7 +18,7 @@
     "array-type": false,
     "import-name": false,
     "no-unused-declaration": true,
-    "object-literal-sort-keys": [true, "ignore-case", "locale-compare"],
+    "object-literal-sort-keys": [false, "ignore-case", "locale-compare"],
     "jsx-boolean-value": false,
     "jsx-no-lambda": false
   }
