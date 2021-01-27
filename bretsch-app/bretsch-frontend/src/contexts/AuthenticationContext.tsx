@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import useLocalStorage from '../util/LocalStorageHook';
+import { RegisterContext } from './RegisterContext';
 
 export type JWTTokenData = {
   id: number;
@@ -12,11 +13,11 @@ export type JWTTokenData = {
 export type RegisterOptions = {
   email: string;
   password: string;
-  first_name: string;
-  last_name: string;
-  birth_date: string;
-  preferred_payment: string;
-  street_plus_number: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  preferedPayment: string;
+  streetPlusNumber: string;
   city: string;
 };
 
@@ -68,6 +69,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   };
 
   const register = async (values: RegisterOptions) => {
+    console.log("register in authcontext");
+    console.log(RegisterContext);
     const registerRequest = await fetch("/api/user", {
       method: "POST",
       body: JSON.stringify(values),

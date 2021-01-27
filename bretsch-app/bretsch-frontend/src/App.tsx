@@ -15,6 +15,7 @@ import { MyBookingPage } from './pages/MyBookings/MyBookingPage';
 import { ProfilePage } from './pages/Profile/ProfilePage';
 import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
+import RegisterModal from './components/Register';
 
 export const BasePage = () => {
   const { token } = useContext(authContext);
@@ -126,6 +127,7 @@ export const App = () => {
               <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
               <AuthenticatedRoute exact path="/settings" component={SettingPage} />
               <Route path="/" component={BasePage} />
+              <Route path="/register" component={RegisterModal} />
             </Switch>
           </BrowserRouter>
         </AppContext.Provider>
