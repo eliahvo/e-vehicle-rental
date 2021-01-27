@@ -15,6 +15,7 @@ import { MyBookingPage } from './pages/MyBookings/MyBookingPage';
 import { ProfilePage } from './pages/Profile/ProfilePage';
 import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
+import RegisterModal from './components/Register';
 
 export const BasePage = () => {
   return <Redirect to="/dashboard" />;
