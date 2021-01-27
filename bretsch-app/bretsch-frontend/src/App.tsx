@@ -16,6 +16,7 @@ import { ProfilePage } from './pages/Profile/ProfilePage';
 import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
 import { AdminPage } from './pages/Admin/AdminPage';
+import RegisterModal from './components/Register';
 
 export const BasePage = () => {
   return <Redirect to="/dashboard" />;
