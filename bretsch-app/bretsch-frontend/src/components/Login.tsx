@@ -9,7 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { LoginContext } from '../contexts/LoginContext';
 import { Divider } from '@material-ui/core';
 import { authContext, LoginOptions } from '../contexts/AuthenticationContext';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import RegisterModal from './Register';
 import { RegisterContext } from '../contexts/RegisterContext';
 
@@ -51,51 +51,53 @@ export default function LoginFormDialog() {
   return (
     <div>
       <RegisterContext.Provider value={registerContext}>
-      <Dialog open={loginContext.open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Welcome to BRETSCH!</DialogTitle>
-        <form onSubmit={onSubmitForm} data-testid="create-task-form">
-          <DialogContent>
-            <TextField
-              autoFocus
-              name="email"
-              margin="dense"
-              id="name"
-              label="Email Address"
-              type="email"
-              fullWidth
-              onChange={fieldDidChange}
-              required
-            />
-            <TextField
-              autoFocus
-              name="password"
-              margin="dense"
-              id="name"
-              label="Password"
-              type="password"
-              fullWidth
-              onChange={fieldDidChange}
-              required
-            />
-          </DialogContent>
+        <Dialog open={loginContext.open} onClose={handleClose} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Welcome to BRETSCH!</DialogTitle>
+          <form onSubmit={onSubmitForm} data-testid="create-task-form">
+            <DialogContent>
+              <TextField
+                autoFocus
+                name="email"
+                margin="dense"
+                id="name"
+                label="Email Address"
+                type="email"
+                fullWidth
+                onChange={fieldDidChange}
+                required
+              />
+              <TextField
+                autoFocus
+                name="password"
+                margin="dense"
+                id="name"
+                label="Password"
+                type="password"
+                fullWidth
+                onChange={fieldDidChange}
+                required
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button type="submit" color="primary">
+                Sign In
+              </Button>
+            </DialogActions>
+          </form>
+          <Divider />
           <DialogActions>
-            <Button type="submit" color="primary">
-              Sign In
+            <DialogContentText> Not BRETSCHing yet?</DialogContentText>
+            <Button
+              onClick={() => {
+                setOpenRegister(true);
+              }}
+              color="primary"
+            >
+              Register
             </Button>
           </DialogActions>
-        </form>
-        <Divider />
-        <DialogActions>
-          <DialogContentText> Not BRETSCHing yet?</DialogContentText>
-          <Button onClick={() => {
-          setOpenRegister(true)}}
-          
-             color="primary">
-            Register
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <RegisterModal/>
+        </Dialog>
+        <RegisterModal />
       </RegisterContext.Provider>
     </div>
   );
