@@ -1,8 +1,8 @@
 import { Layout } from '../../components/Layout';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
-import { Box, Button, Divider, Grid } from '@material-ui/core';
+import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
@@ -51,11 +51,38 @@ export const ButtonStyle = styled.div`
   text-align: center;
 `;
 
+{
+  /* must be replaced later */
+}
+const PaymentMethod = [
+  {
+    value: 'Paypal',
+    label: 'Paypal',
+  },
+  {
+    value: 'Visa',
+    label: 'Visa',
+  },
+  {
+    value: 'Bitcoin',
+    label: 'Bitcoin',
+  },
+  {
+    value: 'Mastercard',
+    label: 'Mastercard',
+  },
+];
+
 export const BookingPage = () => {
   const [booking, setBooking] = useState<Booking>();
   const {
     actions: { getTokenData },
   } = useContext(authContext);
+  const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setChosenPayment(e.target.value);
+  };
 
   {
     /* returns date difference from startDate and current date to form "XX:XX:XX" */
@@ -196,12 +223,36 @@ export const BookingPage = () => {
             {/* timer */}
             <Time>{time}</Time>
 
-            {/* stop booking button */}
-            <Box mt={1} mb={1}>
-              <ButtonStyle>
-                <Button onClick={stopBooking}>Stop</Button>
-              </ButtonStyle>
-            </Box>
+            <Grid container spacing={3}>
+              <Grid item xs={2}>
+                {/* prefered payment */}
+                <TextField
+                  autoFocus
+                  name="preferedPayment"
+                  margin="dense"
+                  id="preferedPayment"
+                  select
+                  label="Payment"
+                  type="text"
+                  value={chosenPayment}
+                  onChange={handleChange}
+                >
+                  {PaymentMethod.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={4}>
+                {/* stop booking button */}
+                <Box mt={1} mb={1}>
+                  <ButtonStyle>
+                    <Button onClick={stopBooking}>Stop</Button>
+                  </ButtonStyle>
+                </Box>
+              </Grid>
+            </Grid>
           </Section>
         </BookingDiv>
       </Layout>
