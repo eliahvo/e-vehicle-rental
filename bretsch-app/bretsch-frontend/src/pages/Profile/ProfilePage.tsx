@@ -224,7 +224,7 @@ export const ProfilePage = () => {
               <Grid item xs={4}>
                 Email:
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={5}>
                 {editMainSettings ? (
                   <TextField
                     autoFocus
@@ -247,13 +247,13 @@ export const ProfilePage = () => {
               <Grid item xs={4}>
                 Password:
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={5}>
                 {editMainSettings ? (
                   <TextField
                     onChange={fieldDidChange}
                     margin="dense"
                     name="password"
-                    label="Password"
+                    label="New Password"
                     type="password"
                     fullWidth
                   />
@@ -261,15 +261,26 @@ export const ProfilePage = () => {
                   '**********'
                 )}
                 {values.password ? (
-                  <TextField
-                    onChange={fieldDidChange}
-                    margin="dense"
-                    name="passwordShadow"
-                    label="Confirm Password"
-                    type="password"
-                    fullWidth
-                    required
-                  />
+                  <>
+                    <TextField
+                      onChange={fieldDidChange}
+                      margin="dense"
+                      name="passwordShadow"
+                      label="Confirm New Password"
+                      type="password"
+                      fullWidth
+                      required
+                    />
+                    <TextField
+                      onChange={fieldDidChange}
+                      margin="dense"
+                      name="passwordShadow"
+                      label="Old Password"
+                      type="password"
+                      fullWidth
+                      required
+                    />
+                  </>
                 ) : (
                   ''
                 )}
