@@ -145,6 +145,10 @@ export const BookingPage = () => {
   }, []);
 
   useEffect(() => {
+    if (booking) setTime(getDateDifference());
+  }, [booking]);
+
+  useEffect(() => {
     if (booking) {
       const timer = setTimeout(() => {
         setTime(getDateDifference());
