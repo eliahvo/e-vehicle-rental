@@ -72,7 +72,7 @@ export const BookingPage = () => {
     }
   };
 
-  const [time, setTime] = useState('00:00:00');
+  const [time, setTime] = useState(getDateDifference());
 
   const fetchBooking = async () => {
     console.log('fetchBooking');
