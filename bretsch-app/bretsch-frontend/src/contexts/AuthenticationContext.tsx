@@ -1,3 +1,5 @@
+import { Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import React, { useState } from 'react';
 import useLocalStorage from '../util/LocalStorageHook';
 import { RegisterContext } from './RegisterContext';
@@ -53,18 +55,19 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [token, setToken] = useState<string | null>(tokenStorage);
 
   const login = async (values: LoginOptions) => {
-    const loginRequest = await fetch('/api/user/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...values }),
-    });
-    if (loginRequest.status === 200) {
-      const { data } = await loginRequest.json();
-      setToken(data);
-      setTokenStorage(data);
-      console.log(data);
-    } else {
-      throw new Error('User does not exist or the password is wrong');
+    try {
+      const loginRequest = await fetch('/api/user/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...values }),
+      });
+      if (loginRequest.status === 200) {
+        const { data } = await loginRequest.json();
+        setToken(data);
+        setTokenStorage(data);
+      }
+    } catch (e) {
+      console.log('Email or Password is wrong! ');
     }
   };
 
