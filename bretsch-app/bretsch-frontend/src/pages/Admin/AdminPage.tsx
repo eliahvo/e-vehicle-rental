@@ -1,89 +1,85 @@
 import { Layout } from '../../components/Layout';
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { AppBar, Box, LinearProgress, makeStyles, Paper, Tab, Tabs } from '@material-ui/core';
 import styled from 'styled-components';
-import { ColDef, DataGrid, FilterModel } from '@material-ui/data-grid';
+import { ColDef, DataGrid, FilterModel, ValueFormatterParams } from '@material-ui/data-grid';
 import { MyProfile } from '../Profile/ProfilePage';
-import { Vehicle } from '../../util/EntityInterfaces';
+import { User, Vehicle } from '../../util/EntityInterfaces';
+import Button from '@material-ui/core/Button';
+import { VehicleTable } from './components/vehicleTable';
+import { UserTable } from './components/UserTable';
+import Typography from '@material-ui/core/Typography';
+import { Theme } from '@material-ui/core/styles';
 
-// TODO Object destruction -> concret Table
-const useStyles = makeStyles((theme) => ({
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${props.index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+  },
   headings: {
     color: theme.palette.primary.main,
   },
 }));
 
+function a11yProps(index: any) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
 export const MyAdmin = styled.div`
   margin: 5% 10%;
 `;
 
-const riceFilterModel: FilterModel = {
-  items: [{ columnField: 'commodity', operatorValue: 'contains', value: 'rice' }],
-};
-//
-
-/*export function BasicToolbarFilteringGrid() {
-    const { data } = ""
-    });*/
-
 export const AdminPage = () => {
-  const [vehicles, setVehiles] = useState<Vehicle[]>([]);
-
-  useEffect(() => {
-    allVehicles();
-  }, []);
-
-  const allVehicles = async () => {
-    const vehicleRequest = await fetch(`/api/vehicle/`, {
-      headers: { 'content-type': 'application/json' },
-      method: 'GET',
-    });
-    if (vehicleRequest.status === 200) {
-      const vehicleJSON = await vehicleRequest.json();
-      setVehiles(vehicleJSON.data);
-    }
-  };
-
+  const [value, setValue] = React.useState(0);
   const classes = useStyles();
-
-  // all Vehicles
-  const vehicleRows: any[] = [];
-  for (const vehicle of vehicles) {
-    vehicleRows.push({
-      battery: vehicle.batteryLevel,
-      id: vehicle.vehicleId,
-      license_plate: vehicle.licencePlate,
-      status: vehicle.status,
-      bookings: vehicle.bookings.length,
-      type: vehicle.vehicleType.type,
-      position: vehicle.positionLatitude + ' / ' + vehicle.positionLongitude,
-    });
-  }
-
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+  };
   return (
     <Layout title="Admin">
       <MyAdmin>
-        <div className={classes.headings}>Vehicles</div>
-        <div style={{ height: 400, width: '100%' }}>
-          <DataGrid
-            columns={[
-              { field: 'id', hide: true },
-              {
-                field: 'license_plate',
-                headerName: 'License Plate',
-                width: 150,
-              },
-              { field: 'status', headerName: 'Status', width: 150 },
-              { field: 'battery', headerName: 'Battery' },
-              { field: 'bookings', headerName: 'Number of bookings' },
-              { field: 'type', headerName: 'Type' },
-              { field: 'position', headerName: 'Position', width: 300},
-              { field: 'button', headerName: 'Button' },
-            ]}
-            rows={vehicleRows}
-            disableColumnMenu
-          />
-        </div>
+        <Paper className={classes.root}>
+          <AppBar position="sticky">
+            <Tabs value={value} onChange={handleChange} indicatorColor="secondary" centered>
+              <Tab label="Data" />
+              <Tab label="Statistics" />
+            </Tabs>
+          </AppBar>
+        </Paper>
+        <TabPanel value={value} index={0}>
+          <h1 className={classes.headings}>Vehicles</h1>
+          <VehicleTable />
+          <h1 className={classes.headings}>Users</h1>
+          <UserTable />
+        </TabPanel>
       </MyAdmin>
     </Layout>
   );
