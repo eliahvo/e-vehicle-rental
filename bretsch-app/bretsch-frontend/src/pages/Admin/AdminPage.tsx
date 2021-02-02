@@ -4,7 +4,7 @@ import { LinearProgress, makeStyles } from '@material-ui/core';
 import styled from 'styled-components';
 import { ColDef, DataGrid, FilterModel, ValueFormatterParams } from '@material-ui/data-grid';
 import { MyProfile } from '../Profile/ProfilePage';
-import { Vehicle } from '../../util/EntityInterfaces';
+import { User, Vehicle } from '../../util/EntityInterfaces';
 import Button from '@material-ui/core/Button';
 
 // TODO Object destruction -> concret Table
@@ -32,24 +32,55 @@ export const BatteryProgress = styled.progress`
 `;
 
 export const AdminPage = () => {
-  const [vehicles, setVehiles] = useState<Vehicle[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    allVehicles();
+    allVehicles().then((r) => {
+      allUsers();
+    });
   }, []);
 
+  // get all vehicles
   const allVehicles = async () => {
     const vehicleRequest = await fetch(`/api/vehicle/`, {
       headers: { 'content-type': 'application/json' },
       method: 'GET',
     });
     if (vehicleRequest.status === 200) {
-      const vehicleJSON = await vehicleRequest.json();
-      setVehiles(vehicleJSON.data);
+      const userJSON = await vehicleRequest.json();
+      setVehicles(userJSON.data);
+    }
+  };
+
+  // get all vehicles
+  const allUsers = async () => {
+    const userRequest = await fetch(`/api/user/`, {
+      headers: { 'content-type': 'application/json' },
+      method: 'GET',
+    });
+    if (userRequest.status === 200) {
+      const userJSON = await userRequest.json();
+      setUsers(userJSON.data);
     }
   };
 
   const classes = useStyles();
+
+  // all users
+  const userRows: any[] = [];
+  for (const user of users) {
+    userRows.push({
+      id: user.userId,
+      name: user.firstName + ' ' + user.lastName,
+      userRole: user.userRole,
+      email: user.email,
+      birthday: user.birthDate,
+      preferedPayment: user.preferedPayment,
+      adress: user.streetPlusNumber + ' ' + user.city,
+      button: <Button variant="contained">Default</Button>,
+    });
+  }
 
   // all Vehicles
   const vehicleRows: any[] = [];
@@ -66,10 +97,15 @@ export const AdminPage = () => {
     });
   }
 
+  // Filter model for vehicle table
+  const vehicleFilterModel: FilterModel = {
+    items: [{ columnField: 'license_plate', operatorValue: 'contains', value: '' }],
+  };
+
   return (
     <Layout title="Admin">
       <MyAdmin>
-        <div className={classes.headings}>Vehicles</div>
+        <h1 className={classes.headings}>Vehicles</h1>
         <div style={{ height: 400, width: '100%' }}>
           <div style={{ display: 'flex', height: '100%' }}>
             <div style={{ flexGrow: 1 }}>
@@ -111,6 +147,50 @@ export const AdminPage = () => {
                 ]}
                 rows={vehicleRows}
                 disableColumnMenu
+                showToolbar
+                filterModel={vehicleFilterModel}
+              />
+            </div>
+          </div>
+        </div>
+        <h1 className={classes.headings}>Users</h1>
+        <div style={{ height: 400, width: '100%' }}>
+          <div style={{ display: 'flex', height: '100%' }}>
+            <div style={{ flexGrow: 1 }}>
+              <DataGrid
+                columns={[
+                  { field: 'id', hide: true },
+                  {
+                    field: 'name',
+                    headerName: 'name',
+                    width: 150,
+                  },
+                  { field: 'email', headerName: 'email', width: 150 },
+                  {
+                    field: 'userRole',
+                    headerName: 'userRole',
+                    width: 150,
+                  },
+                  { field: 'birthday', headerName: 'birth date' },
+                  { field: 'preferedPayment', headerName: 'prefered payment', width: 150 },
+                  { field: 'adress', headerName: 'adress', width: 300 },
+                  {
+                    field: '',
+                    headerName: '',
+                    width: 150,
+                    renderCell: (params: ValueFormatterParams) => (
+                      <strong>
+                        <Button variant="outlined" color="secondary" size="small" style={{ marginLeft: 16 }}>
+                          Delete
+                        </Button>
+                      </strong>
+                    ),
+                  },
+                ]}
+                rows={userRows}
+                disableColumnMenu
+                showToolbar
+                filterModel={vehicleFilterModel}
               />
             </div>
           </div>
