@@ -15,6 +15,13 @@ export const BatteryProgressNumber = styled.span`
 
 export const BatteryProgress = styled.progress`
   width: 100%;
+  background: #75b800;
+`;
+
+export const Progressbar = styled.div`
+  border-radius: 60px;
+  overflow: hidden;
+  width: 100%;
 `;
 
 export const VehicleTable = () => {
@@ -76,8 +83,10 @@ export const VehicleTable = () => {
                 width: 100,
                 renderCell: (params: ValueFormatterParams) => (
                   <div style={{ position: 'relative' }}>
-                    <BatteryProgress value={params.value.toString()} max="100" />
-                    <BatteryProgressNumber>{params.value.toString()}</BatteryProgressNumber>
+                    <Progressbar>
+                      <BatteryProgress value={params.value.toString()} max="100" />
+                      <BatteryProgressNumber>{params.value.toString()}</BatteryProgressNumber>
+                    </Progressbar>
                   </div>
                 ),
               },
