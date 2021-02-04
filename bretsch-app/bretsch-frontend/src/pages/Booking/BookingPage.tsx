@@ -6,6 +6,7 @@ import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/co
 import useLocalStorage from '../../util/LocalStorageHook';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
+import { SocketclientContext } from '../../contexts/SocketclientContext';
 
 /**
  * convert ms to form "XX:XX:XX"
@@ -79,6 +80,7 @@ export const BookingPage = () => {
     actions: { getTokenData },
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
+  const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setChosenPayment(e.target.value);
@@ -158,6 +160,7 @@ export const BookingPage = () => {
       if (userPatch.status === 200) {
         setBooking(undefined);
         fetchBooking();
+        socketclient.emit('stopBooking', { vehicleId: booking?.vehicle.vehicleId });
       } else {
         console.log('error by updating user');
       }

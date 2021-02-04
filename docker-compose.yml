@@ -32,3 +32,13 @@ services:
       - 80:80
     volumes:
       - ./bretsch-app/bretsch-frontend:/bretsch-app/bretsch-frontend
+  bretsch-socket-server:
+    image: node:alpine
+    container_name: bretsch-socket-server
+    working_dir: /bretsch-app/bretsch-socket-server
+    command: sh entrypoint.sh -dev # Remove the "-dev" to turn off the development mode
+    restart: always
+    ports: # Have to match the value set in env file
+      - 5000:5000
+    volumes:
+      - ./bretsch-app/bretsch-socket-server:/bretsch-app/bretsch-socket-server

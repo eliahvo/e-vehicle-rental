@@ -17,6 +17,7 @@ import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
 import { AdminPage } from './pages/Admin/AdminPage';
 import RegisterModal from './components/Register';
+import { SocketclientContext } from './contexts/SocketclientContext';
 
 export const BasePage = () => {
   return <Redirect to="/dashboard" />;
@@ -48,6 +49,7 @@ export const App = () => {
   const [darkModeState, setDarkModeState] = useLocalStorage('App.darkModeState', true);
   const [vehicleData, setVehicleData] = useState<Vehicle[]>([]);
   const [openLogin, setOpenLogin] = React.useState(false);
+  const [socketclient, setSocketclient] = React.useState(null);
 
   const theme = React.useMemo(
     () =>
@@ -115,22 +117,24 @@ export const App = () => {
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <CssBaseline />
-        <AppContext.Provider value={context}>
-          <LoginContext.Provider value={loginContext}>
-            <BrowserRouter>
-              <Switch>
-                <Route path="/admin" component={AdminPage} />
-                <Route exact path="/dashboard" component={DashboardPage} />
-                <AuthenticatedRoute exact path="/booking" component={BookingPage} />
-                <Route exact path="/prices" component={PricePage} />
-                <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
-                <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
-                <AuthenticatedRoute exact path="/settings" component={SettingPage} />
-                <Route path="/" component={BasePage} />
-              </Switch>
-            </BrowserRouter>
-          </LoginContext.Provider>
-        </AppContext.Provider>
+        <SocketclientContext.Provider value={[socketclient, setSocketclient]}>
+          <AppContext.Provider value={context}>
+            <LoginContext.Provider value={loginContext}>
+              <BrowserRouter>
+                <Switch>
+                  <Route path="/admin" component={AdminPage} />
+                  <Route exact path="/dashboard" component={DashboardPage} />
+                  <AuthenticatedRoute exact path="/booking" component={BookingPage} />
+                  <Route exact path="/prices" component={PricePage} />
+                  <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
+                  <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
+                  <AuthenticatedRoute exact path="/settings" component={SettingPage} />
+                  <Route path="/" component={BasePage} />
+                </Switch>
+              </BrowserRouter>
+            </LoginContext.Provider>
+          </AppContext.Provider>
+        </SocketclientContext.Provider>
       </AuthProvider>
     </ThemeProvider>
   );
