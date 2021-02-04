@@ -17,6 +17,7 @@ import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
 import { AdminPage } from './pages/Admin/AdminPage';
 import RegisterModal from './components/Register';
+import { Payment } from './pages/Paypal/Payment'
 
 export const BasePage = () => {
   return <Redirect to="/dashboard" />;
@@ -120,6 +121,7 @@ export const App = () => {
             <BrowserRouter>
               <Switch>
                 <Route path="/admin" component={AdminPage} />
+                <Route path="/paypaltest" component={Payment} />
                 <Route exact path="/dashboard" component={DashboardPage} />
                 <AuthenticatedRoute exact path="/booking" component={BookingPage} />
                 <Route exact path="/prices" component={PricePage} />
