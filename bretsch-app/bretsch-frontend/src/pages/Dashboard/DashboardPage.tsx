@@ -21,6 +21,7 @@ import VehicleInfoFormDialog from '../../components/VehicleInfoForBooking';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
+import io from 'socket.io-client';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -56,10 +57,24 @@ export const DashboardPage = () => {
   );
   const [displayVehicles, setDisplayVehicles] = useState(vehicles);
   const { reloadAll } = React.useContext(AppContext);
+  const [socketclient, setSocketclient] = React.useState(null);
 
   useEffect(() => {
     reloadAll();
+
+    /* setup socket.io-client */
+    setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
+    console.log('sockeeet');
+    if (socketclient) console.log('asdfjasdofasdfo');
   }, []);
+
+  useEffect(() => {
+    if (socketclient) {
+      socketclient.on('booking', async (arg: any) => {
+        console.log(arg);
+      });
+    }
+  }, [socketclient]);
 
   useEffect(() => {
     updateAvailableVehicleTypes();
@@ -203,6 +218,11 @@ export const DashboardPage = () => {
                           lng: parseFloat(vehicle.positionLongitude),
                         }}
                         onClick={() => {
+                          console.log('test: ', socketclient);
+                          if (socketclient) {
+                            console.log('send vehicleId to socket-server');
+                            socketclient.emit('booking', { vehicleId: vehicle.vehicleId });
+                          }
                           setOpenVehicleInfo(true);
                           setCurrenVehicleIdForInfo(vehicle.vehicleId);
                           setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);

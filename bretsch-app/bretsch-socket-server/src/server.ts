@@ -1,14 +1,12 @@
 // tslint:disable-next-line: no-var-requires
 require("dotenv-safe").config();
-import * as bodyParser from "body-parser";
 import express from "express";
-import morgan from "morgan";
 import path from "path";
 import "reflect-metadata";
 import { Logger } from "./util/logger.util";
 
 const logger: Logger = new Logger(path.basename(__filename));
-const port: number = Number(process.env.SERVER_PORT);
+//const port: number = Number(process.env.SERVER_PORT);
 
 /**
  * Main method to start the server.
@@ -16,16 +14,21 @@ const port: number = Number(process.env.SERVER_PORT);
 export const run = async () => {
   try {
     const app = express();
+    const http = require("http").Server(app);
+    const io = require("socket.io")(http, { origins: "*:*" });
 
-    app.use(morgan("combined"));
-    app.use(bodyParser.json());
-    //app.use('/api', );
-    app.get("/socket", (_, res) => {
-      res.send("Socket");
+    io.on("connection", function (socket: any) {
+      console.log("a user connected");
+
+      /* redirect data to all clients */
+      socket.on("booking", (arg: any) => {
+        console.log(arg);
+        io.sockets.emit("booking", arg);
+      });
     });
 
-    app.listen(port, () => {
-      logger.log(`Server is now listening at http://localhost:${port}`);
+    http.listen(5000, function () {
+      console.log("listening on *:5000");
     });
   } catch (error) {
     logger.log(`${error}`);
