@@ -14,6 +14,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import { setVehicleStatus } from '../util/RequestHelper';
 import { authContext } from '../contexts/AuthenticationContext';
 import { LoginContext } from '../contexts/LoginContext';
+import { SocketclientContext } from '../contexts/SocketclientContext';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -35,6 +36,7 @@ export default function vehicleInfoFormDialog() {
   const [actualBooking, setActualBooking] = useState<Booking | null>(null);
   const loginContext = useContext(LoginContext);
   const history = useHistory();
+  const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
   const {
     token,
     actions: { getTokenData, logout },
@@ -119,6 +121,10 @@ export default function vehicleInfoFormDialog() {
               });
               if (updateUserRequest.status === 200) {
                 console.log('added actualBooking');
+                if (socketclient) {
+                  console.log('send vehicleId to socket-server');
+                  socketclient.emit('booking', { vehicleId: vehicle.vehicleId });
+                }
                 handleClose(true);
               } else {
                 console.log('error by updating user/ adding actualBooking');

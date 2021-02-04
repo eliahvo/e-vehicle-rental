@@ -25,6 +25,12 @@ export const run = async () => {
         console.log(arg);
         io.sockets.emit("booking", arg);
       });
+
+      /* redirect data to all clients */
+      socket.on("stopBooking", (arg: any) => {
+        console.log(arg);
+        io.sockets.emit("stopBooking", arg);
+      });
     });
 
     http.listen(5000, function () {

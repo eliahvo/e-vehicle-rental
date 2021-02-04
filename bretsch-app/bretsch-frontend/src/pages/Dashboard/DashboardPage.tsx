@@ -22,6 +22,7 @@ import { setVehicleStatus } from '../../util/RequestHelper';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
 import io from 'socket.io-client';
+import { SocketclientContext } from '../../contexts/SocketclientContext';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -56,8 +57,8 @@ export const DashboardPage = () => {
     [],
   );
   const [displayVehicles, setDisplayVehicles] = useState(vehicles);
-  const { reloadAll } = React.useContext(AppContext);
-  const [socketclient, setSocketclient] = React.useState(null);
+  const { reloadAll, reloadVehicles } = React.useContext(AppContext);
+  const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
   const [vehicleBlacklist, setVehicleBlacklist] = React.useState<number[]>([]);
 
   useEffect(() => {
@@ -65,15 +66,11 @@ export const DashboardPage = () => {
 
     /* setup socket.io-client */
     setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
-    console.log('sockeeet');
-    if (socketclient) console.log('asdfjasdofasdfo');
   }, []);
 
   useEffect(() => {
     if (socketclient) {
       socketclient.on('booking', async (arg: any) => {
-        console.log(arg);
-        console.log(arg.vehicleId);
         setVehicleBlacklist((vehicleBlacklist) => [...vehicleBlacklist, arg.vehicleId]);
       });
     }
@@ -84,7 +81,26 @@ export const DashboardPage = () => {
   }, [vehicles]);
 
   useEffect(() => {
-    console.log(vehicleBlacklist);
+    console.log('useEffectVehicleBlacklist: ', vehicleBlacklist);
+    if (socketclient) {
+      socketclient.on('stopBooking', async (arg: any) => {
+        reloadVehicles();
+        /*
+        const vehicleRequest = await fetch(`/api/vehicle/${arg.vehicleId}`, {
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+        });
+        if (vehicleRequest.status === 200) {
+          const vehicleJSON = await vehicleRequest.json();
+
+        } else {
+          console.log(`error by fetching vehicle ${arg.vehicleId} data`)
+        }*/
+
+        const index = vehicleBlacklist.indexOf(arg.vehicleId);
+        setVehicleBlacklist((vehicleBlacklist) => vehicleBlacklist.filter((value, i) => i !== index));
+      });
+    }
   }, [vehicleBlacklist]);
 
   useEffect(() => {
@@ -216,7 +232,7 @@ export const DashboardPage = () => {
             >
               {(clusterer) =>
                 displayVehicles.map((vehicle: Vehicle) => {
-                  if (vehicle.status === 'Free' || vehicleBlacklist.indexOf(vehicle.vehicleId)) {
+                  if (vehicle.status === 'Free' && vehicleBlacklist.indexOf(vehicle.vehicleId)) {
                     return (
                       <Marker
                         key={vehicle.vehicleId}
@@ -225,11 +241,6 @@ export const DashboardPage = () => {
                           lng: parseFloat(vehicle.positionLongitude),
                         }}
                         onClick={() => {
-                          console.log('test: ', socketclient);
-                          if (socketclient) {
-                            console.log('send vehicleId to socket-server');
-                            socketclient.emit('booking', { vehicleId: vehicle.vehicleId });
-                          }
                           setOpenVehicleInfo(true);
                           setCurrenVehicleIdForInfo(vehicle.vehicleId);
                           setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
