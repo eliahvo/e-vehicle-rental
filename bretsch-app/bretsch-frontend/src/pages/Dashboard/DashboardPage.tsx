@@ -58,6 +58,7 @@ export const DashboardPage = () => {
   const [displayVehicles, setDisplayVehicles] = useState(vehicles);
   const { reloadAll } = React.useContext(AppContext);
   const [socketclient, setSocketclient] = React.useState(null);
+  const [vehicleBlacklist, setVehicleBlacklist] = React.useState<number[]>([]);
 
   useEffect(() => {
     reloadAll();
@@ -72,6 +73,8 @@ export const DashboardPage = () => {
     if (socketclient) {
       socketclient.on('booking', async (arg: any) => {
         console.log(arg);
+        console.log(arg.vehicleId);
+        setVehicleBlacklist((vehicleBlacklist) => [...vehicleBlacklist, arg.vehicleId]);
       });
     }
   }, [socketclient]);
@@ -79,6 +82,10 @@ export const DashboardPage = () => {
   useEffect(() => {
     updateAvailableVehicleTypes();
   }, [vehicles]);
+
+  useEffect(() => {
+    console.log(vehicleBlacklist);
+  }, [vehicleBlacklist]);
 
   useEffect(() => {
     updateFilter();
@@ -209,7 +216,7 @@ export const DashboardPage = () => {
             >
               {(clusterer) =>
                 displayVehicles.map((vehicle: Vehicle) => {
-                  if (vehicle.status === 'Free') {
+                  if (vehicle.status === 'Free' || vehicleBlacklist.indexOf(vehicle.vehicleId)) {
                     return (
                       <Marker
                         key={vehicle.vehicleId}
