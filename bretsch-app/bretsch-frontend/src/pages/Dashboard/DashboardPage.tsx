@@ -21,6 +21,8 @@ import VehicleInfoFormDialog from '../../components/VehicleInfoForBooking';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
+import io from 'socket.io-client';
+import { SocketclientContext } from '../../contexts/SocketclientContext';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -55,15 +57,51 @@ export const DashboardPage = () => {
     [],
   );
   const [displayVehicles, setDisplayVehicles] = useState(vehicles);
-  const { reloadAll } = React.useContext(AppContext);
+  const { reloadAll, reloadVehicles } = React.useContext(AppContext);
+  const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
+  const [vehicleBlacklist, setVehicleBlacklist] = React.useState<number[]>([]);
 
   useEffect(() => {
     reloadAll();
+
+    /* setup socket.io-client */
+    setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
   }, []);
+
+  useEffect(() => {
+    if (socketclient) {
+      socketclient.on('booking', async (arg: any) => {
+        setVehicleBlacklist((vehicleBlacklist) => [...vehicleBlacklist, arg.vehicleId]);
+      });
+    }
+  }, [socketclient]);
 
   useEffect(() => {
     updateAvailableVehicleTypes();
   }, [vehicles]);
+
+  useEffect(() => {
+    console.log('useEffectVehicleBlacklist: ', vehicleBlacklist);
+    if (socketclient) {
+      socketclient.on('stopBooking', async (arg: any) => {
+        await reloadVehicles();
+        /*
+        const vehicleRequest = await fetch(`/api/vehicle/${arg.vehicleId}`, {
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+        });
+        if (vehicleRequest.status === 200) {
+          const vehicleJSON = await vehicleRequest.json();
+
+        } else {
+          console.log(`error by fetching vehicle ${arg.vehicleId} data`)
+        }*/
+
+        const index = vehicleBlacklist.indexOf(arg.vehicleId);
+        setVehicleBlacklist((vehicleBlacklist) => vehicleBlacklist.filter((value, i) => i !== index));
+      });
+    }
+  }, [vehicleBlacklist]);
 
   useEffect(() => {
     updateFilter();
@@ -194,7 +232,7 @@ export const DashboardPage = () => {
             >
               {(clusterer) =>
                 displayVehicles.map((vehicle: Vehicle) => {
-                  if (vehicle.status === 'Free') {
+                  if (vehicle.status === 'Free' && vehicleBlacklist.indexOf(vehicle.vehicleId)) {
                     return (
                       <Marker
                         key={vehicle.vehicleId}
