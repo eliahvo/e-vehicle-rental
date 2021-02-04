@@ -84,7 +84,7 @@ export const DashboardPage = () => {
     console.log('useEffectVehicleBlacklist: ', vehicleBlacklist);
     if (socketclient) {
       socketclient.on('stopBooking', async (arg: any) => {
-        reloadVehicles();
+        await reloadVehicles();
         /*
         const vehicleRequest = await fetch(`/api/vehicle/${arg.vehicleId}`, {
           headers: { 'Content-Type': 'application/json' },
