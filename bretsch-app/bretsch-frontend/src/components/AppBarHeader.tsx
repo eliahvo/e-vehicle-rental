@@ -156,6 +156,11 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
     reloadAll();
   };
 
+  const exitApp = () => {
+    logout();
+    history.push('/');
+  };
+
   return (
     <>
       <AppBar
@@ -314,7 +319,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           <ListItem
             button
             onClick={() => {
-              token ? logout() : loginContext.toggleOpen();
+              token ? exitApp() : loginContext.toggleOpen();
             }}
           >
             <ListItemIcon>{token ? <ExitToAppIcon /> : <VpnKeyIcon />}</ListItemIcon>

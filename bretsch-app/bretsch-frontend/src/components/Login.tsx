@@ -59,7 +59,7 @@ export default function LoginFormDialog() {
                 autoFocus
                 name="email"
                 margin="dense"
-                id="name"
+                id="email"
                 label="Email Address"
                 type="email"
                 fullWidth
@@ -70,7 +70,7 @@ export default function LoginFormDialog() {
                 autoFocus
                 name="password"
                 margin="dense"
-                id="name"
+                id="password"
                 label="Password"
                 type="password"
                 fullWidth

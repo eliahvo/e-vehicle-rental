@@ -21,7 +21,6 @@ import VehicleInfoFormDialog from '../../components/VehicleInfoForBooking';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
-import io from 'socket.io-client';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -63,15 +62,12 @@ export const DashboardPage = () => {
 
   useEffect(() => {
     reloadAll();
-
-    /* setup socket.io-client */
-    setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
   }, []);
 
   useEffect(() => {
     if (socketclient) {
       socketclient.on('booking', async (arg: any) => {
-        setVehicleBlacklist((vehicleBlacklist) => [...vehicleBlacklist, arg.vehicleId]);
+        setVehicleBlacklist((blacklist) => [...blacklist, arg.vehicleId]);
       });
     }
   }, [socketclient]);
@@ -81,24 +77,11 @@ export const DashboardPage = () => {
   }, [vehicles]);
 
   useEffect(() => {
-    console.log('useEffectVehicleBlacklist: ', vehicleBlacklist);
     if (socketclient) {
       socketclient.on('stopBooking', async (arg: any) => {
         await reloadVehicles();
-        /*
-        const vehicleRequest = await fetch(`/api/vehicle/${arg.vehicleId}`, {
-          headers: { 'Content-Type': 'application/json' },
-          method: 'GET',
-        });
-        if (vehicleRequest.status === 200) {
-          const vehicleJSON = await vehicleRequest.json();
-
-        } else {
-          console.log(`error by fetching vehicle ${arg.vehicleId} data`)
-        }*/
-
         const index = vehicleBlacklist.indexOf(arg.vehicleId);
-        setVehicleBlacklist((vehicleBlacklist) => vehicleBlacklist.filter((value, i) => i !== index));
+        setVehicleBlacklist((blacklist) => blacklist.filter((_, i) => i !== index));
       });
     }
   }, [vehicleBlacklist]);
@@ -163,35 +146,41 @@ export const DashboardPage = () => {
       <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Button
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget)}
-        className={classes.filterButton}
-        variant="contained"
-        color="primary"
-      >
-        <FilterListIcon />
-      </Button>
-      <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        {vehicleTypes.map((vehicleType: { name: string; isChecked: boolean }) => {
-          return (
-            <MenuItem key={vehicleType.name} dense>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={vehicleType.isChecked}
-                    onChange={handleFilterChange}
-                    name={vehicleType.name}
-                    color="primary"
+      {vehicleTypes.length ? (
+        <>
+          <Button
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget)}
+            className={classes.filterButton}
+            variant="contained"
+            color="primary"
+          >
+            <FilterListIcon />
+          </Button>
+          <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+            {vehicleTypes.map((vehicleType: { name: string; isChecked: boolean }) => {
+              return (
+                <MenuItem key={vehicleType.name} dense>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={vehicleType.isChecked}
+                        onChange={handleFilterChange}
+                        name={vehicleType.name}
+                        color="primary"
+                      />
+                    }
+                    label={vehicleType.name}
                   />
-                }
-                label={vehicleType.name}
-              />
-            </MenuItem>
-          );
-        })}
-      </Menu>
+                </MenuItem>
+              );
+            })}
+          </Menu>
+        </>
+      ) : (
+        ''
+      )}
       <LoadScript
-        googleMapsApiKey="AIzaSyATr3q52hdyJ7sbnPIw69sp4k8rGGehO2Y"
+        googleMapsApiKey={process.env.REACT_APP_MAP_KEY}
         language="en"
         region="en"
         onLoad={() => setLoading(true)}
@@ -205,21 +194,18 @@ export const DashboardPage = () => {
               width: '100%',
             }}
             center={center}
-            zoom={15}
+            zoom={14}
             mapTypeId="roadmap"
             options={{
               backgroundColor: theme.palette.background,
               disableDefaultUI: true,
-              maxZoom: 20,
-              minZoom: 13,
               restriction: {
                 latLngBounds: {
-                  east: 8.960182,
-                  north: 49.984304,
-                  south: 49.758828,
-                  west: 8.291636,
+                  south: 47.2701114,
+                  west: 5.8663153,
+                  north: 55.099161,
+                  east: 15.0419319,
                 },
-                strictBounds: true,
               },
               styles: mapStyle,
             }}
