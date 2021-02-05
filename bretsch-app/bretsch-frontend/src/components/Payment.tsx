@@ -4,16 +4,21 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { PaymentContext } from '../contexts/PaymentContext';
 import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router';
+import { AppContext } from '../contexts/AppContext';
+import { Box } from '@material-ui/core';
+
 export const Payment: React.FC<{ stopBooking: () => Promise<void> }> = ({ stopBooking }) => {
+  const history = useHistory();
   const [amount, setAmount] = useState(4);
   const [orderID, setOrderID] = useState(false);
   const paymentContext = useContext(PaymentContext);
-  const { enqueueSnackbar } = useSnackbar();
+  const { toggleCheckDialog } = React.useContext(AppContext);
 
   const handleClose = () => {
     paymentContext.toggleOpen();
   };
-  function createOrder(data, actions) {
+  function createOrder(_, actions) {
     return actions.order
       .create({
         purchase_units: [
@@ -30,16 +35,17 @@ export const Payment: React.FC<{ stopBooking: () => Promise<void> }> = ({ stopBo
       });
   }
 
-  function onApprove(data, actions) {
-    return actions.order.capture().then(function (details) {
-      enqueueSnackbar('Transaction completed by ' + details.payer.name.given_name, { variant: 'success' });
+  function onApprove(_, actions) {
+    return actions.order.capture().then(function (_) {
       handleClose();
       stopBooking();
+      history.push('/');
+      toggleCheckDialog();
     });
   }
 
   return (
-    <Dialog open={paymentContext.open} onClose={handleClose} aria-labelledby="form-dialog-title">
+    <Dialog open={paymentContext.open} onClose={handleClose} fullWidth={true} maxWidth="xs">
       <DialogTitle id="form-dialog-title">Check Out</DialogTitle>
       <PayPalScriptProvider
         options={{
@@ -47,7 +53,9 @@ export const Payment: React.FC<{ stopBooking: () => Promise<void> }> = ({ stopBo
           currency: 'EUR',
         }}
       >
-        <PayPalButtons createOrder={createOrder} forceReRender={amount} onApprove={onApprove} />
+        <Box m={3}>
+          <PayPalButtons createOrder={createOrder} forceReRender={amount} onApprove={onApprove} />
+        </Box>
       </PayPalScriptProvider>
     </Dialog>
   );

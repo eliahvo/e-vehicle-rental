@@ -10,6 +10,7 @@ import { SocketclientContext } from '../../contexts/SocketclientContext';
 import { PaymentContext } from '../../contexts/PaymentContext';
 import { Payment } from '../../components/Payment';
 import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router';
 
 /**
  * convert ms to form "XX:XX:XX"
@@ -37,9 +38,11 @@ export const BookingDiv = styled.div`
 export const Heading = styled.div`
   font-size: 3rem;
   text-align: center;
+  margin-bottom: 2rem;
 `;
 
 export const Time = styled.div`
+  margin-top: 2rem;
   font-size: 2rem;
   text-align: center;
 `;
@@ -78,6 +81,7 @@ const PaymentMethod = [
 ];
 
 export const BookingPage = () => {
+  const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
   const [booking, setBooking] = useState<Booking>();
   const {
@@ -241,45 +245,23 @@ export const BookingPage = () => {
             {/* timer */}
             <Time>{time}</Time>
 
-            <Grid container spacing={3}>
-              <Grid item xs={2}>
-                {/* prefered payment */}
-                <TextField
-                  autoFocus
-                  name="preferedPayment"
-                  margin="dense"
-                  id="preferedPayment"
-                  select
-                  label="Payment"
-                  type="text"
-                  value={chosenPayment}
-                  onChange={handleChange}
-                >
-                  {PaymentMethod.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                {/* stop booking button */}
-                <Box mt={1} mb={1}>
-                  <ButtonStyle>
-                    <PaymentContext.Provider value={paymentContext}>
-                      <Button
-                        onClick={() => {
-                          toggleOpenState();
-                        }}
-                      >
-                        Stop
-                      </Button>
-                      <Payment stopBooking={stopBooking} />
-                    </PaymentContext.Provider>
-                  </ButtonStyle>
-                </Box>
-              </Grid>
-            </Grid>
+            <Heading>
+              {/* stop booking button */}
+              <ButtonStyle>
+                <PaymentContext.Provider value={paymentContext}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => {
+                      toggleOpenState();
+                    }}
+                  >
+                    Stop booking
+                  </Button>
+                  <Payment stopBooking={stopBooking} />
+                </PaymentContext.Provider>
+              </ButtonStyle>
+            </Heading>
           </Section>
         </BookingDiv>
       </Layout>
@@ -289,7 +271,18 @@ export const BookingPage = () => {
     <Layout>
       <BookingDiv>
         {/* hypertext with info */}
-        <Heading>No active booking!</Heading>
+        <Heading>
+          <p>No active booking!</p>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              history.push('/');
+            }}
+          >
+            Start bretsching now!
+          </Button>
+        </Heading>
       </BookingDiv>
     </Layout>
   );

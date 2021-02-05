@@ -22,6 +22,7 @@ import { setVehicleStatus } from '../../util/RequestHelper';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
+import { CheckDialog } from '../../components/CheckDialog';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -146,6 +147,7 @@ export const DashboardPage = () => {
       <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
+      <CheckDialog text="Transaction successfully completed!" />
       {vehicleTypes.length ? (
         <>
           <Button
