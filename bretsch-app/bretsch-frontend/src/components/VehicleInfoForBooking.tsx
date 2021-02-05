@@ -6,9 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { VehicleInfoContext } from '../contexts/VehicleInfoContext';
 import { Box, Chip, Divider, makeStyles } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
 import { Booking, Vehicle, vehicle_status } from '../util/EntityInterfaces';
-import useLocalStorage from '../util/LocalStorageHook';
 import styled from 'styled-components';
 import WarningIcon from '@material-ui/icons/Warning';
 import { setVehicleStatus } from '../util/RequestHelper';
@@ -16,7 +14,7 @@ import { authContext } from '../contexts/AuthenticationContext';
 import { LoginContext } from '../contexts/LoginContext';
 import { SocketclientContext } from '../contexts/SocketclientContext';
 import { useSnackbar } from 'notistack';
-import { AppContext } from '../contexts/AppContext';
+import { verifyAuthentication } from '../App';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -34,13 +32,12 @@ export const Section = styled.div`
 
 export default function vehicleInfoFormDialog() {
   const { enqueueSnackbar } = useSnackbar();
-  const { verifyAuthentication } = React.useContext(AppContext);
   const vehicleInfoContext = useContext(VehicleInfoContext);
   const [vehicle, setVehicle] = useState<Vehicle>();
   const [actualBooking, setActualBooking] = useState<Booking | null>(null);
-  const loginContext = useContext(LoginContext);
-  const history = useHistory();
   const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
+  const login = useContext(LoginContext);
+  const auth = useContext(authContext);
   const {
     token,
     actions: { getTokenData, logout },
@@ -60,7 +57,7 @@ export default function vehicleInfoFormDialog() {
   };
 
   const fetchActualBooking = async () => {
-    if (verifyAuthentication() && getTokenData()?.id) {
+    if (verifyAuthentication(login, auth) && getTokenData()?.id) {
       const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
         headers: { 'Content-Type': 'application/json' },
         method: 'GET',
@@ -89,7 +86,7 @@ export default function vehicleInfoFormDialog() {
     e.preventDefault();
 
     /* check if user is logged in */
-    if (verifyAuthentication()) {
+    if (verifyAuthentication(login, auth)) {
       const createBookingRequest = await fetch('/api/booking', {
         body: JSON.stringify({
           paymentStatus: 'not payed',

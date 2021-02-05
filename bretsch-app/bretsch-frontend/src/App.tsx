@@ -16,27 +16,22 @@ import { ProfilePage } from './pages/Profile/ProfilePage';
 import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
 import { AdminPage } from './pages/Admin/AdminPage';
-import RegisterModal from './components/Register';
+import io from 'socket.io-client';
 import { SocketclientContext } from './contexts/SocketclientContext';
 
-const verifyAuthenticationHandler = (): Boolean => {
-  const loginContext = useContext(LoginContext);
-  const {
-    token,
-    actions: { getTokenData, logout },
-  } = useContext(authContext);
-  if (token !== null) {
-    const tokenData = getTokenData();
+export const verifyAuthentication = (login, auth): Boolean => {
+  if (auth.token !== null) {
+    const tokenData = auth.actions.getTokenData();
     if (tokenData !== null) {
       const { exp } = tokenData;
       if (parseInt(exp, 10) * 1000 > Date.now()) {
         return true;
       }
-      logout();
+      auth.actions.logout();
       return false;
     }
   }
-  loginContext.toggleOpen();
+  login.toggleOpen();
   return false;
 };
 
@@ -45,7 +40,9 @@ export const BasePage = () => {
 };
 
 const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
-  if (verifyAuthenticationHandler()) {
+  const login = useContext(LoginContext);
+  const auth = useContext(authContext);
+  if (verifyAuthentication(login, auth)) {
     return <Route {...routeProps} />;
   }
   return <Redirect to="/" />;
@@ -81,6 +78,8 @@ export const App = () => {
   useEffect(() => {
     (async () => {
       await loadAll();
+      /* setup socket.io-client */
+      setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
     })();
   }, []);
 
@@ -113,7 +112,6 @@ export const App = () => {
   };
 
   const context = {
-    verifyAuthentication: verifyAuthenticationHandler,
     darkMode: darkModeState,
     reloadAll: loadAll,
     reloadVehicles: loadVehicles,

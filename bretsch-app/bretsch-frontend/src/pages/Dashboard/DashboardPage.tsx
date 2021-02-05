@@ -21,7 +21,6 @@ import VehicleInfoFormDialog from '../../components/VehicleInfoForBooking';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
-import io from 'socket.io-client';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -63,8 +62,6 @@ export const DashboardPage = () => {
 
   useEffect(() => {
     reloadAll();
-    /* setup socket.io-client */
-    setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
   }, []);
 
   useEffect(() => {
