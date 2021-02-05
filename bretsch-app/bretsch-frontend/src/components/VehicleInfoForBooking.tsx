@@ -15,6 +15,7 @@ import { setVehicleStatus } from '../util/RequestHelper';
 import { authContext } from '../contexts/AuthenticationContext';
 import { LoginContext } from '../contexts/LoginContext';
 import { SocketclientContext } from '../contexts/SocketclientContext';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -31,6 +32,7 @@ export const Section = styled.div`
 `;
 
 export default function vehicleInfoFormDialog() {
+  const { enqueueSnackbar } = useSnackbar();
   const vehicleInfoContext = useContext(VehicleInfoContext);
   const [vehicle, setVehicle] = useState<Vehicle>();
   const [actualBooking, setActualBooking] = useState<Booking | null>(null);
@@ -45,7 +47,6 @@ export default function vehicleInfoFormDialog() {
   const classes = useStyles();
 
   const fetchVehicle = async () => {
-    console.log('fetchVehicle');
     const vehicleRequest = await fetch(`/api/vehicle/${vehicleInfoContext.vehicleId}`, {
       headers: { 'Content-Type': 'application/json' },
       method: 'GET',
@@ -57,7 +58,6 @@ export default function vehicleInfoFormDialog() {
   };
 
   const fetchActualBooking = async () => {
-    console.log('fetchActualBooking');
     if (getTokenData()?.id) {
       /* ToDo: check if token is valid */
       const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
@@ -72,7 +72,6 @@ export default function vehicleInfoFormDialog() {
   };
 
   useEffect(() => {
-    console.log('useEffect');
     if (vehicleInfoContext.vehicleId !== -1) {
       fetchVehicle();
       fetchActualBooking();
@@ -81,9 +80,8 @@ export default function vehicleInfoFormDialog() {
 
   const handleClose = (submitForm: boolean) => {
     vehicleInfoContext.toggleOpen();
-    console.log('handleClose ');
     if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
-    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free); // ToDo: Currently vehicle changes position even if booking was cancelled
+    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free);
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -108,7 +106,6 @@ export default function vehicleInfoFormDialog() {
             method: 'POST',
           });
           if (createBookingRequest.status === 200) {
-            console.log('booking created');
             const createBookingJSON = await createBookingRequest.json();
             try {
               const bookingId = createBookingJSON['data']['bookingId'];
@@ -120,29 +117,32 @@ export default function vehicleInfoFormDialog() {
                 method: 'PATCH',
               });
               if (updateUserRequest.status === 200) {
-                console.log('added actualBooking');
                 if (socketclient) {
-                  console.log('send vehicleId to socket-server');
                   socketclient.emit('booking', { vehicleId: vehicle.vehicleId });
                 }
                 handleClose(true);
               } else {
-                console.log('error by updating user/ adding actualBooking');
+                enqueueSnackbar(`Error while updating user / adding actualBooking!`, {
+                  variant: 'error',
+                });
                 handleClose(false);
                 return;
               }
             } catch (error) {
-              console.log('error by extracting bookingId');
+              enqueueSnackbar(`Error while extracting bookingId!`, {
+                variant: 'error',
+              });
               handleClose(false);
               return;
             }
           } else {
-            console.log('error by creating new booking');
+            enqueueSnackbar(`Error while creating new booking!`, {
+              variant: 'error',
+            });
             handleClose(false);
             return;
           }
           history.push('/booking');
-
           return;
         }
       }
@@ -164,11 +164,9 @@ export default function vehicleInfoFormDialog() {
         <form onSubmit={onSubmitForm}>
           <Section>
             <Box className={classes.modal} mt={1}>
-              {' '}
               Batterylevel: {vehicle?.batteryLevel}%
             </Box>
             <Box className={classes.modal} mt={1}>
-              {' '}
               Type: {vehicle?.vehicleType.type}
             </Box>
           </Section>

@@ -9,6 +9,7 @@ import { authContext } from '../../contexts/AuthenticationContext';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 import { PaymentContext } from '../../contexts/PaymentContext';
 import { Payment } from '../../components/Payment';
+import { useSnackbar } from 'notistack';
 
 /**
  * convert ms to form "XX:XX:XX"
@@ -77,6 +78,7 @@ const PaymentMethod = [
 ];
 
 export const BookingPage = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [booking, setBooking] = useState<Booking>();
   const {
     actions: { getTokenData },
@@ -116,7 +118,6 @@ export const BookingPage = () => {
   const [time, setTime] = useState(getDateDifference());
 
   const fetchBooking = async () => {
-    console.log('fetchBooking');
     const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
       /* 1 must be replaced with actual logged in userId */
       headers: { 'content-type': 'application/json' },
@@ -126,7 +127,6 @@ export const BookingPage = () => {
     if (userRequest.status === 200) {
       const userJSON = await userRequest.json();
       if (userJSON.data.actualBooking) {
-        console.log('in booking');
         const bookingRequest = await fetch(`/api/booking/${userJSON.data.actualBooking.bookingId}`, {
           headers: { 'content-type': 'application/json' },
           method: 'GET',
@@ -174,10 +174,14 @@ export const BookingPage = () => {
         fetchBooking();
         socketclient.emit('stopBooking', { vehicleId: booking?.vehicle.vehicleId });
       } else {
-        console.log('error by updating user');
+        enqueueSnackbar(`Error while updating user!`, {
+          variant: 'error',
+        });
       }
     } else {
-      console.log('error by updating booking');
+      enqueueSnackbar(`Error while updating booking!`, {
+        variant: 'error',
+      });
     }
   };
 
@@ -199,7 +203,6 @@ export const BookingPage = () => {
   });
 
   if (booking) {
-    console.log(booking);
     return (
       <Layout title="Booking">
         <BookingDiv>

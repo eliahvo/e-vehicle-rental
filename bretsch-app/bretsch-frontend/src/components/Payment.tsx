@@ -43,7 +43,7 @@ export const Payment: React.FC<{ stopBooking: () => Promise<void> }> = ({ stopBo
       <DialogTitle id="form-dialog-title">Check Out</DialogTitle>
       <PayPalScriptProvider
         options={{
-          'client-id': 'AadAfDCrXnMGJ-AoFZ1UoOWEA7tM8HTBrp5Dbsm33BugQRbQqQsY-NKLJlPs74Fw-OFcSdBOTxRfe5sn',
+          'client-id': `${process.env.REACT_APP_PAYPAL_CLIENT_ID}`,
           currency: 'EUR',
         }}
       >

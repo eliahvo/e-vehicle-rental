@@ -4,15 +4,15 @@
 # Version:      [1.0.2]
 # Author:       [Ramon Walther]
 #
-# Description:  Simple entrypoint for our api container to
+# Description:  Simple entrypoint for our socket container to
 #               install all necessary packages and build the
-#               api container.
+#               socket container.
 # ------------------------------------------------------------------
 PREFIX="[Entrypoint Script]"
 
 # Default init procedure
 function init() {
-    echo "$PREFIX Initializing api..."
+    echo "$PREFIX Initializing socket..."
     install
 	build
     start
@@ -20,7 +20,7 @@ function init() {
 
 # Development init procedure
 function devInit() {
-    echo "$PREFIX Initializing api... (Dev Mode)"
+    echo "$PREFIX Initializing socket... (Dev Mode)"
     install
 	build
     devStart
@@ -40,13 +40,13 @@ function build() {
 
 # Start only procedure
 function start() {
-    echo "$PREFIX Starting application..."
+    echo "$PREFIX Starting socket..."
     npm start
 }
 
 # Dev-Start only procedure
 function devStart() {
-    echo "$PREFIX Starting application... (Dev Mode)"
+    echo "$PREFIX Starting socket... (Dev Mode)"
     npm run dev
 }
 
