@@ -16,6 +16,7 @@ import { authContext } from '../contexts/AuthenticationContext';
 import { LoginContext } from '../contexts/LoginContext';
 import { SocketclientContext } from '../contexts/SocketclientContext';
 import { useSnackbar } from 'notistack';
+import { AppContext } from '../contexts/AppContext';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -33,6 +34,7 @@ export const Section = styled.div`
 
 export default function vehicleInfoFormDialog() {
   const { enqueueSnackbar } = useSnackbar();
+  const { verifyAuthentication } = React.useContext(AppContext);
   const vehicleInfoContext = useContext(VehicleInfoContext);
   const [vehicle, setVehicle] = useState<Vehicle>();
   const [actualBooking, setActualBooking] = useState<Booking | null>(null);
@@ -58,8 +60,7 @@ export default function vehicleInfoFormDialog() {
   };
 
   const fetchActualBooking = async () => {
-    if (getTokenData()?.id) {
-      /* ToDo: check if token is valid */
+    if (verifyAuthentication() && getTokenData()?.id) {
       const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
         headers: { 'Content-Type': 'application/json' },
         method: 'GET',
@@ -88,66 +89,56 @@ export default function vehicleInfoFormDialog() {
     e.preventDefault();
 
     /* check if user is logged in */
-    if (token !== null) {
-      const tokenData = getTokenData();
-      if (tokenData !== null) {
-        const { exp } = tokenData;
-        if (parseInt(exp, 10) * 1000 > Date.now()) {
-          /* create new Booking */
-          const createBookingRequest = await fetch('/api/booking', {
+    if (verifyAuthentication()) {
+      const createBookingRequest = await fetch('/api/booking', {
+        body: JSON.stringify({
+          paymentStatus: 'not payed',
+          price: 1 /* must be changed later */,
+          startDate: new Date().toString(),
+          userId: getTokenData()?.id,
+          vehicleId: vehicle?.vehicleId,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      });
+      if (createBookingRequest.status === 200) {
+        const createBookingJSON = await createBookingRequest.json();
+        try {
+          const bookingId = createBookingJSON['data']['bookingId'];
+          const updateUserRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
             body: JSON.stringify({
-              paymentStatus: 'not payed',
-              price: 1,
-              startDate: new Date().toString(),
-              userId: 1 /* must be changed later */,
-              vehicleId: vehicle?.vehicleId,
+              actualBookingId: bookingId,
             }),
             headers: { 'Content-Type': 'application/json' },
-            method: 'POST',
+            method: 'PATCH',
           });
-          if (createBookingRequest.status === 200) {
-            const createBookingJSON = await createBookingRequest.json();
-            try {
-              const bookingId = createBookingJSON['data']['bookingId'];
-              const updateUserRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
-                body: JSON.stringify({
-                  actualBookingId: bookingId,
-                }),
-                headers: { 'Content-Type': 'application/json' },
-                method: 'PATCH',
-              });
-              if (updateUserRequest.status === 200) {
-                if (socketclient) {
-                  socketclient.emit('booking', { vehicleId: vehicle.vehicleId });
-                }
-                handleClose(true);
-              } else {
-                enqueueSnackbar(`Error while updating user / adding actualBooking!`, {
-                  variant: 'error',
-                });
-                handleClose(false);
-                return;
-              }
-            } catch (error) {
-              enqueueSnackbar(`Error while extracting bookingId!`, {
-                variant: 'error',
-              });
-              handleClose(false);
-              return;
+          if (updateUserRequest.status === 200) {
+            if (socketclient) {
+              socketclient.emit('booking', { vehicleId: vehicle.vehicleId });
             }
+            handleClose(true);
           } else {
-            enqueueSnackbar(`Error while creating new booking!`, {
+            enqueueSnackbar(`Error while updating user / adding actualBooking!`, {
               variant: 'error',
             });
             handleClose(false);
             return;
           }
-          history.push('/booking');
+        } catch (error) {
+          enqueueSnackbar(`Error while extracting bookingId!`, {
+            variant: 'error',
+          });
+          handleClose(false);
           return;
         }
+      } else {
+        enqueueSnackbar(`Error while creating new booking!`, {
+          variant: 'error',
+        });
+        handleClose(false);
+        return;
       }
     }
-    loginContext.toggleOpen();
   };
 
   return (

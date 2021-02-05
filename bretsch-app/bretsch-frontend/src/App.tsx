@@ -19,11 +19,7 @@ import { AdminPage } from './pages/Admin/AdminPage';
 import RegisterModal from './components/Register';
 import { SocketclientContext } from './contexts/SocketclientContext';
 
-export const BasePage = () => {
-  return <Redirect to="/dashboard" />;
-};
-
-const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
+const verifyAuthenticationHandler = (): Boolean => {
   const loginContext = useContext(LoginContext);
   const {
     token,
@@ -34,13 +30,24 @@ const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) =
     if (tokenData !== null) {
       const { exp } = tokenData;
       if (parseInt(exp, 10) * 1000 > Date.now()) {
-        return <Route {...routeProps} />;
+        return true;
       }
       logout();
-      return <Redirect to="/" />;
+      return false;
     }
   }
   loginContext.toggleOpen();
+  return false;
+};
+
+export const BasePage = () => {
+  return <Redirect to="/dashboard" />;
+};
+
+const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
+  if (verifyAuthenticationHandler()) {
+    return <Route {...routeProps} />;
+  }
   return <Redirect to="/" />;
 };
 
@@ -106,6 +113,7 @@ export const App = () => {
   };
 
   const context = {
+    verifyAuthentication: verifyAuthenticationHandler,
     darkMode: darkModeState,
     reloadAll: loadAll,
     reloadVehicles: loadVehicles,
@@ -122,7 +130,7 @@ export const App = () => {
             <LoginContext.Provider value={loginContext}>
               <BrowserRouter>
                 <Switch>
-                  <Route path="/admin" component={AdminPage} />
+                  <Route exact path="/admin" component={AdminPage} />
                   <Route exact path="/dashboard" component={DashboardPage} />
                   <AuthenticatedRoute exact path="/booking" component={BookingPage} />
                   <Route exact path="/prices" component={PricePage} />
