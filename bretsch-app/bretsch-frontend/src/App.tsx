@@ -123,7 +123,6 @@ export const App = () => {
               <BrowserRouter>
                 <Switch>
                   <Route path="/admin" component={AdminPage} />
-                <Route path="/paypaltest" component={Payment} />
                   <Route exact path="/dashboard" component={DashboardPage} />
                   <AuthenticatedRoute exact path="/booking" component={BookingPage} />
                   <Route exact path="/prices" component={PricePage} />
