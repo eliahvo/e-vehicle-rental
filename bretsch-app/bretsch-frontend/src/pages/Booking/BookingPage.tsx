@@ -7,6 +7,8 @@ import useLocalStorage from '../../util/LocalStorageHook';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
+import { PaymentContext } from '../../contexts/PaymentContext';
+import { Payment } from '../../components/Payment';
 
 /**
  * convert ms to form "XX:XX:XX"
@@ -81,6 +83,16 @@ export const BookingPage = () => {
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
   const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
+  const [openPayment, setOpenPayment] = React.useState(false);
+
+  const toggleOpenState = () => {
+    setOpenPayment(!openPayment);
+  };
+
+  const paymentContext = {
+    open: openPayment,
+    toggleOpen: toggleOpenState,
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setChosenPayment(e.target.value);
@@ -251,7 +263,16 @@ export const BookingPage = () => {
                 {/* stop booking button */}
                 <Box mt={1} mb={1}>
                   <ButtonStyle>
-                    <Button onClick={stopBooking}>Stop</Button>
+                    <PaymentContext.Provider value={paymentContext}>
+                      <Button
+                        onClick={() => {
+                          toggleOpenState();
+                        }}
+                      >
+                        Stop
+                      </Button>
+                      <Payment stopBooking={stopBooking} />
+                    </PaymentContext.Provider>
                   </ButtonStyle>
                 </Box>
               </Grid>

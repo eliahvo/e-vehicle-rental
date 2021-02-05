@@ -26,6 +26,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.2.10",
+    "@paypal/react-paypal-js": "4.0.2",
     "@react-google-maps/api": "^2.1.0",
     "@types/socket.io-client": "^1.4.35",
     "date-fns": "^2.16.1",
