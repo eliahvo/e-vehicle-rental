@@ -15,7 +15,7 @@ items:
   User2:
     email: user2@bretsch.eu
     hashedPassword: $2b$10$ezgvxVBevnWtKO5YJt8wjexQEs5TtDnuQGgI4V4MQRpyeavxqsm5G
-    userRole: normal user
+    userRole: user
     firstName: user2
     lastName: bretsch2
     birthDate: 11.11.11

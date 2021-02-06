@@ -19,7 +19,9 @@ import { AdminPage } from './pages/Admin/AdminPage';
 import io from 'socket.io-client';
 import { SocketclientContext } from './contexts/SocketclientContext';
 
-export const verifyAuthentication = (login, auth): Boolean => {
+const permittedRoles = ['admin']; // Have to be lowercase only!
+
+export const verifyAuthentication = (login, auth, suppressLogin = false): boolean => {
   if (auth.token !== null) {
     const tokenData = auth.actions.getTokenData();
     if (tokenData !== null) {
@@ -31,7 +33,19 @@ export const verifyAuthentication = (login, auth): Boolean => {
       return false;
     }
   }
-  login.toggleOpen();
+  if (!suppressLogin) {
+    login.toggleOpen();
+  }
+  return false;
+};
+
+export const verifyPermittedRole = (login, auth, suppressLogin = false): boolean => {
+  if (
+    verifyAuthentication(login, auth, suppressLogin) &&
+    permittedRoles.includes(auth.actions.getTokenData().role.toLowerCase())
+  ) {
+    return true;
+  }
   return false;
 };
 
@@ -43,6 +57,14 @@ const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) =
   const login = useContext(LoginContext);
   const auth = useContext(authContext);
   if (verifyAuthentication(login, auth)) {
+    return <Route {...routeProps} />;
+  }
+  return <Redirect to="/" />;
+};
+const PermittedRolesRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
+  const login = useContext(LoginContext);
+  const auth = useContext(authContext);
+  if (verifyPermittedRole(login, auth)) {
     return <Route {...routeProps} />;
   }
   return <Redirect to="/" />;
@@ -135,12 +157,12 @@ export const App = () => {
             <LoginContext.Provider value={loginContext}>
               <BrowserRouter>
                 <Switch>
-                  <Route exact path="/admin" component={AdminPage} />
                   <Route exact path="/dashboard" component={DashboardPage} />
                   <AuthenticatedRoute exact path="/booking" component={BookingPage} />
                   <Route exact path="/prices" component={PricePage} />
                   <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
                   <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
+                  <PermittedRolesRoute exact path="/admin" component={AdminPage} />
                   <AuthenticatedRoute exact path="/settings" component={SettingPage} />
                   <Route path="/" component={BasePage} />
                 </Switch>

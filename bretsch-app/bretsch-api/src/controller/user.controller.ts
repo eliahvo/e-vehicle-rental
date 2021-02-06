@@ -54,6 +54,7 @@ export const registerUser = async (req: Request, res: Response) => {
   newUser.preferedPayment = preferedPayment;
   newUser.streetPlusNumber = streetPlusNumber;
   newUser.city = city;
+  newUser.userRole = "user";
 
   const createdUser = await userRepository.save(newUser);
   delete createdUser.hashedPassword;
@@ -68,7 +69,7 @@ export const loginUser = async (req: Request, res: Response) => {
   const userRepository = await getRepository(User);
   // Check if user exists
   const user = await userRepository.findOne({
-    select: ["hashedPassword", "email", "firstName", "lastName", "userId"],
+    select: ["hashedPassword", "email", "firstName", "lastName", "userId", "userRole"],
     where: {
       email,
     },
@@ -87,6 +88,7 @@ export const loginUser = async (req: Request, res: Response) => {
     email: user.email,
     id: user.userId.toString(),
     name: user.firstName,
+    role: user.userRole,
   });
 
   return res.send({

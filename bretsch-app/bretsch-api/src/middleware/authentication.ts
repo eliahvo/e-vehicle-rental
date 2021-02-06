@@ -1,11 +1,12 @@
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import { Request, Response, NextFunction } from 'express';
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { Request, Response, NextFunction } from "express";
 
 export interface JWTUserData {
   email: string;
   name: string;
   id: string;
+  role: string;
 }
 
 export interface JWTToken extends JWTUserData {
@@ -14,7 +15,7 @@ export interface JWTToken extends JWTUserData {
 }
 
 export class Authentication {
-  private static SECRET_KEY = 'JWT_SECRET';
+  private static SECRET_KEY = "JWT_SECRET";
   private static JWT_OPTIONS: jwt.SignOptions = {
     expiresIn: 3600, // in seconds
   };
@@ -46,17 +47,17 @@ export class Authentication {
   }
 
   public static async verifyAccess(req: Request, res: Response, next: NextFunction) {
-    const jwt = req.get('Authorization');
+    const jwt = req.get("Authorization");
 
     // Check if the authorization header exists
     if (!jwt) {
-      return res.status(401).send({ status: 'unauthorized' });
+      return res.status(401).send({ status: "unauthorized" });
     }
 
     // Verify the token. Returns the jwt object if valid - else null
     const validToken = await Authentication.verifyToken(jwt);
     if (!validToken) {
-      return res.status(401).send({ status: 'unauthorized' });
+      return res.status(401).send({ status: "unauthorized" });
     }
 
     return next();
@@ -69,7 +70,7 @@ export const authMiddleware = async (
   _res: Response,
   next: NextFunction
 ) => {
-  const token = req.get('Authorization');
+  const token = req.get("Authorization");
   if (token) {
     try {
       const decodedToken = (await Authentication.verifyToken(token)) as JWTToken;

@@ -4,15 +4,12 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { LoginContext } from '../contexts/LoginContext';
 import { Divider, Typography } from '@material-ui/core';
 import { authContext, LoginOptions } from '../contexts/AuthenticationContext';
-import { useHistory } from 'react-router-dom';
 import RegisterModal from './Register';
 import { RegisterContext } from '../contexts/RegisterContext';
-import { FormatAlignLeft } from '@material-ui/icons';
 
 export default function LoginFormDialog() {
   const auth = useContext(authContext);
@@ -22,6 +19,7 @@ export default function LoginFormDialog() {
   const [errorText, setErrorText] = React.useState('');
 
   const handleClose = () => {
+    setValues({ ...values, password: '' });
     loginContext.toggleOpen();
   };
 
@@ -37,11 +35,12 @@ export default function LoginFormDialog() {
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const loggedIn: Boolean = await auth.actions.login(values);
+    const loggedIn: boolean = await auth.actions.login(values);
     if (loggedIn) {
       handleClose();
     } else {
       setErrorText('Incorrect email or password!');
+      setValues({ ...values, password: '' });
     }
   };
 
@@ -50,6 +49,7 @@ export default function LoginFormDialog() {
   };
 
   const registerContext = {
+    email: values.email,
     open: openRegister,
     toggleOpen: toggleOpenState,
   };
@@ -63,6 +63,7 @@ export default function LoginFormDialog() {
             <DialogContent>
               <TextField
                 autoFocus
+                value={values.email}
                 name="email"
                 margin="dense"
                 id="email"
@@ -73,6 +74,7 @@ export default function LoginFormDialog() {
                 required
               />
               <TextField
+                value={values.password}
                 name="password"
                 margin="dense"
                 id="password"

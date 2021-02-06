@@ -1,12 +1,10 @@
-import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
 import React, { useState } from 'react';
 import useLocalStorage from '../util/LocalStorageHook';
-import { RegisterContext } from './RegisterContext';
 
 export type JWTTokenData = {
   id: number;
   name: string;
+  role: string;
   email: string;
   iat: string;
   exp: string;
@@ -31,7 +29,7 @@ export type LoginOptions = {
 export type AuthContext = {
   token: string | null;
   actions: {
-    login: (options: LoginOptions) => Promise<Boolean>;
+    login: (options: LoginOptions) => Promise<boolean>;
     register: (options: RegisterOptions) => Promise<void>;
     getTokenData: () => JWTTokenData | null;
     logout: () => void;
@@ -54,7 +52,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [tokenStorage, setTokenStorage] = useLocalStorage('App.token', '');
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
-  const login = async (values: LoginOptions): Promise<Boolean> => {
+  const login = async (values: LoginOptions): Promise<boolean> => {
     try {
       const loginRequest = await fetch('/api/user/token', {
         method: 'POST',
