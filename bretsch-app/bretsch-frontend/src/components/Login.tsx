@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { LoginContext } from '../contexts/LoginContext';
-import { Divider } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import { authContext, LoginOptions } from '../contexts/AuthenticationContext';
 import { useHistory } from 'react-router-dom';
 import RegisterModal from './Register';
@@ -19,6 +19,7 @@ export default function LoginFormDialog() {
   const loginContext = useContext(LoginContext);
   const [values, setValues] = useState<LoginOptions>({ email: '', password: '' });
   const [openRegister, setOpenRegister] = React.useState(false);
+  const [errorText, setErrorText] = React.useState('');
 
   const handleClose = () => {
     loginContext.toggleOpen();
@@ -30,13 +31,18 @@ export default function LoginFormDialog() {
       e.target.value = values.email;
     } else {
       setValues({ ...values, [e.target.name]: e.target.value });
+      setErrorText('');
     }
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    auth.actions.login(values);
-    handleClose();
+    const loggedIn: Boolean = await auth.actions.login(values);
+    if (loggedIn) {
+      handleClose();
+    } else {
+      setErrorText('Incorrect email or password!');
+    }
   };
 
   const toggleOpenState = () => {
@@ -78,6 +84,7 @@ export default function LoginFormDialog() {
               />
             </DialogContent>
             <DialogActions>
+              <Typography color="error">{errorText}</Typography>
               <Button type="submit" color="primary">
                 Sign In
               </Button>
