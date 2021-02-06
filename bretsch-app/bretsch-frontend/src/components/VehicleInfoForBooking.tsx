@@ -6,14 +6,16 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { VehicleInfoContext } from '../contexts/VehicleInfoContext';
 import { Box, Chip, Divider, makeStyles } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
 import { Booking, Vehicle, vehicle_status } from '../util/EntityInterfaces';
-import useLocalStorage from '../util/LocalStorageHook';
 import styled from 'styled-components';
 import WarningIcon from '@material-ui/icons/Warning';
 import { setVehicleStatus } from '../util/RequestHelper';
 import { authContext } from '../contexts/AuthenticationContext';
 import { LoginContext } from '../contexts/LoginContext';
+import { SocketclientContext } from '../contexts/SocketclientContext';
+import { useSnackbar } from 'notistack';
+import { verifyAuthentication } from '../App';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -30,11 +32,14 @@ export const Section = styled.div`
 `;
 
 export default function vehicleInfoFormDialog() {
+  const { enqueueSnackbar } = useSnackbar();
+  const history = useHistory();
   const vehicleInfoContext = useContext(VehicleInfoContext);
   const [vehicle, setVehicle] = useState<Vehicle>();
   const [actualBooking, setActualBooking] = useState<Booking | null>(null);
-  const loginContext = useContext(LoginContext);
-  const history = useHistory();
+  const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
+  const login = useContext(LoginContext);
+  const auth = useContext(authContext);
   const {
     token,
     actions: { getTokenData, logout },
@@ -43,7 +48,6 @@ export default function vehicleInfoFormDialog() {
   const classes = useStyles();
 
   const fetchVehicle = async () => {
-    console.log('fetchVehicle');
     const vehicleRequest = await fetch(`/api/vehicle/${vehicleInfoContext.vehicleId}`, {
       headers: { 'Content-Type': 'application/json' },
       method: 'GET',
@@ -55,9 +59,7 @@ export default function vehicleInfoFormDialog() {
   };
 
   const fetchActualBooking = async () => {
-    console.log('fetchActualBooking');
-    if (getTokenData()?.id) {
-      /* ToDo: check if token is valid */
+    if (verifyAuthentication(login, auth) && getTokenData()?.id) {
       const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
         headers: { 'Content-Type': 'application/json' },
         method: 'GET',
@@ -70,7 +72,6 @@ export default function vehicleInfoFormDialog() {
   };
 
   useEffect(() => {
-    console.log('useEffect');
     if (vehicleInfoContext.vehicleId !== -1) {
       fetchVehicle();
       fetchActualBooking();
@@ -79,69 +80,65 @@ export default function vehicleInfoFormDialog() {
 
   const handleClose = (submitForm: boolean) => {
     vehicleInfoContext.toggleOpen();
-    console.log('handleClose ');
     if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
-    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free); // ToDo: Currently vehicle changes position even if booking was cancelled
+    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free);
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     /* check if user is logged in */
-    if (token !== null) {
-      const tokenData = getTokenData();
-      if (tokenData !== null) {
-        const { exp } = tokenData;
-        if (parseInt(exp, 10) * 1000 > Date.now()) {
-          /* create new Booking */
-          const createBookingRequest = await fetch('/api/booking', {
+    if (verifyAuthentication(login, auth)) {
+      const createBookingRequest = await fetch('/api/booking', {
+        body: JSON.stringify({
+          paymentStatus: 'not payed',
+          price: 1 /* must be changed later */,
+          startDate: new Date().toString(),
+          userId: getTokenData()?.id,
+          vehicleId: vehicle?.vehicleId,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      });
+      if (createBookingRequest.status === 200) {
+        const createBookingJSON = await createBookingRequest.json();
+        try {
+          const bookingId = createBookingJSON['data']['bookingId'];
+          const updateUserRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
             body: JSON.stringify({
-              paymentStatus: 'not payed',
-              price: 1,
-              startDate: new Date().toString(),
-              userId: 1 /* must be changed later */,
-              vehicleId: vehicle?.vehicleId,
+              actualBookingId: bookingId,
             }),
             headers: { 'Content-Type': 'application/json' },
-            method: 'POST',
+            method: 'PATCH',
           });
-          if (createBookingRequest.status === 200) {
-            console.log('booking created');
-            const createBookingJSON = await createBookingRequest.json();
-            try {
-              const bookingId = createBookingJSON['data']['bookingId'];
-              const updateUserRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
-                body: JSON.stringify({
-                  actualBookingId: bookingId,
-                }),
-                headers: { 'Content-Type': 'application/json' },
-                method: 'PATCH',
-              });
-              if (updateUserRequest.status === 200) {
-                console.log('added actualBooking');
-                handleClose(true);
-              } else {
-                console.log('error by updating user/ adding actualBooking');
-                handleClose(false);
-                return;
-              }
-            } catch (error) {
-              console.log('error by extracting bookingId');
-              handleClose(false);
-              return;
+          if (updateUserRequest.status === 200) {
+            if (socketclient) {
+              socketclient.emit('booking', { vehicleId: vehicle.vehicleId });
             }
+            handleClose(true);
+            history.push('/booking');
           } else {
-            console.log('error by creating new booking');
+            enqueueSnackbar(`Error while updating user / adding actualBooking!`, {
+              variant: 'error',
+            });
             handleClose(false);
             return;
           }
-          history.push('/booking');
-
+        } catch (error) {
+          enqueueSnackbar(`Error while extracting bookingId!`, {
+            variant: 'error',
+          });
+          handleClose(false);
           return;
         }
+      } else {
+        enqueueSnackbar(`Error while creating new booking!`, {
+          variant: 'error',
+        });
+        handleClose(false);
+        return;
       }
     }
-    loginContext.toggleOpen();
   };
 
   return (
@@ -158,11 +155,9 @@ export default function vehicleInfoFormDialog() {
         <form onSubmit={onSubmitForm}>
           <Section>
             <Box className={classes.modal} mt={1}>
-              {' '}
               Batterylevel: {vehicle?.batteryLevel}%
             </Box>
             <Box className={classes.modal} mt={1}>
-              {' '}
               Type: {vehicle?.vehicleType.type}
             </Box>
           </Section>

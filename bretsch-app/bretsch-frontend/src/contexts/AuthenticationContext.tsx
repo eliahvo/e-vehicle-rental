@@ -31,7 +31,7 @@ export type LoginOptions = {
 export type AuthContext = {
   token: string | null;
   actions: {
-    login: (options: LoginOptions) => Promise<void>;
+    login: (options: LoginOptions) => Promise<Boolean>;
     register: (options: RegisterOptions) => Promise<void>;
     getTokenData: () => JWTTokenData | null;
     logout: () => void;
@@ -39,9 +39,9 @@ export type AuthContext = {
 };
 
 export const initialAuthContext = {
-  token: null,
+  token: localStorage.getItem('token'),
   actions: {
-    login: async () => {},
+    login: async (): Promise<any> => {},
     register: async () => {},
     getTokenData: () => null,
     logout: () => {},
@@ -52,9 +52,9 @@ export const authContext = React.createContext<AuthContext>(initialAuthContext);
 
 export const AuthProvider: React.FC = ({ children }) => {
   const [tokenStorage, setTokenStorage] = useLocalStorage('App.token', '');
-  const [token, setToken] = useState<string | null>(tokenStorage);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
-  const login = async (values: LoginOptions) => {
+  const login = async (values: LoginOptions): Promise<Boolean> => {
     try {
       const loginRequest = await fetch('/api/user/token', {
         method: 'POST',
@@ -65,9 +65,12 @@ export const AuthProvider: React.FC = ({ children }) => {
         const { data } = await loginRequest.json();
         setToken(data);
         setTokenStorage(data);
+        localStorage.setItem('token', data);
+        return true;
       }
+      return false;
     } catch (e) {
-      console.log('Email or Password is wrong! ');
+      return false;
     }
   };
 
@@ -97,6 +100,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const logout = () => {
     setTokenStorage('');
     setToken('');
+    localStorage.setItem('token', '');
   };
   return (
     <authContext.Provider value={{ token, actions: { login, register, getTokenData, logout } }}>

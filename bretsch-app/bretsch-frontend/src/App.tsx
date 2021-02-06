@@ -16,30 +16,35 @@ import { ProfilePage } from './pages/Profile/ProfilePage';
 import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
 import { AdminPage } from './pages/Admin/AdminPage';
-import RegisterModal from './components/Register';
+import io from 'socket.io-client';
+import { SocketclientContext } from './contexts/SocketclientContext';
+
+export const verifyAuthentication = (login, auth): Boolean => {
+  if (auth.token !== null) {
+    const tokenData = auth.actions.getTokenData();
+    if (tokenData !== null) {
+      const { exp } = tokenData;
+      if (parseInt(exp, 10) * 1000 > Date.now()) {
+        return true;
+      }
+      auth.actions.logout();
+      return false;
+    }
+  }
+  login.toggleOpen();
+  return false;
+};
 
 export const BasePage = () => {
   return <Redirect to="/dashboard" />;
 };
 
 const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
-  const loginContext = useContext(LoginContext);
-  const {
-    token,
-    actions: { getTokenData, logout },
-  } = useContext(authContext);
-  if (token !== null) {
-    const tokenData = getTokenData();
-    if (tokenData !== null) {
-      const { exp } = tokenData;
-      if (parseInt(exp, 10) * 1000 > Date.now()) {
-        return <Route {...routeProps} />;
-      }
-      logout();
-      return <Redirect to="/" />;
-    }
+  const login = useContext(LoginContext);
+  const auth = useContext(authContext);
+  if (verifyAuthentication(login, auth)) {
+    return <Route {...routeProps} />;
   }
-  loginContext.toggleOpen();
   return <Redirect to="/" />;
 };
 
@@ -48,6 +53,8 @@ export const App = () => {
   const [darkModeState, setDarkModeState] = useLocalStorage('App.darkModeState', true);
   const [vehicleData, setVehicleData] = useState<Vehicle[]>([]);
   const [openLogin, setOpenLogin] = React.useState(false);
+  const [socketclient, setSocketclient] = React.useState(null);
+  const [openCheckedDialog, setOpenCheckedDialog] = React.useState(false);
 
   const theme = React.useMemo(
     () =>
@@ -72,6 +79,8 @@ export const App = () => {
   useEffect(() => {
     (async () => {
       await loadAll();
+      /* setup socket.io-client */
+      setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
     })();
   }, []);
 
@@ -98,6 +107,10 @@ export const App = () => {
     setOpenLogin(!openLogin);
   };
 
+  const toggleOpenCheckedDialog = () => {
+    setOpenCheckedDialog(!openCheckedDialog);
+  };
+
   const loginContext = {
     open: openLogin,
     toggleOpen: toggleOpenState,
@@ -109,43 +122,33 @@ export const App = () => {
     reloadVehicles: loadVehicles,
     toggleDarkMode: toggleDarkModeState,
     vehicles: vehicleData,
+    toggleCheckDialog: toggleOpenCheckedDialog,
+    checkDialog: openCheckedDialog,
   };
 
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <CssBaseline />
-        <AppContext.Provider value={context}>
-          <LoginContext.Provider value={loginContext}>
-            <BrowserRouter>
-              <Switch>
-                <Route path="/admin" component={AdminPage} />
-                <Route exact path="/dashboard" component={DashboardPage} />
-                <AuthenticatedRoute exact path="/booking" component={BookingPage} />
-                <Route exact path="/prices" component={PricePage} />
-                <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
-                <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
-                <AuthenticatedRoute exact path="/settings" component={SettingPage} />
-                <Route path="/" component={BasePage} />
-
-              </Switch>
-            </BrowserRouter>
-          </LoginContext.Provider>
-        </AppContext.Provider>
+        <SocketclientContext.Provider value={[socketclient, setSocketclient]}>
+          <AppContext.Provider value={context}>
+            <LoginContext.Provider value={loginContext}>
+              <BrowserRouter>
+                <Switch>
+                  <Route exact path="/admin" component={AdminPage} />
+                  <Route exact path="/dashboard" component={DashboardPage} />
+                  <AuthenticatedRoute exact path="/booking" component={BookingPage} />
+                  <Route exact path="/prices" component={PricePage} />
+                  <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
+                  <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
+                  <AuthenticatedRoute exact path="/settings" component={SettingPage} />
+                  <Route path="/" component={BasePage} />
+                </Switch>
+              </BrowserRouter>
+            </LoginContext.Provider>
+          </AppContext.Provider>
+        </SocketclientContext.Provider>
       </AuthProvider>
-      <CssBaseline />
-      <AppContext.Provider value={context}>
-        <BrowserRouter>
-          <Switch>
-            <Route exact path="/" component={DashboardPage} />
-            <Route exact path="/booking" component={BookingPage} />
-            <Route exact path="/prices" component={PricePage} />
-            <Route exact path="/profile" component={ProfilePage} />
-            <Route exact path="/my-bookings" component={MyBookingPage} />
-            <Route exact path="/settings" component={SettingPage} />
-          </Switch>
-        </BrowserRouter>
-      </AppContext.Provider>
     </ThemeProvider>
   );
 };

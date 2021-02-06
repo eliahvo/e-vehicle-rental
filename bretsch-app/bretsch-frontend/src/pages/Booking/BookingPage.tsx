@@ -6,6 +6,11 @@ import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/co
 import useLocalStorage from '../../util/LocalStorageHook';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
+import { SocketclientContext } from '../../contexts/SocketclientContext';
+import { PaymentContext } from '../../contexts/PaymentContext';
+import { Payment } from '../../components/Payment';
+import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router';
 
 /**
  * convert ms to form "XX:XX:XX"
@@ -33,9 +38,11 @@ export const BookingDiv = styled.div`
 export const Heading = styled.div`
   font-size: 3rem;
   text-align: center;
+  margin-bottom: 2rem;
 `;
 
 export const Time = styled.div`
+  margin-top: 2rem;
   font-size: 2rem;
   text-align: center;
 `;
@@ -51,34 +58,25 @@ export const ButtonStyle = styled.div`
   text-align: center;
 `;
 
-{
-  /* must be replaced later */
-}
-const PaymentMethod = [
-  {
-    value: 'Paypal',
-    label: 'Paypal',
-  },
-  {
-    value: 'Visa',
-    label: 'Visa',
-  },
-  {
-    value: 'Bitcoin',
-    label: 'Bitcoin',
-  },
-  {
-    value: 'Mastercard',
-    label: 'Mastercard',
-  },
-];
-
 export const BookingPage = () => {
+  const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const [booking, setBooking] = useState<Booking>();
   const {
     actions: { getTokenData },
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
+  const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
+  const [openPayment, setOpenPayment] = React.useState(false);
+
+  const toggleOpenState = () => {
+    setOpenPayment(!openPayment);
+  };
+
+  const paymentContext = {
+    open: openPayment,
+    toggleOpen: toggleOpenState,
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setChosenPayment(e.target.value);
@@ -102,7 +100,6 @@ export const BookingPage = () => {
   const [time, setTime] = useState(getDateDifference());
 
   const fetchBooking = async () => {
-    console.log('fetchBooking');
     const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
       /* 1 must be replaced with actual logged in userId */
       headers: { 'content-type': 'application/json' },
@@ -112,7 +109,6 @@ export const BookingPage = () => {
     if (userRequest.status === 200) {
       const userJSON = await userRequest.json();
       if (userJSON.data.actualBooking) {
-        console.log('in booking');
         const bookingRequest = await fetch(`/api/booking/${userJSON.data.actualBooking.bookingId}`, {
           headers: { 'content-type': 'application/json' },
           method: 'GET',
@@ -158,11 +154,16 @@ export const BookingPage = () => {
       if (userPatch.status === 200) {
         setBooking(undefined);
         fetchBooking();
+        socketclient.emit('stopBooking', { vehicleId: booking?.vehicle.vehicleId });
       } else {
-        console.log('error by updating user');
+        enqueueSnackbar(`Error while updating user!`, {
+          variant: 'error',
+        });
       }
     } else {
-      console.log('error by updating booking');
+      enqueueSnackbar(`Error while updating booking!`, {
+        variant: 'error',
+      });
     }
   };
 
@@ -184,7 +185,6 @@ export const BookingPage = () => {
   });
 
   if (booking) {
-    console.log(booking);
     return (
       <Layout title="Booking">
         <BookingDiv>
@@ -223,46 +223,44 @@ export const BookingPage = () => {
             {/* timer */}
             <Time>{time}</Time>
 
-            <Grid container spacing={3}>
-              <Grid item xs={2}>
-                {/* prefered payment */}
-                <TextField
-                  autoFocus
-                  name="preferedPayment"
-                  margin="dense"
-                  id="preferedPayment"
-                  select
-                  label="Payment"
-                  type="text"
-                  value={chosenPayment}
-                  onChange={handleChange}
-                >
-                  {PaymentMethod.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                {/* stop booking button */}
-                <Box mt={1} mb={1}>
-                  <ButtonStyle>
-                    <Button onClick={stopBooking}>Stop</Button>
-                  </ButtonStyle>
-                </Box>
-              </Grid>
-            </Grid>
+            <Heading>
+              {/* stop booking button */}
+              <ButtonStyle>
+                <PaymentContext.Provider value={paymentContext}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => {
+                      toggleOpenState();
+                    }}
+                  >
+                    Stop booking
+                  </Button>
+                  <Payment stopBooking={stopBooking} />
+                </PaymentContext.Provider>
+              </ButtonStyle>
+            </Heading>
           </Section>
         </BookingDiv>
       </Layout>
     );
   }
   return (
-    <Layout>
+    <Layout title="Booking">
       <BookingDiv>
         {/* hypertext with info */}
-        <Heading>No active booking!</Heading>
+        <Heading>
+          <p>No active booking!</p>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              history.push('/');
+            }}
+          >
+            Start bretsching now!
+          </Button>
+        </Heading>
       </BookingDiv>
     </Layout>
   );

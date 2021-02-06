@@ -4,13 +4,15 @@ import React, { ChangeEvent, FormEvent, useContext, useEffect, useState } from '
 import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
 import styled from 'styled-components';
 import { User } from '../../util/EntityInterfaces';
-import { Divider, Grid, IconButton, makeStyles, TextField } from '@material-ui/core';
+import { Divider, Grid, IconButton, makeStyles, MenuItem, TextField } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import EditIcon from '@material-ui/icons/Edit';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CheckIcon from '@material-ui/icons/Check';
 import { useSnackbar } from 'notistack';
 import { authContext } from '../../contexts/AuthenticationContext';
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 const useStyles = makeStyles((theme) => ({
   headings: {
@@ -36,6 +38,36 @@ export const Section = styled.div`
   margin: 1rem 0 0 0;
 `;
 
+const useDateStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  textField: {
+    marginRight: theme.spacing(1),
+    width: 175,
+  },
+}));
+
+const PaymentMethod = [
+  {
+    value: 'Paypal',
+    label: 'Paypal',
+  },
+  {
+    value: 'Visa',
+    label: 'Visa',
+  },
+  {
+    value: 'Bitcoin',
+    label: 'Bitcoin',
+  },
+  {
+    value: 'Mastercard',
+    label: 'Mastercard',
+  },
+];
+
 export const ProfilePage = () => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -47,6 +79,9 @@ export const ProfilePage = () => {
   const {
     actions: { getTokenData },
   } = useContext(authContext);
+  const [chosenPayment, setChosenPayment] = React.useState('');
+
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
 
   const fetchProfile = async () => {
     const profileRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
@@ -57,6 +92,8 @@ export const ProfilePage = () => {
     if (profileRequest.status === 200) {
       const profileJSON = await profileRequest.json();
       setProfile(profileJSON.data);
+      setSelectedDate(profileJSON.data?.birthDate);
+      setChosenPayment(profileJSON.data?.preferedPayment);
     } else {
       enqueueSnackbar(`Error while fetching profile data!`, {
         variant: 'error',
@@ -74,10 +111,21 @@ export const ProfilePage = () => {
     firstName: profile?.firstName,
     password: '',
     passwordShadow: '',
+    birthDate: profile?.birthDate,
     lastName: profile?.lastName,
     preferedPayment: profile?.preferedPayment,
     streetPlusNumber: profile?.streetPlusNumber,
   });
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+    setValues({ ...values, birthDate: date.toLocaleDateString() });
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setChosenPayment(e.target.value);
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
 
   const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -95,6 +143,7 @@ export const ProfilePage = () => {
     await fetch(`/api/user/${getTokenData()?.id}`, {
       body: JSON.stringify({
         ...values,
+        birthdate: selectedDate,
       }),
       headers: { 'Content-Type': 'application/json' },
       method: 'PATCH',
@@ -333,17 +382,24 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={4}>
                 {editPersonalSettings ? (
-                  <TextField
-                    autoFocus
-                    onChange={fieldDidChange}
-                    margin="dense"
-                    name="birthDate"
-                    label="Birthdate"
-                    defaultValue={profile?.birthDate}
-                    type="text"
-                    fullWidth
-                    required
-                  />
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container justify="space-around">
+                      <KeyboardDatePicker
+                        id="birthDate"
+                        name="birthDate"
+                        margin="normal"
+                        label="Birthdate"
+                        format="MM/dd/yyyy"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        required
+                        fullWidth
+                      />
+                    </Grid>
+                  </MuiPickersUtilsProvider>
                 ) : (
                   profile?.birthDate
                 )}
@@ -439,15 +495,22 @@ export const ProfilePage = () => {
                 {editPaymentSettings ? (
                   <TextField
                     autoFocus
-                    onChange={fieldDidChange}
+                    onChange={handleChange}
                     margin="dense"
                     name="preferedPayment"
                     label="Preferred Payment"
-                    defaultValue={profile?.preferedPayment}
+                    value={chosenPayment}
                     type="text"
                     fullWidth
+                    select
                     required
-                  />
+                  >
+                    {PaymentMethod.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 ) : (
                   profile?.preferedPayment
                 )}

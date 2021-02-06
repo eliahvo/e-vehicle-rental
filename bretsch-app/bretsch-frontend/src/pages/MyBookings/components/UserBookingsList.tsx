@@ -29,6 +29,19 @@ export const UserBookingItem: React.FC<UserBookingProps> = ({ booking }) => {
   const { startDate, endDate, price, vehicle } = booking;
   const start = new Date(startDate).toLocaleString();
   const end = new Date(endDate).toLocaleString();
+  
+  const duration = () => {
+    const total = Date.parse(endDate.toString()) - Date.parse(startDate.toString());
+
+	const seconds = `0${(total / 1000) % 60}`.slice(-2);
+	const minutes = `${Math.floor(total / 1000 / 60)}`;
+	const getMinutes = `0${parseInt(minutes, 10) % 60}`.slice(-2);
+  const hours = `0${Math.floor(total / 1000 / 3600)}`.slice(-2);
+  
+  return `${hours}:${getMinutes}:${seconds}`;
+  }
+  
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -43,7 +56,7 @@ export const UserBookingItem: React.FC<UserBookingProps> = ({ booking }) => {
                   Price:
                 </Grid>
                 <Grid item xs={6}>
-                  {price}
+                  {price} €
                 </Grid>
               </Grid>
               <Grid container spacing={3}>
@@ -60,6 +73,14 @@ export const UserBookingItem: React.FC<UserBookingProps> = ({ booking }) => {
                 </Grid>
                 <Grid item xs={7}>
                   {end}
+                </Grid>
+              </Grid>
+              <Grid container spacing={3}>
+                <Grid item xs={5}>
+                  Duration:
+                </Grid>
+                <Grid item xs={7}>
+                  {duration()}
                 </Grid>
               </Grid>
               <Grid container spacing={3}>
