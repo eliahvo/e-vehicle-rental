@@ -1,16 +1,21 @@
-import React, { useContext, useState, ChangeEvent } from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import React, { useContext, useState, ChangeEvent, useEffect } from 'react';
 import { RegisterContext } from '../contexts/RegisterContext';
-import { Divider, Grid, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
-import { authContext, RegisterOptions } from '../contexts/AuthenticationContext';
-import { makeStyles } from '@material-ui/core';
-import { MenuItem } from '@material-ui/core';
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  makeStyles,
+  MenuItem,
+  Divider,
+  Grid,
+  Step,
+  StepLabel,
+  Stepper,
+} from '@material-ui/core';
+import { authContext } from '../contexts/AuthenticationContext';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { LoginContext } from '../contexts/LoginContext';
@@ -46,18 +51,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const useDateStyles = makeStyles((theme) => ({
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
-  },
-}));
-
 export default function RegisterModal() {
   const classes = useStyles();
   const auth = useContext(authContext);
@@ -75,6 +68,10 @@ export default function RegisterModal() {
     streetPlusNumber: '',
     city: '',
   });
+
+  useEffect(() => {
+    setValues({ ...values, email: registerContext.email });
+  }, [registerContext.email]);
 
   const handleClose = () => {
     registerContext.toggleOpen();
@@ -122,12 +119,8 @@ export default function RegisterModal() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
   function getSteps() {
-    return ['Select master blaster campaign settings', 'Create an ad group', 'Create an ad'];
+    return ['Account', 'Personal Details', 'Payment Settings'];
   }
 
   return (

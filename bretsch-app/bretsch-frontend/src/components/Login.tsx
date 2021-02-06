@@ -49,6 +49,7 @@ export default function LoginFormDialog() {
   };
 
   const registerContext = {
+    email: values.email,
     open: openRegister,
     toggleOpen: toggleOpenState,
   };
