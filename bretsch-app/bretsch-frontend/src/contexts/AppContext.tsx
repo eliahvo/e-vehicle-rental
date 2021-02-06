@@ -10,4 +10,6 @@ export const AppContext = React.createContext({
   reloadVehicles: () => {},
   toggleDarkMode: () => {},
   vehicles: typedVehicles,
+  toggleCheckDialog: () => {},
+  checkDialog: false,
 });

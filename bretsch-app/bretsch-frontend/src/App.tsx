@@ -54,6 +54,7 @@ export const App = () => {
   const [vehicleData, setVehicleData] = useState<Vehicle[]>([]);
   const [openLogin, setOpenLogin] = React.useState(false);
   const [socketclient, setSocketclient] = React.useState(null);
+  const [openCheckedDialog, setOpenCheckedDialog] = React.useState(false);
 
   const theme = React.useMemo(
     () =>
@@ -106,6 +107,10 @@ export const App = () => {
     setOpenLogin(!openLogin);
   };
 
+  const toggleOpenCheckedDialog = () => {
+    setOpenCheckedDialog(!openCheckedDialog);
+  };
+
   const loginContext = {
     open: openLogin,
     toggleOpen: toggleOpenState,
@@ -117,6 +122,8 @@ export const App = () => {
     reloadVehicles: loadVehicles,
     toggleDarkMode: toggleDarkModeState,
     vehicles: vehicleData,
+    toggleCheckDialog: toggleOpenCheckedDialog,
+    checkDialog: openCheckedDialog,
   };
 
   return (

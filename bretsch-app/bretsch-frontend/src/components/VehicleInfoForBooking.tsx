@@ -15,6 +15,7 @@ import { LoginContext } from '../contexts/LoginContext';
 import { SocketclientContext } from '../contexts/SocketclientContext';
 import { useSnackbar } from 'notistack';
 import { verifyAuthentication } from '../App';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -32,6 +33,7 @@ export const Section = styled.div`
 
 export default function vehicleInfoFormDialog() {
   const { enqueueSnackbar } = useSnackbar();
+  const history = useHistory();
   const vehicleInfoContext = useContext(VehicleInfoContext);
   const [vehicle, setVehicle] = useState<Vehicle>();
   const [actualBooking, setActualBooking] = useState<Booking | null>(null);
@@ -114,6 +116,7 @@ export default function vehicleInfoFormDialog() {
               socketclient.emit('booking', { vehicleId: vehicle.vehicleId });
             }
             handleClose(true);
+            history.push('/booking');
           } else {
             enqueueSnackbar(`Error while updating user / adding actualBooking!`, {
               variant: 'error',
