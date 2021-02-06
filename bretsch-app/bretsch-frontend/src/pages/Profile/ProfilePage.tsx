@@ -79,7 +79,7 @@ export const ProfilePage = () => {
   const {
     actions: { getTokenData },
   } = useContext(authContext);
-  const [chosenPayment, setChosenPayment] = React.useState('EUR');
+  const [chosenPayment, setChosenPayment] = React.useState('');
 
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
 
@@ -92,6 +92,8 @@ export const ProfilePage = () => {
     if (profileRequest.status === 200) {
       const profileJSON = await profileRequest.json();
       setProfile(profileJSON.data);
+      setSelectedDate(profileJSON.data?.birthDate);
+      setChosenPayment(profileJSON.data?.preferedPayment);
     } else {
       enqueueSnackbar(`Error while fetching profile data!`, {
         variant: 'error',
