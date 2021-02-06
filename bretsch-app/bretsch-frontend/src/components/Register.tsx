@@ -144,145 +144,138 @@ export default function RegisterModal() {
         <Divider />
         <form onSubmit={activeStep === steps.length - 1 ? onSubmitForm : handleNext}>
           <DialogContent>
-            {activeStep === steps.length ? (
-              <>
-                <Typography>All steps completed</Typography>
-                <Button onClick={handleReset}>Reset</Button>
-              </>
-            ) : (
-              <>
-                {activeStep === 0 ? (
-                  <>
-                    <TextField
-                      defaultValue={values.email}
-                      autoFocus
-                      name="email"
-                      margin="dense"
-                      id="name"
-                      label="Email Address"
-                      type="email"
-                      fullWidth
-                      onChange={fieldDidChange}
-                      required
-                    />
-                    <TextField
-                      defaultValue={values.password}
-                      name="password"
-                      margin="dense"
-                      id="password"
-                      label="Password"
-                      type="password"
-                      fullWidth
-                      onChange={fieldDidChange}
-                      required
-                    />
-                    <TextField
-                      defaultValue={values.passwordShadow}
-                      onChange={fieldDidChange}
-                      margin="dense"
-                      name="passwordShadow"
-                      label="Confirm New Password"
-                      type="password"
-                      fullWidth
-                      required
-                    />
-                  </>
-                ) : (
-                  ''
-                )}
-                {activeStep === 1 ? (
-                  <>
-                    <TextField
-                      defaultValue={values.firstName}
-                      autoFocus
-                      name="firstName"
-                      margin="dense"
-                      id="firstName"
-                      label="First name"
-                      type="text"
-                      fullWidth
-                      onChange={fieldDidChange}
-                      required
-                    />
-                    <TextField
-                      defaultValue={values.lastName}
-                      name="lastName"
-                      margin="dense"
-                      id="lastName"
-                      label="Last name"
-                      type="text"
-                      fullWidth
-                      onChange={fieldDidChange}
-                      required
-                    />
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <Grid container justify="space-around">
-                        <KeyboardDatePicker
-                          id="birthDate"
-                          name="birthDate"
-                          margin="dense"
-                          label="Birthdate"
-                          format="MM/dd/yyyy"
-                          value={selectedDate}
-                          onChange={handleDateChange}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                          required
-                          fullWidth
-                        />
-                      </Grid>
-                    </MuiPickersUtilsProvider>
-                    <TextField
-                      defaultValue={values.streetPlusNumber}
-                      name="streetPlusNumber"
-                      margin="dense"
-                      id="streetPlusNumber"
-                      label="Street and Number"
-                      type="text"
-                      fullWidth
-                      onChange={fieldDidChange}
-                      required
-                    />
-                    <TextField
-                      defaultValue={values.city}
-                      name="city"
-                      margin="dense"
-                      id="city"
-                      label="City"
-                      type="text"
-                      fullWidth
-                      onChange={fieldDidChange}
-                      required
-                    />
-                  </>
-                ) : (
-                  ''
-                )}
-                {activeStep === 2 ? (
+            <>
+              {activeStep === 0 ? (
+                <>
                   <TextField
-                    defaultValue={values.preferedPayment}
+                    defaultValue={values.email}
                     autoFocus
-                    name="preferedPayment"
+                    name="email"
                     margin="dense"
-                    id="preferedPayment"
-                    select
-                    label="Prefered Payment"
-                    type="text"
+                    id="name"
+                    label="Email Address"
+                    type="email"
+                    fullWidth
                     onChange={fieldDidChange}
-                    helperText="Please select your favourite payment method"
-                  >
-                    {PaymentMethod.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                ) : (
-                  ''
-                )}
-              </>
-            )}
+                    required
+                  />
+                  <TextField
+                    defaultValue={values.password}
+                    name="password"
+                    margin="dense"
+                    id="password"
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    onChange={fieldDidChange}
+                    required
+                  />
+                  <TextField
+                    defaultValue={values.passwordShadow}
+                    onChange={fieldDidChange}
+                    margin="dense"
+                    name="passwordShadow"
+                    label="Confirm New Password"
+                    type="password"
+                    fullWidth
+                    required
+                  />
+                </>
+              ) : (
+                ''
+              )}
+              {activeStep === 1 ? (
+                <>
+                  <TextField
+                    defaultValue={values.firstName}
+                    autoFocus
+                    name="firstName"
+                    margin="dense"
+                    id="firstName"
+                    label="First name"
+                    type="text"
+                    fullWidth
+                    onChange={fieldDidChange}
+                    required
+                  />
+                  <TextField
+                    defaultValue={values.lastName}
+                    name="lastName"
+                    margin="dense"
+                    id="lastName"
+                    label="Last name"
+                    type="text"
+                    fullWidth
+                    onChange={fieldDidChange}
+                    required
+                  />
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container justify="space-around">
+                      <KeyboardDatePicker
+                        id="birthDate"
+                        name="birthDate"
+                        margin="dense"
+                        label="Birthdate"
+                        format="MM/dd/yyyy"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        required
+                        fullWidth
+                      />
+                    </Grid>
+                  </MuiPickersUtilsProvider>
+                  <TextField
+                    defaultValue={values.streetPlusNumber}
+                    name="streetPlusNumber"
+                    margin="dense"
+                    id="streetPlusNumber"
+                    label="Street and Number"
+                    type="text"
+                    fullWidth
+                    onChange={fieldDidChange}
+                    required
+                  />
+                  <TextField
+                    defaultValue={values.city}
+                    name="city"
+                    margin="dense"
+                    id="city"
+                    label="City"
+                    type="text"
+                    fullWidth
+                    onChange={fieldDidChange}
+                    required
+                  />
+                </>
+              ) : (
+                ''
+              )}
+              {activeStep === 2 ? (
+                <TextField
+                  defaultValue={values.preferedPayment}
+                  autoFocus
+                  name="preferedPayment"
+                  margin="dense"
+                  id="preferedPayment"
+                  select
+                  label="Preferred Payment"
+                  type="text"
+                  onChange={fieldDidChange}
+                  helperText="Please select your favorite payment method"
+                >
+                  {PaymentMethod.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              ) : (
+                ''
+              )}
+            </>
           </DialogContent>
           <DialogActions>
             <Button disabled={activeStep === 0} onClick={handleBack} className={classes.backButton}>

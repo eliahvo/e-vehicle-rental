@@ -54,6 +54,7 @@ export const registerUser = async (req: Request, res: Response) => {
   newUser.preferedPayment = preferedPayment;
   newUser.streetPlusNumber = streetPlusNumber;
   newUser.city = city;
+  newUser.userRole = "user";
 
   const createdUser = await userRepository.save(newUser);
   delete createdUser.hashedPassword;
