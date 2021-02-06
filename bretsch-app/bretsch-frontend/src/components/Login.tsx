@@ -12,22 +12,22 @@ import { authContext, LoginOptions } from '../contexts/AuthenticationContext';
 import { useHistory } from 'react-router-dom';
 import RegisterModal from './Register';
 import { RegisterContext } from '../contexts/RegisterContext';
+import { FormatAlignLeft } from '@material-ui/icons';
 
 export default function LoginFormDialog() {
   const auth = useContext(authContext);
   const loginContext = useContext(LoginContext);
-  let history = useHistory();
   const [values, setValues] = useState<LoginOptions>({ email: '', password: '' });
   const [openRegister, setOpenRegister] = React.useState(false);
 
   const handleClose = () => {
     loginContext.toggleOpen();
   };
+
   const format = /[!#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]+/;
   const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (format.test(e.target.value)) {
-      alert('Sonderzeichen sind im Namen nicht erlaubt!');
-      e.target.value = '';
+      e.target.value = values.email;
     } else {
       setValues({ ...values, [e.target.name]: e.target.value });
     }
@@ -60,14 +60,13 @@ export default function LoginFormDialog() {
                 name="email"
                 margin="dense"
                 id="email"
-                label="Email Address"
+                label="E-Mail"
                 type="email"
                 fullWidth
                 onChange={fieldDidChange}
                 required
               />
               <TextField
-                autoFocus
                 name="password"
                 margin="dense"
                 id="password"
@@ -86,7 +85,7 @@ export default function LoginFormDialog() {
           </form>
           <Divider />
           <DialogActions>
-            <DialogContentText> Not BRETSCHing yet?</DialogContentText>
+            <p>Not BRETSCHing yet?</p>
             <Button
               onClick={() => {
                 setOpenRegister(true);

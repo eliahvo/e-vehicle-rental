@@ -58,28 +58,6 @@ export const ButtonStyle = styled.div`
   text-align: center;
 `;
 
-{
-  /* must be replaced later */
-}
-const PaymentMethod = [
-  {
-    value: 'Paypal',
-    label: 'Paypal',
-  },
-  {
-    value: 'Visa',
-    label: 'Visa',
-  },
-  {
-    value: 'Bitcoin',
-    label: 'Bitcoin',
-  },
-  {
-    value: 'Mastercard',
-    label: 'Mastercard',
-  },
-];
-
 export const BookingPage = () => {
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
@@ -268,7 +246,7 @@ export const BookingPage = () => {
     );
   }
   return (
-    <Layout>
+    <Layout title="Booking">
       <BookingDiv>
         {/* hypertext with info */}
         <Heading>
