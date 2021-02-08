@@ -15,6 +15,10 @@ export const BatteryProgressNumber = styled.span`
   color: black;
 `;
 
+export const CreateButton = styled.div`
+  margin-bottom: 2%;
+`;
+
 export const BatteryProgress = styled.progress`
   width: 100%;
   background: #75b800;
@@ -96,6 +100,11 @@ export const VehicleTable = () => {
 
   return (
     <>
+      <CreateButton>
+        <Button variant="outlined" color="primary">
+          Create
+        </Button>
+      </CreateButton>
       <div style={{ height: 400, width: '100%' }}>
         <div style={{ display: 'flex', height: '100%' }}>
           <div style={{ flexGrow: 1 }}>

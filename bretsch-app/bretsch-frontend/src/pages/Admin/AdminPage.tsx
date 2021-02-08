@@ -10,6 +10,7 @@ import { VehicleTable } from './components/vehicleTable';
 import { UserTable } from './components/UserTable';
 import Typography from '@material-ui/core/Typography';
 import { Theme } from '@material-ui/core/styles';
+import {VehicleTypeChips} from "./components/vehicleTypeChips";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -75,6 +76,8 @@ export const AdminPage = () => {
           </AppBar>
         </Paper>
         <TabPanel value={value} index={0}>
+          <h1 className={classes.headings}>Vehicle Type</h1>
+          <VehicleTypeChips />
           <h1 className={classes.headings}>Vehicles</h1>
           <VehicleTable />
           <h1 className={classes.headings}>Users</h1>
