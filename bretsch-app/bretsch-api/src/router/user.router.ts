@@ -7,6 +7,7 @@ import {
   getSpecificUser,
   updateUser,
   loginUser,
+  checkMailExists,
 } from "../controller/user.controller";
 // import { Authentication } from '../middleware/authentication';
 
@@ -16,9 +17,7 @@ userRouter.post("/", registerUser);
 userRouter.post("/token", loginUser);
 userRouter.delete("/:userId", deleteUser);
 userRouter.get("/", /*Authentication.verifyAccess,*/ getAllUser);
-userRouter.get(
-  "/:userId/bookings",
-  /*Authentication.verifyAccess,*/ getBookingsByUserId
-);
+userRouter.get("/email/:email", /*Authentication.verifyAccess,*/ checkMailExists);
+userRouter.get("/:userId/bookings", /*Authentication.verifyAccess,*/ getBookingsByUserId);
 userRouter.get("/:userId", getSpecificUser);
 userRouter.patch("/:userId", /*Authentication.verifyAccess,*/ updateUser);

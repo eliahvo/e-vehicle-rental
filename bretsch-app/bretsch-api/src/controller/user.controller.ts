@@ -189,6 +189,26 @@ export const getSpecificUser = async (req: Request, res: Response) => {
 };
 
 /**
+ * Checks wether an account with that mail already exists or not
+ * Method: get
+ * Expected as a parameter: email
+ * Expected in the body: ---
+ * @param {Request}req Request
+ * @param {Response}res Response
+ */
+export const checkMailExists = async (req: Request, res: Response) => {
+  const email = req.params.email;
+  const userRepository = getRepository(User);
+
+  try {
+    await userRepository.findOneOrFail({ where: { email: email } });
+    res.status(200).send();
+  } catch (error) {
+    res.status(404).send();
+  }
+};
+
+/**
  * Update a User based on the userId
  * Method: patch
  * Expected as a parameter: userId
