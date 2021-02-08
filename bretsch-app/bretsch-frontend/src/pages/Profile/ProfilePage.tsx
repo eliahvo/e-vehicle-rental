@@ -81,7 +81,7 @@ export const ProfilePage = () => {
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('');
 
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
 
   const fetchProfile = async () => {
     const profileRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
@@ -92,7 +92,7 @@ export const ProfilePage = () => {
     if (profileRequest.status === 200) {
       const profileJSON = await profileRequest.json();
       setProfile(profileJSON.data);
-      setSelectedDate(profileJSON.data?.birthDate);
+      setSelectedDate(new Date(profileJSON.data?.birthDate));
       setChosenPayment(profileJSON.data?.preferedPayment);
     } else {
       enqueueSnackbar(`Error while fetching profile data!`, {
@@ -117,7 +117,7 @@ export const ProfilePage = () => {
     streetPlusNumber: profile?.streetPlusNumber,
   });
 
-  const handleDateChange = (date: Date | null) => {
+  const handleDateChange = (date: Date) => {
     setSelectedDate(date);
     setValues({ ...values, birthDate: date.toLocaleDateString() });
   };
@@ -389,7 +389,7 @@ export const ProfilePage = () => {
                         name="birthDate"
                         margin="normal"
                         label="Birthdate"
-                        format="MM/dd/yyyy"
+                        format="yyyy-MM-dd"
                         value={selectedDate}
                         onChange={handleDateChange}
                         KeyboardButtonProps={{
