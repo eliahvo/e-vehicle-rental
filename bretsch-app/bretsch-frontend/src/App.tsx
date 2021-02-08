@@ -18,6 +18,7 @@ import { AdminPage } from './pages/Admin/AdminPage';
 import io from 'socket.io-client';
 import { SocketclientContext } from './contexts/SocketclientContext';
 
+export const minAge: number = 18;
 const permittedRoles = ['admin']; // Have to be lowercase only!
 
 export const verifyAuthentication = (login, auth, suppressLogin = false): boolean => {

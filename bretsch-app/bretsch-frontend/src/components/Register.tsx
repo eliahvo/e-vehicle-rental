@@ -19,6 +19,7 @@ import { authContext } from '../contexts/AuthenticationContext';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { LoginContext } from '../contexts/LoginContext';
+import { minAge } from '../App';
 
 const PaymentMethod = [
   {
@@ -69,6 +70,21 @@ export default function RegisterModal() {
     streetPlusNumber: '',
     city: '',
   });
+
+  const getMaxDate = (): Date => {
+    const today = new Date();
+    const date = new Date(
+      today.getFullYear() - minAge,
+      today.getMonth(),
+      today.getDate(),
+      today.getHours(),
+      today.getMinutes(),
+      today.getSeconds(),
+      today.getMilliseconds(),
+    );
+    return date;
+  };
+  const maxDate = getMaxDate();
 
   useEffect(() => {
     setValues({ ...values, email: registerContext.email });
@@ -122,6 +138,10 @@ export default function RegisterModal() {
       });
       if (checkEmailTaken.status === 200) {
         setMailError('This email address is already taken.');
+        return;
+      }
+    } else if (activeStep === 1) {
+      if (selectedDate > maxDate) {
         return;
       }
     }
@@ -232,6 +252,9 @@ export default function RegisterModal() {
                         }}
                         required
                         fullWidth
+                        disableFuture
+                        maxDate={maxDate}
+                        helperText={`You have to be at least ${minAge} years old to register!`}
                       />
                     </Grid>
                   </MuiPickersUtilsProvider>
