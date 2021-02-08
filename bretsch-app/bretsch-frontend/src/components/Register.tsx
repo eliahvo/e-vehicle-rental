@@ -56,7 +56,7 @@ export default function RegisterModal() {
   const auth = useContext(authContext);
   const registerContext = useContext(RegisterContext);
   const loginContext = useContext(LoginContext);
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = React.useState<Date>(null);
   const [values, setValues] = useState({
     email: '',
     password: '',
@@ -93,9 +93,9 @@ export default function RegisterModal() {
     }
   };
 
-  const handleDateChange = (date: Date | null) => {
+  const handleDateChange = (date: Date) => {
     setSelectedDate(date);
-    setValues({ ...values, birthDate: date.toLocaleDateString() });
+    setValues({ ...values, birthDate: new Date(date).toLocaleDateString() });
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -209,7 +209,7 @@ export default function RegisterModal() {
                         name="birthDate"
                         margin="dense"
                         label="Birthdate"
-                        format="MM/dd/yyyy"
+                        format="yyyy-MM-dd"
                         value={selectedDate}
                         onChange={handleDateChange}
                         KeyboardButtonProps={{
