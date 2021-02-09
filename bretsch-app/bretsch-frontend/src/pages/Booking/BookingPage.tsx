@@ -71,6 +71,23 @@ export const BookingPage = () => {
   const [stopButtonClicked, setStopButtonClicked] = React.useState(false);
   const [timeAtStopClicked, setTimeAtStopClicked] = React.useState(0);
 
+  useEffect(() => {
+    fetchBooking();
+    if (booking) setTime(getDateDifference());
+  }, []);
+
+  useEffect(() => {
+    if (booking) setTime(getDateDifference());
+  }, [booking]);
+
+  useEffect(() => {
+    if (booking && !stopButtonClicked) {
+      const timer = setTimeout(() => {
+        setTime(getDateDifference());
+      }, 1000);
+    }
+  });
+
   const toggleOpenState = () => {
     setOpenPayment(!openPayment);
   };
@@ -91,8 +108,7 @@ export const BookingPage = () => {
   const getDateDifference = function (): string {
     if (booking) {
       const actualDate = new Date();
-      const ms =
-        actualDate.getTime() - new Date(booking.startDate).getTime();
+      const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
       return msToHMS(ms - (ms % 1000));
     } else {
       return '00:00:00';
@@ -168,23 +184,6 @@ export const BookingPage = () => {
       });
     }
   };
-
-  useEffect(() => {
-    fetchBooking();
-    if (booking) setTime(getDateDifference());
-  }, []);
-
-  useEffect(() => {
-    if (booking) setTime(getDateDifference());
-  }, [booking]);
-
-  useEffect(() => {
-    if (booking && !stopButtonClicked) {
-      const timer = setTimeout(() => {
-        setTime(getDateDifference());
-      }, 1000);
-    }
-  });
 
   if (booking) {
     return (

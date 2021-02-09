@@ -93,7 +93,6 @@ export default function vehicleInfoFormDialog() {
     });
     if (vehicleRequest.status === 200) {
       const vehicleJSON = await vehicleRequest.json();
-      console.log(vehicleJSON);
       if (vehicleJSON.data.status !== 'Free') {
         enqueueSnackbar(`Vehicle already booked!`, {
           variant: 'error',

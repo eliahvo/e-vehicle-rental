@@ -128,8 +128,10 @@ export const App = () => {
     setOpenLogin(!openLogin);
   };
 
-  const toggleOpenCheckedDialog = () => {
-    setOpenCheckedDialog(!openCheckedDialog);
+  const toggleOpenCheckedDialog = async () => {
+    setOpenCheckedDialog(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setOpenCheckedDialog(false);
   };
 
   const loginContext = {
