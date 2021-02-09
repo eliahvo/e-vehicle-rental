@@ -18,7 +18,6 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
@@ -333,17 +332,6 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           ) : (
             ''
           )}
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/settings');
-            }}
-          >
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Settings'} />
-          </ListItem>
           <ListItem
             button
             onClick={() => {

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "06b26da2-6ace-4382-8b80-bc7531e4b1b2",
+		"_postman_id": "466feb29-7a45-442d-a5bc-49a7c06c2fb6",
 		"name": "Main_Project Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -293,6 +293,27 @@
 								"api",
 								"user",
 								"userId"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkMailExists",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/user/email/user1@bretsch.eu",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"user",
+								"email",
+								"user1@bretsch.eu"
 							]
 						}
 					},

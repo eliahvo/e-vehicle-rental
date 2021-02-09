@@ -26,14 +26,13 @@ enum vehicle_status {
  */
 export const createVehicle = async (req: Request, res: Response) => {
   const {
-    licencePlate,
     status,
     positionLongitude,
     positionLatitude,
     batteryLevel,
     vehicleType,
   } = req.body;
-  if ( !status || !batteryLevel || !vehicleType) {
+  if (!status || !batteryLevel || !vehicleType) {
     res.status(400).send({
       status: 'Error: Missing parameter!',
     });
@@ -41,7 +40,11 @@ export const createVehicle = async (req: Request, res: Response) => {
   }
   const vehicle = new Vehicle();
   // because of enum
-  if (typeof status === 'number' && status >= 0 && status < Object.values(vehicle_status).length / 2) {
+  if (
+    typeof status === 'number' &&
+    status >= 0 &&
+    status < Object.values(vehicle_status).length / 2
+  ) {
     vehicle.status = vehicle_status[status].toString();
   } else {
     res.status(400).send({
@@ -49,27 +52,17 @@ export const createVehicle = async (req: Request, res: Response) => {
     });
     return;
   }
-  if (!licencePlate) {
-    try {
-      const vehicleRep = getRepository(Vehicle);
-      const vehicles = await vehicleRep.find({
+  try {
+    const vehicleRep = getRepository(Vehicle);
+    const vehicles = await vehicleRep.find({
       relations: ['bookings', 'vehicleType'],
-  });
+    });
     const lastvehicle = vehicles.pop();
     const licenceNumber = lastvehicle.vehicleId + 1;
-    const generatedLicencePlate = "DA-BR-" + licenceNumber;
+    const generatedLicencePlate = 'DA-BR-' + licenceNumber;
     vehicle.licencePlate = generatedLicencePlate;
-    } catch (error) {
-      
-    }
-    
-    
-    
-  }
-  else{
-    vehicle.licencePlate = licencePlate;
-  }
-  
+  } catch (error) {}
+
   const positions = randomLocationGenerate();
   // tslint:disable-next-line:prefer-conditional-expression
   if (!positionLongitude) {
@@ -132,7 +125,10 @@ export const deleteVehicle = async (req: Request, res: Response) => {
  * @param {Request} req Request
  * @param {Response} res Response
  */
-export const getAllBookingsByVehicleId = async (req: Request, res: Response) => {
+export const getAllBookingsByVehicleId = async (
+  req: Request,
+  res: Response
+) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRep = await getRepository(Vehicle);
   try {
@@ -213,7 +209,14 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
  */
 export const updateVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
-  const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
+  const {
+    licencePlate,
+    status,
+    positionLongitude,
+    positionLatitude,
+    batteryLevel,
+    vehicleType,
+  } = req.body;
   const vehicleRep = getRepository(Vehicle);
   try {
     // actual vehicle
@@ -237,7 +240,11 @@ export const updateVehicle = async (req: Request, res: Response) => {
     console.log(Object.values(vehicle_status).length / 2);
     console.log(Object.entries(vehicle_status));
     // because of enum  -  "/2" because enum has the douple size
-    if (typeof status === 'number' && status >= 0 && status < Object.values(vehicle_status).length / 2) {
+    if (
+      typeof status === 'number' &&
+      status >= 0 &&
+      status < Object.values(vehicle_status).length / 2
+    ) {
       vehicle.status = vehicle_status[status].toString();
     } else {
       res.status(400).send({

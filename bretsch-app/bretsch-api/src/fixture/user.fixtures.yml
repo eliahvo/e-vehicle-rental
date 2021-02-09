@@ -6,7 +6,7 @@ items:
     userRole: admin
     firstName: user1
     lastName: bretsch1
-    birthDate: 10.10.10
+    birthDate: "2010-10-10"
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
@@ -18,7 +18,7 @@ items:
     userRole: user
     firstName: user2
     lastName: bretsch2
-    birthDate: 11.11.11
+    birthDate: "2011-11-11"
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt
@@ -30,7 +30,7 @@ items:
     userRole: developer
     firstName: user3
     lastName: bretsch
-    birthDate: 12.12.12
+    birthDate: "2012-12-12"
     preferedPayment: PayPal
     streetPlusNumber: H-DA 2020
     city: Darmstadt

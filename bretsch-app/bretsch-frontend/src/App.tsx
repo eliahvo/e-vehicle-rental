@@ -10,7 +10,6 @@ import { fetchVehicles } from './util/RequestHelper';
 import { useSnackbar } from 'notistack';
 import { BookingPage } from './pages/Booking/BookingPage';
 import { PricePage } from './pages/Prices/PricesPage';
-import { SettingPage } from './pages/Settings/SettingPage';
 import { MyBookingPage } from './pages/MyBookings/MyBookingPage';
 import { ProfilePage } from './pages/Profile/ProfilePage';
 import { authContext, AuthProvider } from './contexts/AuthenticationContext';
@@ -163,6 +162,7 @@ export const App = () => {
                   <Route exact path="/prices" component={PricePage} />
                   <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
                   <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
+                  <PermittedRolesRoute exact path="/admin" component={AdminPage} />
                   <Route exact path="/admin" component={AdminPage} />
                   <AuthenticatedRoute exact path="/settings" component={SettingPage} />
                   <Route path="/" component={BasePage} />
