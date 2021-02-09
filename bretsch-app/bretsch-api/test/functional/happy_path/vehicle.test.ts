@@ -23,7 +23,6 @@ describe("Tests for the Vehicle class", () => {
     request(helper.app)
       .post("/api/vehicle")
       .send({
-        licencePlate: "TestLicensePlate",
         status: 2,
         batteryLevel: 100,
         vehicleType: 2,
@@ -35,7 +34,7 @@ describe("Tests for the Vehicle class", () => {
         if (err) throw err;
         const [, vehicle] = await helper.getRepo(Vehicle).findAndCount();
         expect(vehicle).toBe(4);
-        expect(res.body.data.licencePlate).toBe("TestLicensePlate");
+        expect(res.body.data.licencePlate).toBe("DA-BR-"+vehicle);
         expect(res.body.data.status).toBe("Not_available");
         expect(res.body.data.positionLongitude).toBeDefined();
         expect(res.body.data.positionLatitude).toBeDefined();
