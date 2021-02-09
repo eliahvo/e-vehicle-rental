@@ -68,6 +68,8 @@ export const BookingPage = () => {
   const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
   const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
   const [openPayment, setOpenPayment] = React.useState(false);
+  const [stopButtonClicked, setStopButtonClicked] = React.useState(false);
+  const [timeAtStopClicked, setTimeAtStopClicked] = React.useState(0);
 
   const toggleOpenState = () => {
     setOpenPayment(!openPayment);
@@ -89,8 +91,8 @@ export const BookingPage = () => {
   const getDateDifference = function (): string {
     if (booking) {
       const actualDate = new Date();
-      const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
-
+      const ms =
+        actualDate.getTime() - new Date(booking.startDate).getTime();
       return msToHMS(ms - (ms % 1000));
     } else {
       return '00:00:00';
@@ -177,7 +179,7 @@ export const BookingPage = () => {
   }, [booking]);
 
   useEffect(() => {
-    if (booking) {
+    if (booking && !stopButtonClicked) {
       const timer = setTimeout(() => {
         setTime(getDateDifference());
       }, 1000);
@@ -232,11 +234,13 @@ export const BookingPage = () => {
                     color="primary"
                     onClick={() => {
                       toggleOpenState();
+                      setStopButtonClicked(true);
+                      setTimeAtStopClicked(parseInt(time, 10));
                     }}
                   >
                     Stop booking
                   </Button>
-                  <Payment stopBooking={stopBooking} />
+                  <Payment stopBooking={stopBooking} setStopButtonClicked={setStopButtonClicked} />
                 </PaymentContext.Provider>
               </ButtonStyle>
             </Heading>
