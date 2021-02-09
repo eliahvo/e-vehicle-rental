@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "466feb29-7a45-442d-a5bc-49a7c06c2fb6",
+		"_postman_id": "51d7c7c6-290d-4fc5-bc6a-f146bcab817b",
 		"name": "Main_Project Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"type\": \"e_scooter\",\r\n    \"pricePerMinute\": 0.19,\r\n    \"minimalBatteryLevel\": 10\r\n}",
+							"raw": "{\r\n    \"type\": \"scooter\",\r\n    \"startPrice\": 1.00,\r\n    \"pricePerMinute\": 0.19,\r\n    \"minimalBatteryLevel\": 10\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

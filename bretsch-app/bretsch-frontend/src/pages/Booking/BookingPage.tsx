@@ -70,7 +70,7 @@ export const BookingPage = () => {
   const [openPayment, setOpenPayment] = React.useState(false);
   const [stopButtonClicked, setStopButtonClicked] = React.useState(false);
   const [timeAtStopClicked, setTimeAtStopClicked] = React.useState(0);
-  const [currentPrice, setCurrentPrice] = React.useState(0);
+  const [currentPrice, setCurrentPrice] = React.useState('');
   const [time, setTime] = useState('');
 
   useEffect(() => {
@@ -119,14 +119,16 @@ export const BookingPage = () => {
     return '00:00:00';
   };
 
-  const getPrice = (): number => {
+  const getPrice = (): string => {
     if (booking) {
       const actualDate = new Date();
       const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
       const m = Math.ceil(ms / 1000 / 60);
-      return m * booking.vehicle.vehicleType.pricePerMinute;
+      const price: number =
+        Number(booking.vehicle.vehicleType.startPrice) + m * Number(booking.vehicle.vehicleType.pricePerMinute);
+      return price.toFixed(2);
     }
-    return 0;
+    return '0.00';
   };
 
   const fetchBooking = async () => {
@@ -252,7 +254,11 @@ export const BookingPage = () => {
                   >
                     Stop booking
                   </Button>
-                  <Payment stopBooking={stopBooking} price={currentPrice} setStopButtonClicked={setStopButtonClicked} />
+                  <Payment
+                    stopBooking={stopBooking}
+                    price={Number(currentPrice)}
+                    setStopButtonClicked={setStopButtonClicked}
+                  />
                 </PaymentContext.Provider>
               </ButtonStyle>
             </Heading>
