@@ -87,6 +87,18 @@ export default function vehicleInfoFormDialog() {
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    /* check if vehicle is still free */
+    const vehicleRequest = await fetch(`/api/vehicle/${vehicle.vehicleId}`, {
+      headers: { 'content-type': 'application/json' },
+      method: 'GET',
+    });
+    if (vehicleRequest.status === 200) {
+    } else {
+      enqueueSnackbar(`Error while checking vehicle status!`, {
+        variant: 'error',
+      });
+    }
+
     /* check if user is logged in */
     if (verifyAuthentication(login, auth)) {
       const createBookingRequest = await fetch('/api/booking', {
