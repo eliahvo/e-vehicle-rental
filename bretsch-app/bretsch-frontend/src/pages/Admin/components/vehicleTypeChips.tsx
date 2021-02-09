@@ -7,11 +7,19 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
+  FilledInput,
+  FormControl,
+  FormHelperText,
+  InputAdornment,
+  OutlinedInput,
   Snackbar,
+  TextField,
 } from '@material-ui/core';
 import { Vehicle, VehicleType } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Alert } from '@material-ui/lab';
+import { CreateButton } from './vehicleTable';
 
 export const ChipsPos = styled.span`
   margin: 0.2%;
@@ -19,9 +27,21 @@ export const ChipsPos = styled.span`
 
 export const VehicleTypeChips = () => {
   const [open, setOpen] = React.useState(false);
-  const [alert, setAlert] = React.useState(false);
+  const [openDialogCreate, setDialogCreate] = React.useState(false);
   const [vehicleTypes, setVehiclesType] = useState<VehicleType[]>([]);
   const [choosedVehicleType, setchoosedVehiclesType] = useState<VehicleType | null>(null);
+
+  // Badges
+  const [alert, setAlert] = React.useState(false);
+  const [alertCreate, setAlertCreate] = React.useState(false);
+  const [sucCreate, setSucCreate] = React.useState(false);
+
+  // Create Vehicle Type
+  const [name, setname] = useState<string>(' ');
+  const [price, setPrice] = useState<number>(0);
+  const [errorprice, setErrorprice] = useState<string>(' ');
+  const [bLevel, setBLevel] = useState<number>(0);
+  const [errorbLevel, setErrorbLevel] = useState<string>(' ');
 
   const handleClickOpen = async (t: VehicleType) => {
     setchoosedVehiclesType(t);
@@ -32,8 +52,50 @@ export const VehicleTypeChips = () => {
     setOpen(false);
   };
 
+  // Badge handle
   const handleAlertClose = () => {
     setAlert(false);
+  };
+  const handleCreateAlertClose = () => {
+    setAlertCreate(false);
+  };
+  const handleCreateSucClose = () => {
+    setSucCreate(false);
+  };
+
+  const handleCreateDialogClose = () => {
+    setDialogCreate(false);
+  };
+
+  const handleCreateDialogOpen = () => {
+    setDialogCreate(true);
+  };
+
+  const handleNameChange = (e) => {
+    setname(e.target.value);
+  };
+
+  const handlePriceChange = (e) => {
+    if (parseFloat(e.target.value) || e.target.value.empty) {
+      setPrice(parseFloat(e.target.value));
+      setErrorprice('');
+    } else {
+      setErrorprice('Error: Value should be a number');
+    }
+  };
+
+  const handleBLevelChange = (e) => {
+    if (parseInt(e.target.value, 10) || e.target.value.empty) {
+      const num = parseInt(e.target.value, 10);
+      if (num < 100) {
+        setBLevel(parseInt(e.target.value, 10));
+        setErrorbLevel('');
+      } else {
+        setErrorbLevel('Error: Value should be smaller than 100');
+      }
+    } else {
+      setErrorbLevel('Error: Value should be a number');
+    }
   };
 
   useEffect(() => {
@@ -42,6 +104,13 @@ export const VehicleTypeChips = () => {
 
   const printChips = () => {
     const chips = [];
+    chips.push(
+      <ChipsPos>
+        <Button variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
+          Create
+        </Button>
+      </ChipsPos>,
+    );
     for (const t of vehicleTypes) {
       chips.push(
         <ChipsPos id={t.vehicleTypeId.toString()}>
@@ -60,6 +129,54 @@ export const VehicleTypeChips = () => {
     return chips;
   };
 
+  const createVehicleTypeDialog = () => {
+    return (
+      <Dialog onClose={handleCreateDialogClose} aria-labelledby="simple-dialog-title" open={openDialogCreate}>
+        <form onSubmit={createVehicleType}>
+          <DialogTitle id="simple-dialog-title">Create new vehicle type</DialogTitle>
+          <DialogContent dividers>
+            <p> Name: </p>
+            <FormControl required>
+              <TextField onChange={handleNameChange} id="outlined-basic" variant="outlined" />
+            </FormControl>
+            <p> Price </p>
+            <FormControl required>
+              <OutlinedInput
+                id="filled-adornment-weight"
+                onChange={handlePriceChange}
+                endAdornment={<InputAdornment position="end">€/min</InputAdornment>}
+                aria-describedby="filled-weight-helper-text"
+                inputProps={{
+                  'aria-label': 'weight',
+                }}
+              />
+            </FormControl>
+            <FormHelperText id="component-helper-text">{errorprice}</FormHelperText>
+            <p> Minimal Battery Level: </p>
+            <FormControl required>
+              <OutlinedInput
+                id="filled-adornment-weight"
+                onChange={handleBLevelChange}
+                endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                aria-describedby="filled-weight-helper-text"
+                inputProps={{
+                  'aria-label': 'weight',
+                }}
+              />
+            </FormControl>
+            <FormHelperText id="component-helper-text">{errorbLevel}</FormHelperText>
+          </DialogContent>
+
+          <div>
+            <Button type="submit" color="primary">
+              Create
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+    );
+  };
+
   const updateVehicleType = async () => {
     console.log('Update');
   };
@@ -75,6 +192,27 @@ export const VehicleTypeChips = () => {
     }
   };
 
+  const createVehicleType = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const vehicleTypeRequest = await fetch(`/api/vehicletype/`, {
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        type: name,
+        pricePerMinute: price,
+        minimalBatteryLevel: bLevel,
+      }),
+      method: 'POST',
+    });
+    if (vehicleTypeRequest.status === 200) {
+      await allVehicleTypes();
+      handleCreateDialogClose();
+      setSucCreate(true);
+    } else {
+      setAlertCreate(true);
+      console.log('work not');
+    }
+  };
+
   const deleteOneVehicleType = async (e: any) => {
     if (choosedVehicleType) {
       const vehicleTypeRequest = await fetch(`/api/vehicletype/` + choosedVehicleType.vehicleTypeId.toString(), {
@@ -82,8 +220,9 @@ export const VehicleTypeChips = () => {
         method: 'DELETE',
       });
       if (vehicleTypeRequest.status === 200) {
-        const vehicleTypeJSON = await vehicleTypeRequest.json();
         await allVehicleTypes();
+        setAlert(true);
+        handleClose();
       }
     }
   };
@@ -121,14 +260,27 @@ export const VehicleTypeChips = () => {
   };
 
   return (
-    <div>
-      {printChips()}
-      {dialog()}
+    <>
+      <div>
+        {printChips()}
+        {dialog()}
+        {createVehicleTypeDialog()}
+      </div>
       <Snackbar open={alert} autoHideDuration={6000} onClose={handleAlertClose}>
         <Alert onClose={handleAlertClose} severity="success">
           A Vehicle Type was sucessfully deleted!
         </Alert>
       </Snackbar>
-    </div>
+      <Snackbar open={alertCreate} autoHideDuration={6000} onClose={handleCreateAlertClose}>
+        <Alert onClose={handleAlertClose} severity="error">
+          An Error occured: Could not create Vehicle Type!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={sucCreate} autoHideDuration={6000} onClose={handleCreateSucClose}>
+        <Alert onClose={handleAlertClose} severity="success">
+          Successfully created a new Vehicle Type!
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
