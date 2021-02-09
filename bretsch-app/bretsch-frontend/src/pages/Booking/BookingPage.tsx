@@ -73,7 +73,9 @@ export const BookingPage = () => {
 
   useEffect(() => {
     fetchBooking();
-    if (booking) setTime(getDateDifference());
+    if (booking) {
+      setTime(getDateDifference());
+    }
   }, []);
 
   useEffect(() => {
@@ -112,6 +114,20 @@ export const BookingPage = () => {
       return msToHMS(ms - (ms % 1000));
     } else {
       return '00:00:00';
+    }
+  };
+
+  const getPrice = function (): number {
+    if (booking) {
+      console.log('testPrice');
+      const actualDate = new Date();
+      const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
+      const m = Math.ceil(ms / 1000 / 60);
+      console.log(m * booking.vehicle.vehicleType.pricePerMinute);
+
+      return m * booking.vehicle.vehicleType.pricePerMinute;
+    } else {
+      return 0;
     }
   };
 
@@ -239,7 +255,7 @@ export const BookingPage = () => {
                   >
                     Stop booking
                   </Button>
-                  <Payment stopBooking={stopBooking} setStopButtonClicked={setStopButtonClicked} />
+                  <Payment stopBooking={stopBooking} price={getPrice()} setStopButtonClicked={setStopButtonClicked} />
                 </PaymentContext.Provider>
               </ButtonStyle>
             </Heading>

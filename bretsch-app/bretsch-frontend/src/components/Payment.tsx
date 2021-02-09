@@ -8,8 +8,9 @@ import { useHistory } from 'react-router';
 import { AppContext } from '../contexts/AppContext';
 import { Box } from '@material-ui/core';
 
-export const Payment: React.FC<{ stopBooking: () => Promise<void>; setStopButtonClicked: any }> = ({
+export const Payment: React.FC<{ stopBooking: () => Promise<void>; price: number; setStopButtonClicked: any }> = ({
   stopBooking,
+  price,
   setStopButtonClicked,
 }) => {
   const history = useHistory();
@@ -28,7 +29,7 @@ export const Payment: React.FC<{ stopBooking: () => Promise<void>; setStopButton
         purchase_units: [
           {
             amount: {
-              value: amount,
+              value: price,
             },
           },
         ],
