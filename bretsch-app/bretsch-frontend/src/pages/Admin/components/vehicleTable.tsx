@@ -5,18 +5,29 @@ import { Vehicle } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Alert } from '@material-ui/lab';
 import { Snackbar } from '@material-ui/core';
-
+// progress style by https://codepen.io/restlessdesign/pen/CJrad
 export const BatteryProgressNumber = styled.span`
   position: absolute;
-  left: 0;
-  top: 0;
+  top: 50%;
   width: 100%;
   text-align: center;
+  font-weight: 100;
+  font-size: 3em;
+  margin-top: -1.33em;
   color: black;
 `;
 
 export const CreateButton = styled.div`
   margin-bottom: 2%;
+`;
+
+export const ProgressBorder = styled.div`
+  border: 2px solid black;
+  background: black;
+  border-radius: 60px;
+  overflow: hidden;
+  margin: 1%;
+  height: 50%;
 `;
 
 export const BatteryProgress = styled.progress`
@@ -25,9 +36,52 @@ export const BatteryProgress = styled.progress`
 `;
 
 export const Progressbar = styled.div`
-  border-radius: 60px;
-  overflow: hidden;
+  background-color: #1a1a1a;
+  height: 50%;
   width: 100%;
+  margin: 50px auto;
+  border-radius: 5px;
+  box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+
+  background-size: 30px 30px;
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+`;
+
+export const stripes = styled.div`
+    background-size: 33% 33%;
+    background-image: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, .15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, .15) 50%,
+        rgba(255, 255, 255, .15) 75%,
+        transparent 75%,
+        transparent
+`;
+
+/*.stripes.reverse {
+    animation-direction: reverse;
+}*/
+
+export const Progressbarinner = styled.span`
+  display: block;
+  height: 95%;
+
+  background-color: #75b800;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  position: relative;
+  animation: auto-progress 10s infinite linear;
 `;
 
 export const VehicleTable = () => {
@@ -98,6 +152,13 @@ export const VehicleTable = () => {
     items: [{ columnField: 'license_plate', operatorValue: 'contains', value: '' }],
   };
 
+  /*<div style={{ position: 'relative', width: '100%' }}>
+        <BatteryProgressNumber>{params.value}%</BatteryProgressNumber>
+        <ProgressBorder>
+            <div style={{ width: params.value.toString() + '%', background: '#75b800' }} />
+        </ProgressBorder>
+    </div>*/
+
   return (
     <>
       <CreateButton>
@@ -122,12 +183,11 @@ export const VehicleTable = () => {
                   headerName: 'Battery',
                   width: 100,
                   renderCell: (params: ValueFormatterParams) => (
-                    <div style={{ position: 'relative' }}>
+                    <>
                       <Progressbar>
-                        <BatteryProgress value={params.value.toString()} max="100" />
-                        <BatteryProgressNumber>{params.value.toString()}</BatteryProgressNumber>
+                        <Progressbarinner style={{ width: params.value.toString() + '%' }} />
                       </Progressbar>
-                    </div>
+                    </>
                   ),
                 },
                 { field: 'bookings', headerName: 'Number of bookings' },
