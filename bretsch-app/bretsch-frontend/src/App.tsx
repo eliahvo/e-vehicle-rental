@@ -149,6 +149,7 @@ export const App = () => {
     checkDialog: openCheckedDialog,
   };
 
+  // after dev:   <PermittedRolesRoute exact path="/admin" component={AdminPage} />
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
@@ -163,7 +164,7 @@ export const App = () => {
                   <Route exact path="/prices" component={PricePage} />
                   <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
                   <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
-                  <PermittedRolesRoute exact path="/admin" component={AdminPage} />
+                  <Route exact path="/admin" component={AdminPage} />
                   <Route path="/" component={BasePage} />
                 </Switch>
               </BrowserRouter>
