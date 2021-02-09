@@ -13,6 +13,7 @@ import { useSnackbar } from 'notistack';
 import { authContext } from '../../contexts/AuthenticationContext';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { maxDate, minAge, validateBirthday } from '../../util/ValidBirthday';
 
 const useStyles = makeStyles((theme) => ({
   headings: {
@@ -92,7 +93,11 @@ export const ProfilePage = () => {
     if (profileRequest.status === 200) {
       const profileJSON = await profileRequest.json();
       setProfile(profileJSON.data);
-      setSelectedDate(new Date(profileJSON.data?.birthDate));
+
+      const bday = new Date(profileJSON.data?.birthDate);
+      bday.setHours(0, 0, 0, 0);
+      setSelectedDate(bday);
+
       setChosenPayment(profileJSON.data?.preferedPayment);
     } else {
       enqueueSnackbar(`Error while fetching profile data!`, {
@@ -118,8 +123,11 @@ export const ProfilePage = () => {
   });
 
   const handleDateChange = (date: Date) => {
+    if (date) {
+      date.setHours(0, 0, 0, 0);
+    }
     setSelectedDate(date);
-    setValues({ ...values, birthDate: date.toLocaleDateString() });
+    setValues({ ...values, birthDate: new Date(date).toDateString() });
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -140,10 +148,14 @@ export const ProfilePage = () => {
 
   const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!validateBirthday(selectedDate)) {
+      return;
+    }
+
     await fetch(`/api/user/${getTokenData()?.id}`, {
       body: JSON.stringify({
         ...values,
-        birthdate: selectedDate,
       }),
       headers: { 'Content-Type': 'application/json' },
       method: 'PATCH',
@@ -397,11 +409,17 @@ export const ProfilePage = () => {
                         }}
                         required
                         fullWidth
+                        disableFuture
+                        maxDate={maxDate}
+                        helperText={`You have to be at least ${minAge} years old!`}
                       />
                     </Grid>
                   </MuiPickersUtilsProvider>
                 ) : (
-                  profile?.birthDate
+                  `${new Date(profile?.birthDate).getFullYear()}-${(
+                    '0' +
+                    (new Date(profile?.birthDate).getMonth() + 1)
+                  ).slice(-2)}-${('0' + new Date(profile?.birthDate).getDate()).slice(-2)}`
                 )}
               </Grid>
             </Grid>

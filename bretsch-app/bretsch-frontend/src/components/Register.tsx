@@ -19,7 +19,7 @@ import { authContext } from '../contexts/AuthenticationContext';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { LoginContext } from '../contexts/LoginContext';
-import { minAge } from '../App';
+import { maxDate, minAge, validateBirthday } from '../util/ValidBirthday';
 
 const PaymentMethod = [
   {
@@ -71,21 +71,6 @@ export default function RegisterModal() {
     city: '',
   });
 
-  const getMaxDate = (): Date => {
-    const today = new Date();
-    const date = new Date(
-      today.getFullYear() - minAge,
-      today.getMonth(),
-      today.getDate(),
-      today.getHours(),
-      today.getMinutes(),
-      today.getSeconds(),
-      today.getMilliseconds(),
-    );
-    return date;
-  };
-  const maxDate = getMaxDate();
-
   useEffect(() => {
     setValues({ ...values, email: registerContext.email });
   }, [registerContext.email]);
@@ -113,8 +98,11 @@ export default function RegisterModal() {
   };
 
   const handleDateChange = (date: Date) => {
+    if (date) {
+      date.setHours(0, 0, 0, 0);
+    }
     setSelectedDate(date);
-    setValues({ ...values, birthDate: new Date(date).toLocaleDateString() });
+    setValues({ ...values, birthDate: new Date(date).toDateString() });
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -141,7 +129,7 @@ export default function RegisterModal() {
         return;
       }
     } else if (activeStep === 1) {
-      if (selectedDate > maxDate) {
+      if (!validateBirthday(selectedDate)) {
         return;
       }
     }
