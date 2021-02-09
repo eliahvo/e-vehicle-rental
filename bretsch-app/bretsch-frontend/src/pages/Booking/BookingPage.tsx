@@ -41,7 +41,7 @@ export const Heading = styled.div`
   margin-bottom: 2rem;
 `;
 
-export const Time = styled.div`
+export const Main = styled.div`
   margin-top: 2rem;
   font-size: 2rem;
   text-align: center;
@@ -70,22 +70,25 @@ export const BookingPage = () => {
   const [openPayment, setOpenPayment] = React.useState(false);
   const [stopButtonClicked, setStopButtonClicked] = React.useState(false);
   const [timeAtStopClicked, setTimeAtStopClicked] = React.useState(0);
+  const [currentPrice, setCurrentPrice] = React.useState(0);
+  const [time, setTime] = useState('');
 
   useEffect(() => {
     fetchBooking();
-    if (booking) {
-      setTime(getDateDifference());
-    }
   }, []);
 
   useEffect(() => {
-    if (booking) setTime(getDateDifference());
+    if (booking) {
+      setTime(getDateDifference());
+      setCurrentPrice(getPrice());
+    }
   }, [booking]);
 
   useEffect(() => {
     if (booking && !stopButtonClicked) {
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         setTime(getDateDifference());
+        setCurrentPrice(getPrice());
       }, 1000);
     }
   });
@@ -107,31 +110,24 @@ export const BookingPage = () => {
     /* returns date difference from startDate and current date to form "XX:XX:XX" */
   }
 
-  const getDateDifference = function (): string {
+  const getDateDifference = (): string => {
     if (booking) {
       const actualDate = new Date();
       const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
       return msToHMS(ms - (ms % 1000));
-    } else {
-      return '00:00:00';
     }
+    return '00:00:00';
   };
 
-  const getPrice = function (): number {
+  const getPrice = (): number => {
     if (booking) {
-      console.log('testPrice');
       const actualDate = new Date();
       const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
       const m = Math.ceil(ms / 1000 / 60);
-      console.log(m * booking.vehicle.vehicleType.pricePerMinute);
-
       return m * booking.vehicle.vehicleType.pricePerMinute;
-    } else {
-      return 0;
     }
+    return 0;
   };
-
-  const [time, setTime] = useState(getDateDifference());
 
   const fetchBooking = async () => {
     const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
@@ -238,7 +234,8 @@ export const BookingPage = () => {
             <Divider />
 
             {/* timer */}
-            <Time>{time}</Time>
+            <Main>{time}</Main>
+            <Main>{currentPrice ? `${currentPrice}€` : ''}</Main>
 
             <Heading>
               {/* stop booking button */}
@@ -255,7 +252,7 @@ export const BookingPage = () => {
                   >
                     Stop booking
                   </Button>
-                  <Payment stopBooking={stopBooking} price={getPrice()} setStopButtonClicked={setStopButtonClicked} />
+                  <Payment stopBooking={stopBooking} price={currentPrice} setStopButtonClicked={setStopButtonClicked} />
                 </PaymentContext.Provider>
               </ButtonStyle>
             </Heading>
