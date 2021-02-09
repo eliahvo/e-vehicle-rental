@@ -122,6 +122,11 @@ export const ProfilePage = () => {
     streetPlusNumber: profile?.streetPlusNumber,
   });
 
+  const validateOldPassword = (oldPass: string): boolean => {
+    // ToDo: Use Backend to check whether the given password matches the old one or not
+    return true;
+  };
+
   const handleDateChange = (date: Date) => {
     if (date) {
       date.setHours(0, 0, 0, 0);
@@ -137,11 +142,20 @@ export const ProfilePage = () => {
 
   const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+
     if (e.target.name === 'passwordShadow') {
       if (values.password === e.target.value) {
         e.target.setCustomValidity('');
       } else {
         e.target.setCustomValidity("Passwords don't match!");
+      }
+    }
+
+    if (e.target.name === 'passwordOld') {
+      if (validateOldPassword(e.target.value)) {
+        e.target.setCustomValidity('');
+      } else {
+        e.target.setCustomValidity('Incorrect password!');
       }
     }
   };
@@ -335,7 +349,7 @@ export const ProfilePage = () => {
                     <TextField
                       onChange={fieldDidChange}
                       margin="dense"
-                      name="passwordShadow"
+                      name="passwordOld"
                       label="Old Password"
                       type="password"
                       fullWidth
