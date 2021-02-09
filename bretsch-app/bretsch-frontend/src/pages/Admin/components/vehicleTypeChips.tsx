@@ -28,6 +28,7 @@ export const ChipsPos = styled.span`
 export const VehicleTypeChips = () => {
   const [open, setOpen] = React.useState(false);
   const [openDialogCreate, setDialogCreate] = React.useState(false);
+  const [openDialogUpdate, setDialogUpdate] = React.useState(false);
   const [vehicleTypes, setVehiclesType] = useState<VehicleType[]>([]);
   const [choosedVehicleType, setchoosedVehiclesType] = useState<VehicleType | null>(null);
 
@@ -35,13 +36,16 @@ export const VehicleTypeChips = () => {
   const [alert, setAlert] = React.useState(false);
   const [alertCreate, setAlertCreate] = React.useState(false);
   const [sucCreate, setSucCreate] = React.useState(false);
+  const [alertUpdate, setAlertUpdate] = React.useState(false);
+  const [sucUpdate, setSucUpdate] = React.useState(false);
 
-  // Create Vehicle Type
+  // Create and Update Vehicle Type
   const [name, setname] = useState<string>(' ');
   const [price, setPrice] = useState<number>(0);
   const [errorprice, setErrorprice] = useState<string>(' ');
   const [bLevel, setBLevel] = useState<number>(0);
   const [errorbLevel, setErrorbLevel] = useState<string>(' ');
+  const [typeId, setTypeId] = useState<string>(' ');
 
   const handleClickOpen = async (t: VehicleType) => {
     setchoosedVehiclesType(t);
@@ -63,6 +67,14 @@ export const VehicleTypeChips = () => {
     setSucCreate(false);
   };
 
+  const handleUpdateAlertClose = () => {
+    setAlertUpdate(false);
+  };
+  const handleUpdateSucClose = () => {
+    setSucUpdate(false);
+  };
+
+  // Create Dialog
   const handleCreateDialogClose = () => {
     setDialogCreate(false);
   };
@@ -82,6 +94,15 @@ export const VehicleTypeChips = () => {
     } else {
       setErrorprice('Error: Value should be a number');
     }
+  };
+
+  // Update Dialog
+  const handleUpdateDialogClose = () => {
+    setDialogUpdate(false);
+  };
+
+  const handleUpdateDialogOpen = () => {
+    setDialogUpdate(true);
   };
 
   const handleBLevelChange = (e) => {
@@ -116,7 +137,9 @@ export const VehicleTypeChips = () => {
         <ChipsPos id={t.vehicleTypeId.toString()}>
           <Chip
             label={t.type}
-            onClick={updateVehicleType}
+            onClick={() => {
+              updateVehicleType(t);
+            }}
             onDelete={() => {
               handleClickOpen(t);
             }}
@@ -177,8 +200,54 @@ export const VehicleTypeChips = () => {
     );
   };
 
-  const updateVehicleType = async () => {
-    console.log('Update');
+  const updateVehicleTypeDialog = () => {
+    return (
+      <Dialog onClose={handleUpdateDialogClose} aria-labelledby="simple-dialog-title" open={openDialogUpdate}>
+        <form onSubmit={updateVehicleTypeDB}>
+          <DialogTitle id="simple-dialog-title">Update vehicle type</DialogTitle>
+          <DialogContent dividers>
+            <p> Name: </p>
+            <FormControl>
+              <TextField required  onChange={handleNameChange}  id="outlined-required" defaultValue={name} variant="outlined" />
+            </FormControl>
+            <p> Price </p>
+            <FormControl required>
+              <OutlinedInput
+                id="filled-adornment-weight"
+                defaultValue={price}
+                onChange={handlePriceChange}
+                endAdornment={<InputAdornment position="end">€/min</InputAdornment>}
+                aria-describedby="filled-weight-helper-text"
+                inputProps={{
+                  'aria-label': 'weight',
+                }}
+              />
+            </FormControl>
+            <FormHelperText id="component-helper-text">{errorprice}</FormHelperText>
+            <p> Minimal Battery Level: </p>
+            <FormControl required>
+              <OutlinedInput
+                id="filled-adornment-weight"
+                defaultValue={bLevel}
+                onChange={handleBLevelChange}
+                endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                aria-describedby="filled-weight-helper-text"
+                inputProps={{
+                  'aria-label': 'weight',
+                }}
+              />
+            </FormControl>
+            <FormHelperText id="component-helper-text">{errorbLevel}</FormHelperText>
+          </DialogContent>
+
+          <div>
+            <Button type="submit" color="primary">
+              Update
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+    );
   };
 
   const allVehicleTypes = async () => {
@@ -189,6 +258,34 @@ export const VehicleTypeChips = () => {
     if (vehicleTypeRequest.status === 200) {
       const vehicleTypeJSON = await vehicleTypeRequest.json();
       setVehiclesType(vehicleTypeJSON.data);
+    }
+  };
+
+  const updateVehicleType = async (t: VehicleType) => {
+    await setname(t.type);
+    await setPrice(t.pricePerMinute);
+    await setBLevel(t.minimalBatteryLevel);
+    await setTypeId(t.vehicleTypeId.toString());
+    handleUpdateDialogOpen();
+  };
+
+  const updateVehicleTypeDB = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const vehicleTypeRequest = await fetch(`/api/vehicletype/` + typeId, {
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        type: name,
+        pricePerMinute: price,
+        minimalBatteryLevel: bLevel,
+      }),
+      method: 'PATCH',
+    });
+    if (vehicleTypeRequest.status === 200) {
+      await allVehicleTypes();
+      handleUpdateDialogClose();
+      setSucUpdate(true);
+    } else {
+      setAlertUpdate(true);
     }
   };
 
@@ -209,7 +306,6 @@ export const VehicleTypeChips = () => {
       setSucCreate(true);
     } else {
       setAlertCreate(true);
-      console.log('work not');
     }
   };
 
@@ -265,6 +361,7 @@ export const VehicleTypeChips = () => {
         {printChips()}
         {dialog()}
         {createVehicleTypeDialog()}
+        {updateVehicleTypeDialog()}
       </div>
       <Snackbar open={alert} autoHideDuration={6000} onClose={handleAlertClose}>
         <Alert onClose={handleAlertClose} severity="success">
@@ -279,6 +376,16 @@ export const VehicleTypeChips = () => {
       <Snackbar open={sucCreate} autoHideDuration={6000} onClose={handleCreateSucClose}>
         <Alert onClose={handleAlertClose} severity="success">
           Successfully created a new Vehicle Type!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={alertUpdate} autoHideDuration={6000} onClose={handleUpdateAlertClose}>
+        <Alert onClose={handleAlertClose} severity="error">
+          An Error occured: Could not update Vehicle Type!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={sucUpdate} autoHideDuration={6000} onClose={handleUpdateSucClose}>
+        <Alert onClose={handleAlertClose} severity="success">
+          Successfully update a new Vehicle Type!
         </Alert>
       </Snackbar>
     </>
