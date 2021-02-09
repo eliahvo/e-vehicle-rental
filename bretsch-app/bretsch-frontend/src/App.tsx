@@ -162,9 +162,7 @@ export const App = () => {
                   <Route exact path="/prices" component={PricePage} />
                   <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
                   <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
-                  <PermittedRolesRoute exact path="/admin" component={AdminPage} />
                   <Route exact path="/admin" component={AdminPage} />
-                  <AuthenticatedRoute exact path="/settings" component={SettingPage} />
                   <Route path="/" component={BasePage} />
                 </Switch>
               </BrowserRouter>
