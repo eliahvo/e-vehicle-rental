@@ -68,6 +68,27 @@ export const BookingPage = () => {
   const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
   const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
   const [openPayment, setOpenPayment] = React.useState(false);
+  const [stopButtonClicked, setStopButtonClicked] = React.useState(false);
+  const [timeAtStopClicked, setTimeAtStopClicked] = React.useState(0);
+
+  useEffect(() => {
+    fetchBooking();
+    if (booking) {
+      setTime(getDateDifference());
+    }
+  }, []);
+
+  useEffect(() => {
+    if (booking) setTime(getDateDifference());
+  }, [booking]);
+
+  useEffect(() => {
+    if (booking && !stopButtonClicked) {
+      const timer = setTimeout(() => {
+        setTime(getDateDifference());
+      }, 1000);
+    }
+  });
 
   const toggleOpenState = () => {
     setOpenPayment(!openPayment);
@@ -90,10 +111,23 @@ export const BookingPage = () => {
     if (booking) {
       const actualDate = new Date();
       const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
-
       return msToHMS(ms - (ms % 1000));
     } else {
       return '00:00:00';
+    }
+  };
+
+  const getPrice = function (): number {
+    if (booking) {
+      console.log('testPrice');
+      const actualDate = new Date();
+      const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
+      const m = Math.ceil(ms / 1000 / 60);
+      console.log(m * booking.vehicle.vehicleType.pricePerMinute);
+
+      return m * booking.vehicle.vehicleType.pricePerMinute;
+    } else {
+      return 0;
     }
   };
 
@@ -167,23 +201,6 @@ export const BookingPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchBooking();
-    if (booking) setTime(getDateDifference());
-  }, []);
-
-  useEffect(() => {
-    if (booking) setTime(getDateDifference());
-  }, [booking]);
-
-  useEffect(() => {
-    if (booking) {
-      const timer = setTimeout(() => {
-        setTime(getDateDifference());
-      }, 1000);
-    }
-  });
-
   if (booking) {
     return (
       <Layout title="Booking">
@@ -232,11 +249,13 @@ export const BookingPage = () => {
                     color="primary"
                     onClick={() => {
                       toggleOpenState();
+                      setStopButtonClicked(true);
+                      setTimeAtStopClicked(parseInt(time, 10));
                     }}
                   >
                     Stop booking
                   </Button>
-                  <Payment stopBooking={stopBooking} />
+                  <Payment stopBooking={stopBooking} price={getPrice()} setStopButtonClicked={setStopButtonClicked} />
                 </PaymentContext.Provider>
               </ButtonStyle>
             </Heading>

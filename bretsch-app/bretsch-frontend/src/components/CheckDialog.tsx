@@ -9,7 +9,7 @@ export const CheckDialog: React.FC<{ text: String }> = ({ text }) => {
   const { checkDialog, toggleCheckDialog } = React.useContext(AppContext);
 
   return (
-    <Dialog onClose={toggleCheckDialog} open={checkDialog} maxWidth="sm">
+    <Dialog open={checkDialog} maxWidth="sm">
       <DialogTitle>
         <Checkmark color={theme.palette.primary.main} size="xxLarge" />
       </DialogTitle>

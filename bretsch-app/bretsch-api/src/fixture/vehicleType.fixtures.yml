@@ -2,10 +2,10 @@ entity: VehicleType
 items:
   VehicleType1:
     type: scooter
-    pricePerMinute: 5
+    pricePerMinute: 0.2
     minimalBatteryLevel: 15
 
   VehicleType2:
     type: car
-    pricePerMinute: 10
+    pricePerMinute: 0.4
     minimalBatteryLevel: 10

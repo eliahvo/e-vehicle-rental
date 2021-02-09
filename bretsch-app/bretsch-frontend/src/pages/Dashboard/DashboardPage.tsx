@@ -231,7 +231,6 @@ export const DashboardPage = () => {
                         onClick={() => {
                           setOpenVehicleInfo(true);
                           setCurrenVehicleIdForInfo(vehicle.vehicleId);
-                          setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
                         }}
                         icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
                         clusterer={clusterer}
