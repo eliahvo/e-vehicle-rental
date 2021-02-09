@@ -189,7 +189,7 @@ export const getSpecificUser = async (req: Request, res: Response) => {
 };
 
 /**
- * Checks wether an account with that mail already exists or not
+ * Checks whether an account with that mail already exists or not
  * Method: get
  * Expected as a parameter: email
  * Expected in the body: ---

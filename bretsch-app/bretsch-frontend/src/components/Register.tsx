@@ -19,6 +19,7 @@ import { authContext } from '../contexts/AuthenticationContext';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { LoginContext } from '../contexts/LoginContext';
+import { maxDate, minAge, validateBirthday } from '../util/ValidBirthday';
 
 const PaymentMethod = [
   {
@@ -57,6 +58,7 @@ export default function RegisterModal() {
   const registerContext = useContext(RegisterContext);
   const loginContext = useContext(LoginContext);
   const [selectedDate, setSelectedDate] = React.useState<Date>(null);
+  const [mailError, setMailError] = React.useState<string>('');
   const [values, setValues] = useState({
     email: '',
     password: '',
@@ -89,13 +91,18 @@ export default function RegisterModal() {
         } else {
           e.target.setCustomValidity("Passwords don't match!");
         }
+      } else if (e.target.name === 'email') {
+        setMailError('');
       }
     }
   };
 
   const handleDateChange = (date: Date) => {
+    if (date) {
+      date.setHours(0, 0, 0, 0);
+    }
     setSelectedDate(date);
-    setValues({ ...values, birthDate: new Date(date).toLocaleDateString() });
+    setValues({ ...values, birthDate: new Date(date).toDateString() });
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -112,6 +119,20 @@ export default function RegisterModal() {
 
   const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (activeStep === 0) {
+      const checkEmailTaken = await fetch(`/api/user/email//${values.email}`, {
+        headers: { 'Content-Type': 'application/json' },
+        method: 'GET',
+      });
+      if (checkEmailTaken.status === 200) {
+        setMailError('This email address is already taken.');
+        return;
+      }
+    } else if (activeStep === 1) {
+      if (!validateBirthday(selectedDate)) {
+        return;
+      }
+    }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -151,6 +172,8 @@ export default function RegisterModal() {
                     fullWidth
                     onChange={fieldDidChange}
                     required
+                    error={mailError !== ''}
+                    helperText={mailError}
                   />
                   <TextField
                     defaultValue={values.password}
@@ -217,6 +240,9 @@ export default function RegisterModal() {
                         }}
                         required
                         fullWidth
+                        disableFuture
+                        maxDate={maxDate}
+                        helperText={`You have to be at least ${minAge} years old to register!`}
                       />
                     </Grid>
                   </MuiPickersUtilsProvider>
