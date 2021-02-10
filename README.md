@@ -58,8 +58,7 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 
    
 
-``` 
-
+   ``` 
    make start
    ```
 
@@ -67,8 +66,7 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 
    
 
-``` 
-
+   ``` 
    docker-compose up
    ```
 
@@ -78,8 +76,7 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 
    
 
-``` 
-
+   ``` 
    make dbsync
    ```
 
@@ -87,8 +84,7 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 
    
 
-``` 
-
+   ``` 
    docker-compose exec bretsch-api npm run typeorm schema:sync
    ```
 
@@ -96,8 +92,7 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 
    
 
-``` 
-
+   ``` 
    You can now view bretsch-frontend in the browser.
 
       Local:            http://localhost:80
@@ -109,14 +104,12 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 Oh and by the way, if you're willing to stop the running server ever again, try executing the following command at the root dir:
 
 ``` 
-
 make stop
 ```
 
 Alternatively if you can't use `make` , run:
 
 ``` 
-
 docker-compose down
 ```
 
@@ -129,7 +122,6 @@ Replace in the ` `  ` command `  `  ` -field of the .yml file in the images ` br
 that it look like the following:
 
 ``` 
-
 command: npm start
 ```
 
@@ -166,14 +158,12 @@ This project includes defined automated tests (using jest and cypress). This hel
 To run all tests, you have to simply start the servers and execute the following command at the root dir:
 
 ``` 
-
 make test
 ```
 
 Alternatively if you can't use `make` , run:
 
 ``` 
-
 docker-compose exec bretsch-api npm run test
 docker-compose exec bretsch-frontend npm run test
 ```
@@ -185,14 +175,12 @@ Depending on the system you're running the tests on, this takes up to a couple o
 To start the cypress test environment execute the following command at the root dir:
 
 ``` 
-
 make cypress
 ```
 
 Alternatively if you can't use `make` , move over to the `bretsch-app/cypress/` folder and run:
 
 ``` 
-
 npm i
 npm run cypress
 ```
@@ -202,28 +190,24 @@ npm run cypress
 If you just want to run the **frontend** tests, execute the following command at the root dir:
 
 ``` 
-
 make ftest
 ```
 
 Alternatively if you can't use `make` , run:
 
 ``` 
-
 docker-compose exec bretsch-frontend npm run test
 ```
 
 And if you just wanna run the **backend** tests, execute the following command at the root dir:
 
 ``` 
-
 make btest
 ```
 
 Alternatively if you can't use `make` , run:
 
 ``` 
-
 docker-compose exec bretsch-api npm run test
 ```
 
@@ -234,14 +218,12 @@ If you willing to test the project, especially the backend, manually or wanna te
 Note that the predefined postman collection is based on the fixtures also delivered with the project. To add this example fixtures to your database simple execute the following command at the root dir:
 
 ``` 
-
 make fixtures
 ```
 
 Alternatively if you can't use `make` , run:
 
 ``` 
-
 docker-compose exec bretsch-api npm run fixtures
 ```
 

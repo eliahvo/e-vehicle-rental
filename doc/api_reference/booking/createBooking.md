@@ -1,12 +1,10 @@
 ## Create booking
 
 <table>
-
     <tr><td> <b>Description</b>: Create a new task. </td></tr>
     <tr><td> <b>URL</b>: <code> /api/task/ </code> </td></tr>
     <tr><td> <b>Method</b>: <code>POST</code> </td></tr>
     <tr><td> <b>Data constraints</b>: Provide name and/or description. </td></tr>
-
 <tr><td>
 
 **Example request:**
