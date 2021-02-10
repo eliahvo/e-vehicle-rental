@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import { Booking } from "../entity/Booking.entity";
-import { User } from "../entity/User.entity";
-import { Authentication } from "../middleware/authentication";
+import { Request, Response } from 'express';
+import { getRepository } from 'typeorm';
+import { Booking } from '../entity/Booking.entity';
+import { User } from '../entity/User.entity';
+import { Authentication } from '../middleware/authentication';
 
 /**
  * Create User
@@ -21,11 +21,29 @@ import { Authentication } from "../middleware/authentication";
  * @param {Response}res Response
  */
 export const registerUser = async (req: Request, res: Response) => {
-  const { email, password, firstName, lastName, birthDate, preferedPayment, streetPlusNumber, city } = req.body;
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    birthDate,
+    preferedPayment,
+    streetPlusNumber,
+    city,
+  } = req.body;
   const userRepository = getRepository(User);
-  if (!email || !password || !firstName || !lastName || !birthDate || !preferedPayment || !streetPlusNumber || !city) {
+  if (
+    !email ||
+    !password ||
+    !firstName ||
+    !lastName ||
+    !birthDate ||
+    !preferedPayment ||
+    !streetPlusNumber ||
+    !city
+  ) {
     return res.status(400).send({
-      status: "Error: Parameter missing!",
+      status: 'Error: Parameter missing!',
     });
   }
 
@@ -37,7 +55,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
   if (user) {
     return res.status(400).send({
-      status: "bad_request",
+      status: 'bad_request',
     });
   }
 
@@ -54,7 +72,7 @@ export const registerUser = async (req: Request, res: Response) => {
   newUser.preferedPayment = preferedPayment;
   newUser.streetPlusNumber = streetPlusNumber;
   newUser.city = city;
-  newUser.userRole = "user";
+  newUser.userRole = 'user';
 
   const createdUser = await userRepository.save(newUser);
   delete createdUser.hashedPassword;
@@ -64,24 +82,67 @@ export const registerUser = async (req: Request, res: Response) => {
   });
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const validatePassword = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const userRepository = await getRepository(User);
   // Check if user exists
   const user = await userRepository.findOne({
-    select: ["hashedPassword", "email", "firstName", "lastName", "userId", "userRole"],
+    select: ['hashedPassword', 'email'],
     where: {
       email,
     },
   });
 
   if (!user) {
-    return res.status(401).send({ status: "unauthorized1" });
+    console.log('is drinnen');
+    return res.status(401).send({ status: 'unauthorized1' });
+  }
+  console.log(user.email);
+  console.log(password);
+  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(
+    password,
+    user.hashedPassword
+  );
+
+  const hashedPassword: string = await Authentication.hashPassword(password);
+  console.log('1: ', hashedPassword);
+  console.log('2: ', user.hashedPassword);
+
+  if (!matchingPasswords) {
+    return res.status(401).send({ status: 'unauthorized2' });
   }
 
-  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(password, user.hashedPassword);
+  return res.status(200);
+};
+
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const userRepository = await getRepository(User);
+  // Check if user exists
+  const user = await userRepository.findOne({
+    select: [
+      'hashedPassword',
+      'email',
+      'firstName',
+      'lastName',
+      'userId',
+      'userRole',
+    ],
+    where: {
+      email,
+    },
+  });
+
+  if (!user) {
+    return res.status(401).send({ status: 'unauthorized1' });
+  }
+
+  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(
+    password,
+    user.hashedPassword
+  );
   if (!matchingPasswords) {
-    return res.status(401).send({ status: "unauthorized2" });
+    return res.status(401).send({ status: 'unauthorized2' });
   }
 
   const token: string = await Authentication.generateToken({
@@ -114,7 +175,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(200).send({});
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -149,7 +210,11 @@ export const getBookingsByUserId = async (req: Request, res: Response) => {
 
   try {
     const user = await userRepository.findOneOrFail(userId, {
-      relations: ["bookings", "bookings.vehicle", "bookings.vehicle.vehicleType"],
+      relations: [
+        'bookings',
+        'bookings.vehicle',
+        'bookings.vehicle.vehicleType',
+      ],
     });
     const userBookingList = user.bookings;
     res.status(200).send({
@@ -157,7 +222,7 @@ export const getBookingsByUserId = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -176,14 +241,14 @@ export const getSpecificUser = async (req: Request, res: Response) => {
 
   try {
     const user = await userRepository.findOneOrFail(userId, {
-      relations: ["bookings", "actualBooking"],
+      relations: ['bookings', 'actualBooking'],
     });
     res.status(200).send({
       data: user,
     });
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -241,7 +306,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
   try {
     let user = await userRepository.findOneOrFail(userId, {
-      relations: ["bookings", "actualBooking"],
+      relations: ['bookings', 'actualBooking'],
     });
     user.email = email;
     user.firstName = firstName;
@@ -257,13 +322,17 @@ export const updateUser = async (req: Request, res: Response) => {
       } else {
         const bookingRepository = getRepository(Booking);
 
-        let actualBooking = await bookingRepository.findOneOrFail(actualBookingId);
+        let actualBooking = await bookingRepository.findOneOrFail(
+          actualBookingId
+        );
         user.actualBooking = actualBooking;
       }
     }
 
     if (password) {
-      const hashedPassword: string = await Authentication.hashPassword(password);
+      const hashedPassword: string = await Authentication.hashPassword(
+        password
+      );
       user.hashedPassword = hashedPassword;
     }
 
@@ -274,7 +343,7 @@ export const updateUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };

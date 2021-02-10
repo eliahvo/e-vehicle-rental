@@ -124,7 +124,29 @@ export const ProfilePage = () => {
 
   const validateOldPassword = (oldPass: string): boolean => {
     // ToDo: Use Backend to check whether the given password matches the old one or not
-    return true;
+    console.log(oldPass);
+
+    let rightPwd = false;
+    const validatePassword = async () => {
+      const passwordRequest = await fetch(`/api/user/checkpwd`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: `${profile?.email}`,
+          password: `${oldPass}`,
+        }),
+      });
+      if (passwordRequest.status === 200) {
+        rightPwd = true;
+      } else {
+        console.log(rightPwd, 'else');
+        rightPwd = false;
+      }
+    };
+    validatePassword();
+
+    console.log(rightPwd, 'Unten');
+    return rightPwd;
   };
 
   const handleDateChange = (date: Date) => {
