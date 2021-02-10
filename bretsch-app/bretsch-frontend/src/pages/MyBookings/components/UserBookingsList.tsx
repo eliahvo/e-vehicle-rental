@@ -56,7 +56,7 @@ export const UserBookingItem: React.FC<UserBookingProps> = ({ booking }) => {
                   Price:
                 </Grid>
                 <Grid item xs={6}>
-                  {price} €
+                  {price.toFixed(2)} €
                 </Grid>
               </Grid>
               <Grid container spacing={3}>
