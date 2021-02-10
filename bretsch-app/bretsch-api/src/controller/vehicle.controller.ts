@@ -25,7 +25,13 @@ enum vehicle_status {
  * @param {Response} res Response
  */
 export const createVehicle = async (req: Request, res: Response) => {
-  const { status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
+  const {
+    status,
+    positionLongitude,
+    positionLatitude,
+    batteryLevel,
+    vehicleType,
+  } = req.body;
   if (!status || !batteryLevel || !vehicleType) {
     res.status(400).send({
       status: "Error: Missing parameter!",
@@ -34,7 +40,11 @@ export const createVehicle = async (req: Request, res: Response) => {
   }
   const vehicle = new Vehicle();
   // because of enum
-  if (typeof status === "number" && status >= 0 && status < Object.values(vehicle_status).length / 2) {
+  if (
+    typeof status === "number" &&
+    status >= 0 &&
+    status < Object.values(vehicle_status).length / 2
+  ) {
     vehicle.status = vehicle_status[status].toString();
   } else {
     res.status(400).send({
@@ -115,7 +125,10 @@ export const deleteVehicle = async (req: Request, res: Response) => {
  * @param {Request} req Request
  * @param {Response} res Response
  */
-export const getAllBookingsByVehicleId = async (req: Request, res: Response) => {
+export const getAllBookingsByVehicleId = async (
+  req: Request,
+  res: Response
+) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRep = await getRepository(Vehicle);
   try {
@@ -196,7 +209,14 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
  */
 export const updateVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
-  const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
+  const {
+    licencePlate,
+    status,
+    positionLongitude,
+    positionLatitude,
+    batteryLevel,
+    vehicleType,
+  } = req.body;
   const vehicleRep = getRepository(Vehicle);
   try {
     // actual vehicle
@@ -216,12 +236,19 @@ export const updateVehicle = async (req: Request, res: Response) => {
     } else {
       vehicle.positionLatitude = positionLatitude;
     }
-
-    if (status) {
+    console.log("1: ", status);
+    if (status != undefined) {
+      console.log("2: ", status);
       // because of enum  -  "/2" because enum has the douple size
-      if (typeof status === "number" && status >= 0 && status < Object.values(vehicle_status).length / 2) {
+      if (
+        typeof status === "number" &&
+        status >= 0 &&
+        status < Object.values(vehicle_status).length / 2
+      ) {
+        console.log("3: ", status);
         vehicle.status = vehicle_status[status].toString();
       } else {
+        console.log("4: ", status);
         res.status(400).send({
           status: "Error: Parameter status is wrong",
         });
