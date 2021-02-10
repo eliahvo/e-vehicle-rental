@@ -4,7 +4,7 @@ import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
-import { setVehicleStatus } from '../../util/RequestHelper';
+import { setVehicleStats, setVehicleStatus } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 import { PaymentContext } from '../../contexts/PaymentContext';
@@ -72,6 +72,7 @@ export const BookingPage = () => {
   const [timeAtStopClicked, setTimeAtStopClicked] = React.useState(0);
   const [currentPrice, setCurrentPrice] = React.useState('');
   const [time, setTime] = useState('');
+  const [battery, setBattery] = useState<number>(0);
 
   useEffect(() => {
     fetchBooking();
@@ -124,6 +125,7 @@ export const BookingPage = () => {
       const actualDate = new Date();
       const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
       const m = Math.ceil(ms / 1000 / 60);
+      setBattery(Math.round(ms / 1000 / 30));
       const price: number =
         Number(booking.vehicle.vehicleType.startPrice) + m * Number(booking.vehicle.vehicleType.pricePerMinute);
       return price.toFixed(2);
@@ -162,14 +164,15 @@ export const BookingPage = () => {
       body: JSON.stringify({
         endDate: new Date().toString(),
         paymentStatus: 'payed' /* maybe must be changed */,
-        price: 100 /* must be calculated */,
+        price: Number(currentPrice),
       }),
       headers: { 'content-type': 'application/json' },
       method: 'PATCH',
     });
 
     if (bookingPatch.status === 200) {
-      setVehicleStatus(booking?.vehicle.vehicleId, vehicle_status.Free);
+      const newBattery: number = Number(booking?.vehicle.batteryLevel) - battery;
+      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery);
 
       {
         /* updating user */
