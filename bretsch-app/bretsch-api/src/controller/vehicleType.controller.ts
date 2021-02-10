@@ -3,22 +3,23 @@ import { getRepository } from "typeorm";
 import { VehicleType } from "../entity/VehicleType.entity";
 
 /**
- * Create VehicleType 
+ * Create VehicleType
  * Method: create
  * Expected as a parameter: ---
  * Expected in the body:
  *                      type,
+ *                      startPrice,
  *                      pricePerMinute,
  *                      minimalBatteryLevel,
  * @param {Request}req Request
  * @param {Response}res Response
  */
 export const createVehicleType = async (req: Request, res: Response) => {
-  const { type, pricePerMinute, minimalBatteryLevel } = req.body;
+  const { type, startPrice, pricePerMinute, minimalBatteryLevel } = req.body;
 
-  if (!type || !pricePerMinute || !minimalBatteryLevel) {
+  if (!type || !pricePerMinute || !pricePerMinute || !minimalBatteryLevel) {
     res.status(400).send({
-      status: 'Error: Parameter missing!',
+      status: "Error: Parameter missing!",
     });
     return;
   }
@@ -26,6 +27,7 @@ export const createVehicleType = async (req: Request, res: Response) => {
   const vehicleType = new VehicleType();
 
   vehicleType.type = type;
+  vehicleType.startPrice = startPrice;
   vehicleType.pricePerMinute = pricePerMinute;
   vehicleType.minimalBatteryLevel = minimalBatteryLevel;
 
@@ -35,7 +37,7 @@ export const createVehicleType = async (req: Request, res: Response) => {
   res.status(200).send({
     data: createdVehicleType,
   });
-}
+};
 
 /**
  * Delete VehicleType based on the vehicleTypeId
@@ -52,15 +54,13 @@ export const deleteVehicleType = async (req: Request, res: Response) => {
   try {
     const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId);
     await vehicleTypeRepository.remove(vehicleType);
-    res.status(200).send({
-
-    });
+    res.status(200).send({});
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
-}
+};
 
 /**
  * Get all vehicles from a specific vehicleType
@@ -75,15 +75,15 @@ export const getAllVehiclesByVehicleTypeId = async (req: Request, res: Response)
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
-    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId, { relations: ['vehicles'] });
+    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId, { relations: ["vehicles"] });
     const vehicleList = vehicleType.vehicles;
     res.status(200).send({ data: vehicleList });
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
-}
+};
 
 /**
  * Get All VehicleTypes
@@ -94,12 +94,12 @@ export const getAllVehiclesByVehicleTypeId = async (req: Request, res: Response)
  */
 export const getAllVehicleType = async (_: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
-  const vehicleTypes = await vehicleTypeRepository.find({ relations: ['vehicles'] });
+  const vehicleTypes = await vehicleTypeRepository.find({ relations: ["vehicles"] });
 
   res.status(200).send({
-    data: vehicleTypes
+    data: vehicleTypes,
   });
-}
+};
 
 /**
  * Get a vehicleType based on the vehicleTypeId
@@ -114,23 +114,24 @@ export const getSpecificVehicleType = async (req: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
-    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId, { relations: ['vehicles'] });
+    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId, { relations: ["vehicles"] });
     res.status(200).send({
       data: vehicleType,
     });
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
-}
+};
 
 /**
  * Update a vehicleType based on the vehicleTypeId
  * Method: patch
  * Expected as a parameter: vehicleTypeId
  * Expected in the body (at least one parameter):
- * *                                            type,
+ *                                              type,
+ *                                              startPrice,
  *                                              pricePerMinute,
  *                                              minimalBatteryLevel,
  * @param {Request}req Request
@@ -138,12 +139,13 @@ export const getSpecificVehicleType = async (req: Request, res: Response) => {
  */
 export const updateVehicleType = async (req: Request, res: Response) => {
   const vehicleTypeId = req.params.vehicleTypeId;
-  const { type, pricePerMinute, minimalBatteryLevel } = req.body;
+  const { type, startPrice, pricePerMinute, minimalBatteryLevel } = req.body;
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
     let vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId);
     vehicleType.type = type;
+    vehicleType.startPrice = startPrice;
     vehicleType.pricePerMinute = pricePerMinute;
     vehicleType.minimalBatteryLevel = minimalBatteryLevel;
 
@@ -154,7 +156,7 @@ export const updateVehicleType = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: 'Error: ' + error,
+      status: "Error: " + error,
     });
   }
-}
+};

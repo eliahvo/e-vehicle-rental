@@ -23,6 +23,8 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 import { CheckDialog } from '../../components/CheckDialog';
+import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -47,6 +49,8 @@ export const DashboardPage = () => {
   const theme = useTheme();
   const classes = useStyles();
   const mapStyle = useMapStyle();
+  const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const { vehicles } = React.useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [openVehicleInfo, setOpenVehicleInfo] = React.useState(false);
@@ -69,6 +73,15 @@ export const DashboardPage = () => {
     if (socketclient) {
       socketclient.on('booking', async (arg: any) => {
         setVehicleBlacklist((blacklist) => [...blacklist, arg.vehicleId]);
+        if (
+          history.location.pathname.toLowerCase().includes('dashboard') &&
+          (currenVehicleIdForInfo === -1 || arg.vehicleId === currenVehicleIdForInfo)
+        ) {
+          setOpenVehicleInfo(false);
+          enqueueSnackbar(`This vehicle is no longer available!`, {
+            variant: 'error',
+          });
+        }
       });
     }
   }, [socketclient]);
@@ -231,7 +244,6 @@ export const DashboardPage = () => {
                         onClick={() => {
                           setOpenVehicleInfo(true);
                           setCurrenVehicleIdForInfo(vehicle.vehicleId);
-                          setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
                         }}
                         icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
                         clusterer={clusterer}

@@ -81,11 +81,31 @@ export default function vehicleInfoFormDialog() {
   const handleClose = (submitForm: boolean) => {
     vehicleInfoContext.toggleOpen();
     if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
-    else setVehicleStatus(vehicle?.vehicleId, vehicle_status.Free);
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    /* check if vehicle is still free */
+    const vehicleRequest = await fetch(`/api/vehicle/${vehicle.vehicleId}`, {
+      headers: { 'content-type': 'application/json' },
+      method: 'GET',
+    });
+    if (vehicleRequest.status === 200) {
+      const vehicleJSON = await vehicleRequest.json();
+      if (vehicleJSON.data.status !== 'Free') {
+        enqueueSnackbar(`Vehicle already booked!`, {
+          variant: 'error',
+        });
+        handleClose(false);
+        return;
+      }
+    } else {
+      enqueueSnackbar(`Error while checking vehicle status!`, {
+        variant: 'error',
+      });
+      return;
+    }
 
     /* check if user is logged in */
     if (verifyAuthentication(login, auth)) {

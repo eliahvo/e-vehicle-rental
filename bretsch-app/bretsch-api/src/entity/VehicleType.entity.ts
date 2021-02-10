@@ -4,18 +4,21 @@ import { Vehicle } from "./Vehicle.entity";
 @Entity()
 export class VehicleType {
   @PrimaryGeneratedColumn()
-	vehicleTypeId: number;
+  vehicleTypeId: number;
 
   @Column()
   type: string;
 
-  @Column()
+  @Column("decimal", { precision: 5, scale: 2 })
+  startPrice: number;
+
+  @Column("decimal", { precision: 5, scale: 2 })
   pricePerMinute: number;
 
   @Column()
   minimalBatteryLevel: number;
 
-  @OneToMany(() => Vehicle, vehicle => vehicle.vehicleType)
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.vehicleType)
   vehicles: Vehicle[];
 
   @CreateDateColumn()

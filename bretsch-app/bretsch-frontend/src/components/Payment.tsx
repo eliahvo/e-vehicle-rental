@@ -8,7 +8,11 @@ import { useHistory } from 'react-router';
 import { AppContext } from '../contexts/AppContext';
 import { Box } from '@material-ui/core';
 
-export const Payment: React.FC<{ stopBooking: () => Promise<void> }> = ({ stopBooking }) => {
+export const Payment: React.FC<{ stopBooking: () => Promise<void>; price: number; setStopButtonClicked: any }> = ({
+  stopBooking,
+  price,
+  setStopButtonClicked,
+}) => {
   const history = useHistory();
   const [amount, setAmount] = useState(4);
   const [orderID, setOrderID] = useState(false);
@@ -17,6 +21,7 @@ export const Payment: React.FC<{ stopBooking: () => Promise<void> }> = ({ stopBo
 
   const handleClose = () => {
     paymentContext.toggleOpen();
+    setStopButtonClicked(false);
   };
   function createOrder(_, actions) {
     return actions.order
@@ -24,7 +29,7 @@ export const Payment: React.FC<{ stopBooking: () => Promise<void> }> = ({ stopBo
         purchase_units: [
           {
             amount: {
-              value: amount,
+              value: price,
             },
           },
         ],
