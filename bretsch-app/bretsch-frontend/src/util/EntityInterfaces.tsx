@@ -26,6 +26,7 @@ export interface Booking {
 export interface VehicleType {
   vehicleTypeId: number;
   type: string;
+  startPrice: number;
   pricePerMinute: number;
   minimalBatteryLevel: number;
   vehicles: Vehicle[];

@@ -21,3 +21,20 @@ export const setVehicleStatus = async (vehicleId: any, vehicleStatus: vehicle_st
     method: 'PATCH',
   });
 };
+
+export const setVehicleStats = async (
+  vehicleId: any,
+  vehicleStatus: vehicle_status,
+  vehicleBattery: number,
+): Promise<void> => {
+  if (vehicleBattery >= 0 && vehicleBattery <= 100) {
+    await fetch(`/api/vehicle/${vehicleId}`, {
+      body: JSON.stringify({
+        status: vehicleStatus,
+        batteryLevel: vehicleBattery,
+      }),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'PATCH',
+    });
+  }
+};

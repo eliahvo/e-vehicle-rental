@@ -4,7 +4,7 @@ import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
-import { setVehicleStatus } from '../../util/RequestHelper';
+import { setVehicleStats, setVehicleStatus } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 import { PaymentContext } from '../../contexts/PaymentContext';
@@ -41,7 +41,7 @@ export const Heading = styled.div`
   margin-bottom: 2rem;
 `;
 
-export const Time = styled.div`
+export const Main = styled.div`
   margin-top: 2rem;
   font-size: 2rem;
   text-align: center;
@@ -70,22 +70,26 @@ export const BookingPage = () => {
   const [openPayment, setOpenPayment] = React.useState(false);
   const [stopButtonClicked, setStopButtonClicked] = React.useState(false);
   const [timeAtStopClicked, setTimeAtStopClicked] = React.useState(0);
+  const [currentPrice, setCurrentPrice] = React.useState('');
+  const [time, setTime] = useState('');
+  const [battery, setBattery] = useState<number>(0);
 
   useEffect(() => {
     fetchBooking();
-    if (booking) {
-      setTime(getDateDifference());
-    }
   }, []);
 
   useEffect(() => {
-    if (booking) setTime(getDateDifference());
+    if (booking) {
+      setTime(getDateDifference());
+      setCurrentPrice(getPrice());
+    }
   }, [booking]);
 
   useEffect(() => {
     if (booking && !stopButtonClicked) {
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         setTime(getDateDifference());
+        setCurrentPrice(getPrice());
       }, 1000);
     }
   });
@@ -107,31 +111,27 @@ export const BookingPage = () => {
     /* returns date difference from startDate and current date to form "XX:XX:XX" */
   }
 
-  const getDateDifference = function (): string {
+  const getDateDifference = (): string => {
     if (booking) {
       const actualDate = new Date();
       const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
       return msToHMS(ms - (ms % 1000));
-    } else {
-      return '00:00:00';
     }
+    return '00:00:00';
   };
 
-  const getPrice = function (): number {
+  const getPrice = (): string => {
     if (booking) {
-      console.log('testPrice');
       const actualDate = new Date();
       const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
       const m = Math.ceil(ms / 1000 / 60);
-      console.log(m * booking.vehicle.vehicleType.pricePerMinute);
-
-      return m * booking.vehicle.vehicleType.pricePerMinute;
-    } else {
-      return 0;
+      setBattery(Math.round(ms / 1000 / 30));
+      const price: number =
+        Number(booking.vehicle.vehicleType.startPrice) + m * Number(booking.vehicle.vehicleType.pricePerMinute);
+      return price.toFixed(2);
     }
+    return '0.00';
   };
-
-  const [time, setTime] = useState(getDateDifference());
 
   const fetchBooking = async () => {
     const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
@@ -164,14 +164,15 @@ export const BookingPage = () => {
       body: JSON.stringify({
         endDate: new Date().toString(),
         paymentStatus: 'payed' /* maybe must be changed */,
-        price: 100 /* must be calculated */,
+        price: Number(currentPrice),
       }),
       headers: { 'content-type': 'application/json' },
       method: 'PATCH',
     });
 
     if (bookingPatch.status === 200) {
-      setVehicleStatus(booking?.vehicle.vehicleId, vehicle_status.Free);
+      const newBattery: number = Number(booking?.vehicle.batteryLevel) - battery;
+      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery);
 
       {
         /* updating user */
@@ -238,7 +239,8 @@ export const BookingPage = () => {
             <Divider />
 
             {/* timer */}
-            <Time>{time}</Time>
+            <Main>{time}</Main>
+            <Main>{currentPrice ? `${currentPrice}€` : ''}</Main>
 
             <Heading>
               {/* stop booking button */}
@@ -255,7 +257,11 @@ export const BookingPage = () => {
                   >
                     Stop booking
                   </Button>
-                  <Payment stopBooking={stopBooking} price={getPrice()} setStopButtonClicked={setStopButtonClicked} />
+                  <Payment
+                    stopBooking={stopBooking}
+                    price={Number(currentPrice)}
+                    setStopButtonClicked={setStopButtonClicked}
+                  />
                 </PaymentContext.Provider>
               </ButtonStyle>
             </Heading>
