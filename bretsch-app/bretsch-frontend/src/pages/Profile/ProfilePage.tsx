@@ -14,6 +14,7 @@ import { authContext } from '../../contexts/AuthenticationContext';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { maxDate, minAge, validateBirthday } from '../../util/ValidBirthday';
+import { validatePassword } from '../../util/RequestHelper';
 
 const useStyles = makeStyles((theme) => ({
   headings: {
@@ -116,38 +117,12 @@ export const ProfilePage = () => {
     firstName: profile?.firstName,
     password: '',
     passwordShadow: '',
+    passwordOld: '',
     birthDate: profile?.birthDate,
     lastName: profile?.lastName,
     preferedPayment: profile?.preferedPayment,
     streetPlusNumber: profile?.streetPlusNumber,
   });
-
-  const validateOldPassword = (oldPass: string): boolean => {
-    // ToDo: Use Backend to check whether the given password matches the old one or not
-    console.log(oldPass);
-
-    let rightPwd = false;
-    const validatePassword = async () => {
-      const passwordRequest = await fetch(`/api/user/checkpwd`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: `${profile?.email}`,
-          password: `${oldPass}`,
-        }),
-      });
-      if (passwordRequest.status === 200) {
-        rightPwd = true;
-      } else {
-        console.log(rightPwd, 'else');
-        rightPwd = false;
-      }
-    };
-    validatePassword();
-
-    console.log(rightPwd, 'Unten');
-    return rightPwd;
-  };
 
   const handleDateChange = (date: Date) => {
     if (date) {
@@ -174,9 +149,13 @@ export const ProfilePage = () => {
     }
 
     if (e.target.name === 'passwordOld') {
-      if (validateOldPassword(e.target.value)) {
-        e.target.setCustomValidity('');
-      } else {
+      e.target.setCustomValidity('');
+    }
+  };
+
+  const validateOldPassword = async (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.name === 'passwordOld') {
+      if (!(await validatePassword(`${profile?.email}`, `${values.passwordOld}`))) {
         e.target.setCustomValidity('Incorrect password!');
       }
     }
@@ -370,6 +349,7 @@ export const ProfilePage = () => {
                     />
                     <TextField
                       onChange={fieldDidChange}
+                      onBlur={validateOldPassword}
                       margin="dense"
                       name="passwordOld"
                       label="Old Password"
