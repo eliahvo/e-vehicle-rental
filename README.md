@@ -279,11 +279,11 @@ This is a simple overview of all routes provided by the API, grouped by their ro
 
 | Method                                                                                     | URL                              |
 | ------------------------------------------------------------------------------------------ | -------------------------------- |
-| [Create vehicle type](doc/api_reference/vehicletype/createVehicleType.md)       | `POST /api/vehicletype/` |
-| [Delete vehicle type by id](doc/api_reference/vehicletype/deleteVehicleType.md) | `DELETE /api/vehicletype/:vehicleTypeId` |
-| [Get vehicle type by id](doc/api_reference/vehicletype/getSpecificVehicleType.md)       | `GET /api/vehicletype/:vehicleTypeId` |
-| [Get all vehicle types](doc/api_reference/vehicletype/getAllVehicleType.md)           | `GET /api/vehicletype/` |
-| [Patch vehicle type by id](doc/api_reference/vehicletype/updateVehicleType.md)   | `PATCH /api/vehicletype/:vehicleTypeId` |
+| [Create vehicle type](doc/api_reference/vehicleType/createVehicleType.md)       | `POST /api/vehicletype/` |
+| [Delete vehicle type by id](doc/api_reference/vehicleType/deleteVehicleType.md) | `DELETE /api/vehicletype/:vehicleTypeId` |
+| [Get vehicle type by id](doc/api_reference/vehicleType/getSpecificVehicleType.md)       | `GET /api/vehicletype/:vehicleTypeId` |
+| [Get all vehicle types](doc/api_reference/vehicleType/getAllVehicleType.md)           | `GET /api/vehicletype/` |
+| [Patch vehicle type by id](doc/api_reference/vehicleType/updateVehicleType.md)   | `PATCH /api/vehicletype/:vehicleTypeId` |
 
 # ⚠ Status codes
 
