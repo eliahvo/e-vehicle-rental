@@ -182,7 +182,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         })}
       >
         <Toolbar>
-          <IconButton
+          <IconButton data-testid="drawer-id"
             color="inherit"
             onClick={handleDrawerOpen}
             edge="start"
@@ -332,7 +332,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           ) : (
             ''
           )}
-          <ListItem
+          <ListItem data-testid="login-button-id"
             button
             onClick={() => {
               token ? exitApp() : login.toggleOpen();
@@ -346,8 +346,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           <>
             <Divider />
             <List dense className={classes.userinfo}>
-              <ListItem>Logged in as {getTokenData().name}.</ListItem>
-              <ListItem>Role: '{getTokenData().role}'.</ListItem>
+              <ListItem data-testid="user-name-id">Logged in as {getTokenData().name}.</ListItem>
+              <ListItem data-testid="role-id">Role: '{getTokenData().role}'.</ListItem>
             </List>
           </>
         ) : (
