@@ -251,6 +251,40 @@ This is a simple overview of all routes provided by the API, grouped by their ro
 | [Get bookings](doc/api_reference/booking/getAllBookings.md)           | `GET /api/booking/` |
 | [Patch booking by id](doc/api_reference/booking/updateBooking.md)   | `PATCH /api/booking/:bookingId` |
 
+## Route `/user`
+
+| Method                                                                                     | URL                              |
+| ------------------------------------------------------------------------------------------ | -------------------------------- |
+| [Register user](doc/api_reference/user/registerUser.md)       | `POST /api/user/` |
+| [Login user](doc/api_reference/user/loginUser.md)       | `POST /api/user/token` |
+| [Validate password](doc/api_reference/user/validatePassword.md)       | `POST /api/user/checkpwd` |
+| [Delete user by id](doc/api_reference/user/deleteUser.md) | `DELETE /api/user/:userId` |
+| [Get user by id](doc/api_reference/user/getSpecificUser.md)       | `GET /api/user/:userId` |
+| [Get users](doc/api_reference/user/getAllUser.md)           | `GET /api/user/` |
+| [Check if email exists](doc/api_reference/user/checkMailExists.md)       | `GET /api/user/email/:email` |
+| [Get bookings by userId](doc/api_reference/user/getBookingsByUserId.md)       | `GET /api/user/:userId/bookings` |
+| [Patch user by id](doc/api_reference/user/updateUser.md)   | `PATCH /api/user/:userId` |
+
+## Route `/vehicle`
+
+| Method                                                                                     | URL                              |
+| ------------------------------------------------------------------------------------------ | -------------------------------- |
+| [Create vehicle](doc/api_reference/vehicle/createVehicle.md)       | `POST /api/vehicle/` |
+| [Delete vehicle by id](doc/api_reference/vehicle/deleteVehicle.md) | `DELETE /api/vehicle/:vehicleId` |
+| [Get vehicle by id](doc/api_reference/vehicle/getSpecificVehicle.md)       | `GET /api/vehicle/:vehicleId` |
+| [Get vehicles](doc/api_reference/vehicle/getAllVehicles.md)           | `GET /api/vehicle/` |
+| [Patch vehicle by id](doc/api_reference/vehicle/updateVehicle.md)   | `PATCH /api/vehicle/:vehicleId` |
+
+## Route `/vehicletype`
+
+| Method                                                                                     | URL                              |
+| ------------------------------------------------------------------------------------------ | -------------------------------- |
+| [Create vehicle type](doc/api_reference/vehicletype/createVehicleType.md)       | `POST /api/vehicletype/` |
+| [Delete vehicle type by id](doc/api_reference/vehicletype/deleteVehicleType.md) | `DELETE /api/vehicletype/:vehicleTypeId` |
+| [Get vehicle type by id](doc/api_reference/vehicletype/getSpecificVehicleType.md)       | `GET /api/vehicletype/:vehicleTypeId` |
+| [Get all vehicle types](doc/api_reference/vehicletype/getAllVehicleType.md)           | `GET /api/vehicletype/` |
+| [Patch vehicle type by id](doc/api_reference/vehicletype/updateVehicleType.md)   | `PATCH /api/vehicletype/:vehicleTypeId` |
+
 # ⚠ Status codes
 
 The following table gives you a simple overview of the used http status codes used by the project and its respective meaning:
