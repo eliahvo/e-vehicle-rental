@@ -9,7 +9,7 @@
 
 **Example request:**
 
- `POST http://localhost:3000/api/booking/2`
+ `PATCH http://localhost:3000/api/booking/2`
 
 ``` json
 {
