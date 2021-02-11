@@ -2,7 +2,7 @@
 
 <table>
     <tr><td> <b>Description</b>: Delete a booking. </td></tr>
-    <tr><td> <b>URL</b>: <code> /api/booking/ </code> </td></tr>
+    <tr><td> <b>URL</b>: <code> /api/booking/:bookingId </code> </td></tr>
     <tr><td> <b>Method</b>: <code>DELETE</code> </td></tr>
 <tr><td>
 
