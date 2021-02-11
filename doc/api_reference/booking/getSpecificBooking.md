@@ -8,7 +8,7 @@
 
 **Example request:**
 
- `GET http://localhost:3000/api/booking/:bookingId`
+ `GET http://localhost:3000/api/booking/2`
 
 </td></tr>
 <tr><td>
