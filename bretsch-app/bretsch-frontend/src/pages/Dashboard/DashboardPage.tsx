@@ -54,7 +54,7 @@ export const DashboardPage = () => {
   const { vehicles } = React.useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [openVehicleInfo, setOpenVehicleInfo] = React.useState(false);
-  const [currenVehicleIdForInfo, setCurrenVehicleIdForInfo] = React.useState(-1);
+  const [currentVehicleIdForInfo, setCurrenVehicleIdForInfo] = React.useState(-1);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [vehicleTypes, setVehicleTypes] = useLocalStorage<{ name: string; isChecked: boolean }[]>(
     'Dashboard.vehicleTypes',
@@ -73,9 +73,10 @@ export const DashboardPage = () => {
     if (socketclient) {
       socketclient.on('booking', async (arg: any) => {
         setVehicleBlacklist((blacklist) => [...blacklist, arg.vehicleId]);
+        console.log('arg: ', arg.vehicleId, ' current: ', currentVehicleIdForInfo);
         if (
           history.location.pathname.toLowerCase().includes('dashboard') &&
-          (currenVehicleIdForInfo === -1 || arg.vehicleId === currenVehicleIdForInfo)
+          arg.vehicleId === currentVehicleIdForInfo
         ) {
           setOpenVehicleInfo(false);
           enqueueSnackbar(`This vehicle is no longer available!`, {
@@ -93,12 +94,13 @@ export const DashboardPage = () => {
   useEffect(() => {
     if (socketclient) {
       socketclient.on('stopBooking', async (arg: any) => {
+        console.log('stopBooking');
         await reloadVehicles();
         const index = vehicleBlacklist.indexOf(arg.vehicleId);
         setVehicleBlacklist((blacklist) => blacklist.filter((_, i) => i !== index));
       });
     }
-  }, [vehicleBlacklist]);
+  }, [socketclient, vehicleBlacklist]);
 
   useEffect(() => {
     updateFilter();
@@ -111,7 +113,7 @@ export const DashboardPage = () => {
   const vehicleInfoContext = {
     open: openVehicleInfo,
     toggleOpen: toggleVehicleInfo,
-    vehicleId: currenVehicleIdForInfo,
+    vehicleId: currentVehicleIdForInfo,
   };
   const updateAvailableVehicleTypes = () => {
     const availableVehicles = vehicles.filter((v: Vehicle) => v.status === 'Free');
@@ -243,6 +245,7 @@ export const DashboardPage = () => {
                         }}
                         onClick={() => {
                           setOpenVehicleInfo(true);
+                          console.log('vehicle: ', vehicle.vehicleId);
                           setCurrenVehicleIdForInfo(vehicle.vehicleId);
                         }}
                         icon={`./icons/marker/${vehicle.vehicleType.type}.png`}

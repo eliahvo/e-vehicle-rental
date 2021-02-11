@@ -16,7 +16,7 @@ export class Booking {
   @Column()
   paymentStatus: string;
 
-  @Column()
+  @Column("decimal", { precision: 5, scale: 2 })
   price: number;
 
   @ManyToOne(() => Vehicle, vehicle => vehicle.bookings, {onDelete: "CASCADE"})
