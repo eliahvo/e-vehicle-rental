@@ -273,6 +273,7 @@ This is a simple overview of all routes provided by the API, grouped by their ro
 | [Delete vehicle by id](doc/api_reference/vehicle/deleteVehicle.md) | `DELETE /api/vehicle/:vehicleId` |
 | [Get vehicle by id](doc/api_reference/vehicle/getSpecificVehicle.md)       | `GET /api/vehicle/:vehicleId` |
 | [Get vehicles](doc/api_reference/vehicle/getAllVehicles.md)           | `GET /api/vehicle/` |
+| [Get all bookings by vehicleId](doc/api_reference/vehicle/getAllBookingsByVehicleId.md)           | `GET /api/vehicle/:vehicleId/bookings` |
 | [Patch vehicle by id](doc/api_reference/vehicle/updateVehicle.md)   | `PATCH /api/vehicle/:vehicleId` |
 
 ## Route `/vehicletype`
@@ -283,6 +284,7 @@ This is a simple overview of all routes provided by the API, grouped by their ro
 | [Delete vehicle type by id](doc/api_reference/vehicleType/deleteVehicleType.md) | `DELETE /api/vehicletype/:vehicleTypeId` |
 | [Get vehicle type by id](doc/api_reference/vehicleType/getSpecificVehicleType.md)       | `GET /api/vehicletype/:vehicleTypeId` |
 | [Get all vehicle types](doc/api_reference/vehicleType/getAllVehicleType.md)           | `GET /api/vehicletype/` |
+| [Get all vehicles by vehicleTypeId](doc/api_reference/vehicleType/getAllVehiclesByVehicleTypeId.md)           | `GET /api/vehicletype/:vehicleTypeId/vehicles` |
 | [Patch vehicle type by id](doc/api_reference/vehicleType/updateVehicleType.md)   | `PATCH /api/vehicletype/:vehicleTypeId` |
 
 # ⚠ Status codes

@@ -1,20 +1,24 @@
 ## Create booking
 
 <table>
-    <tr><td> <b>Description</b>: Create a new task. </td></tr>
-    <tr><td> <b>URL</b>: <code> /api/task/ </code> </td></tr>
+    <tr><td> <b>Description</b>: Create a new booking. </td></tr>
+    <tr><td> <b>URL</b>: <code> /api/booking/ </code> </td></tr>
     <tr><td> <b>Method</b>: <code>POST</code> </td></tr>
-    <tr><td> <b>Data constraints</b>: Provide name and/or description. </td></tr>
+    <tr><td> <b>Data constraints</b>: startDate, endDate, paymentStatus, price, vehicleId, userId. </td></tr>
 <tr><td>
 
 **Example request:**
 
- `POST http://localhost:3000/api/task/`
+ `POST http://localhost:3000/api/booking/`
 
 ``` json
 {
-  "name": "Example Task",
-  "description": "Hey there, this is a simple example task!"
+  "startDate": "19.01.2021",
+  "endDate": "22.01.2021",
+  "paymentStatus": "payed",
+  "price": 90,
+  "vehicleId": 1,
+  "userId": 1
 }
 ```
 
@@ -27,13 +31,38 @@
 
 ``` json
 {
-  "data": {
-    "name": "Example Task",
-    "description": "Hey there, this is a simple example task!",
-    "id": "0cb23bc4-bc7c-4512-b749-37a74e7a03d1",
-    "createdAt": "2020-11-22T15:56:57.121Z",
-    "updatedAt": "2020-11-22T15:56:57.121Z"
-  }
+    "data": {
+        "startDate": "19.01.2021",
+        "paymentStatus": "payed",
+        "user": {
+            "userId": 1,
+            "email": "user1@bretsch.eu",
+            "hashedPassword": "$2b$10$gWYo9in8xBDH0IBhlGmHlO8k6FQ27ltzME/dHPbIzHftuybiX30GC",
+            "userRole": "admin",
+            "firstName": "user1",
+            "lastName": "bretsch1",
+            "birthDate": "1996-01-31",
+            "preferedPayment": "PayPal",
+            "streetPlusNumber": "H-DA 2020",
+            "city": "Darmstadt",
+            "createdAt": "2021-02-11T10:11:22.321Z",
+            "updatedAt": "2021-02-11T10:11:22.000Z"
+        },
+        "vehicle": {
+            "vehicleId": 1,
+            "licencePlate": "DA-BR-001",
+            "status": "Free",
+            "positionLongitude": "8.648249",
+            "positionLatitude": "49.865158",
+            "batteryLevel": 50,
+            "createdAt": "2021-02-11T10:11:22.592Z",
+            "updatedAt": "2021-02-11T10:11:22.592Z"
+        },
+        "bookingId": 4,
+        "endDate": "Thu Feb 11 2021 10:11:11 GMT+0000 (Coordinated Universal Time)",
+        "createdAt": "2021-02-11T11:25:06.260Z",
+        "updatedAt": "2021-02-11T11:25:06.260Z"
+    }
 }
 ```
 
