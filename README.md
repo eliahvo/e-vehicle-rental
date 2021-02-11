@@ -141,11 +141,11 @@ In this case the image name will be `bretsch-api` and `bretsch-frontend`
 
 **Sync database schema**
 
-* `docker-compose exec backend npm run typeorm schema:sync`
+* `docker-compose exec bretsch-api npm run typeorm schema:sync`
 
 **Insert fixtures**
 
-* `docker-compose exec backend npm run fixtures`
+* `docker-compose exec bretsch-api npm run fixtures`
 
 # 🔍 Test the project
 
