@@ -53,7 +53,7 @@ _This project is kindly supervised by T. Sauer / D. Schulz / D. Wohlfarth._
 
 There is barley nothing easier than setting up this project. Just follow this 3 steps and you're ready to go:
 
-1. Move over to the `bretsch-app/bretsch-api/` folder and create a `.env` file based on the `.env.example`. For default values use the `.env.dist` as base. After that repeat this process for the `bretsch-app/bretsch-frontend/` folder.
+1. Move over to the `bretsch-app/bretsch-api/` folder and create a `.env` file based on the `.env.example`. For default values use the `.env.dist` as base. After that repeat this process for the `bretsch-app/bretsch-frontend/` folder. Finally mve over to the `bretsch-app/bretsch-socket-server/` folder and create a `.env` file based on the `.env.example`.
 2. Now head back to the root folder and execute the following command:
 
    
@@ -141,11 +141,11 @@ In this case the image name will be `bretsch-api` and `bretsch-frontend`
 
 **Sync database schema**
 
-* `docker-compose exec backend npm run typeorm schema:sync`
+* `docker-compose exec bretsch-api npm run typeorm schema:sync`
 
 **Insert fixtures**
 
-* `docker-compose exec backend npm run fixtures`
+* `docker-compose exec bretsch-api npm run fixtures`
 
 # 🔍 Test the project
 

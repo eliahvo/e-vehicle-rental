@@ -8,7 +8,7 @@
 
 **Example request:**
 
- `POST http://localhost:3000/api/booking/1`
+ `DELETE http://localhost:3000/api/booking/1`
 
 </td></tr>
 <tr><td>
