@@ -18,7 +18,6 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
@@ -34,6 +33,8 @@ import LoginFormDialog from './Login';
 import { LoginContext } from '../contexts/LoginContext';
 import { authContext } from '../contexts/AuthenticationContext';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import SecurityIcon from '@material-ui/icons/Security';
+import { verifyAuthentication, verifyPermittedRole } from '../App';
 
 const drawerWidth = 240;
 
@@ -71,6 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     drawerOpen: {
+      overflowX: 'hidden',
       transition: theme.transitions.create('width', {
         duration: theme.transitions.duration.enteringScreen,
         easing: theme.transitions.easing.sharp,
@@ -108,6 +110,15 @@ const useStyles = makeStyles((theme: Theme) =>
       // necessary for content to be below app bar
       ...theme.mixins.toolbar,
     },
+    userinfo: {
+      position: 'absolute',
+      bottom: 0,
+      '& > *': {
+        paddingTop: 0,
+        paddingBottom: 0,
+        margin: 0,
+      },
+    },
   }),
 );
 
@@ -119,16 +130,17 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
   const classes = useStyles();
   const theme = useTheme();
   const history = useHistory();
+  const login = useContext(LoginContext);
+  const auth = useContext(authContext);
   const { enqueueSnackbar } = useSnackbar();
   const { reloadAll } = React.useContext(AppContext);
-  const loginContext = useContext(LoginContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [navigationDrawer, setNavigationDrawer] = React.useState(false);
 
   const {
     token,
-    actions: { logout },
-  } = useContext(authContext);
+    actions: { logout, getTokenData },
+  } = auth;
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -154,6 +166,11 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
   const reloadAllData = () => {
     enqueueSnackbar(`Reloading all data...`, { variant: 'info' });
     reloadAll();
+  };
+
+  const exitApp = () => {
+    logout();
+    history.push('/');
   };
 
   return (
@@ -300,27 +317,42 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           ''
         )}
         <List>
+          {verifyPermittedRole(login, auth, true) ? (
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/admin');
+              }}
+            >
+              <ListItemIcon>
+                <SecurityIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Admin Panel'} />
+            </ListItem>
+          ) : (
+            ''
+          )}
           <ListItem
             button
             onClick={() => {
-              history.push('/settings');
-            }}
-          >
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Settings'} />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              token ? logout() : loginContext.toggleOpen();
+              token ? exitApp() : login.toggleOpen();
             }}
           >
             <ListItemIcon>{token ? <ExitToAppIcon /> : <VpnKeyIcon />}</ListItemIcon>
             <ListItemText primary={token ? `Logout` : `Login`} />
           </ListItem>
         </List>
+        {navigationDrawer && verifyAuthentication(login, auth, true) ? (
+          <>
+            <Divider />
+            <List dense className={classes.userinfo}>
+              <ListItem>Logged in as {getTokenData().name}.</ListItem>
+              <ListItem>Role: '{getTokenData().role}'.</ListItem>
+            </List>
+          </>
+        ) : (
+          ''
+        )}
         <LoginFormDialog />
       </Drawer>
     </>

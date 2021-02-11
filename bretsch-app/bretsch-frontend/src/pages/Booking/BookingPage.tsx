@@ -4,8 +4,13 @@ import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
-import { setVehicleStatus } from '../../util/RequestHelper';
+import { setVehicleStats, setVehicleStatus } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
+import { SocketclientContext } from '../../contexts/SocketclientContext';
+import { PaymentContext } from '../../contexts/PaymentContext';
+import { Payment } from '../../components/Payment';
+import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router';
 
 /**
  * convert ms to form "XX:XX:XX"
@@ -33,9 +38,11 @@ export const BookingDiv = styled.div`
 export const Heading = styled.div`
   font-size: 3rem;
   text-align: center;
+  margin-bottom: 2rem;
 `;
 
-export const Time = styled.div`
+export const Main = styled.div`
+  margin-top: 2rem;
   font-size: 2rem;
   text-align: center;
 `;
@@ -51,34 +58,50 @@ export const ButtonStyle = styled.div`
   text-align: center;
 `;
 
-{
-  /* must be replaced later */
-}
-const PaymentMethod = [
-  {
-    value: 'Paypal',
-    label: 'Paypal',
-  },
-  {
-    value: 'Visa',
-    label: 'Visa',
-  },
-  {
-    value: 'Bitcoin',
-    label: 'Bitcoin',
-  },
-  {
-    value: 'Mastercard',
-    label: 'Mastercard',
-  },
-];
-
 export const BookingPage = () => {
+  const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const [booking, setBooking] = useState<Booking>();
   const {
     actions: { getTokenData },
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
+  const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
+  const [openPayment, setOpenPayment] = React.useState(false);
+  const [stopButtonClicked, setStopButtonClicked] = React.useState(false);
+  const [timeAtStopClicked, setTimeAtStopClicked] = React.useState(0);
+  const [currentPrice, setCurrentPrice] = React.useState('');
+  const [time, setTime] = useState('');
+  const [battery, setBattery] = useState<number>(0);
+
+  useEffect(() => {
+    fetchBooking();
+  }, []);
+
+  useEffect(() => {
+    if (booking) {
+      setTime(getDateDifference());
+      setCurrentPrice(getPrice());
+    }
+  }, [booking]);
+
+  useEffect(() => {
+    if (booking && !stopButtonClicked) {
+      setTimeout(() => {
+        setTime(getDateDifference());
+        setCurrentPrice(getPrice());
+      }, 1000);
+    }
+  });
+
+  const toggleOpenState = () => {
+    setOpenPayment(!openPayment);
+  };
+
+  const paymentContext = {
+    open: openPayment,
+    toggleOpen: toggleOpenState,
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setChosenPayment(e.target.value);
@@ -88,21 +111,29 @@ export const BookingPage = () => {
     /* returns date difference from startDate and current date to form "XX:XX:XX" */
   }
 
-  const getDateDifference = function (): string {
+  const getDateDifference = (): string => {
     if (booking) {
       const actualDate = new Date();
       const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
-
       return msToHMS(ms - (ms % 1000));
-    } else {
-      return '00:00:00';
     }
+    return '00:00:00';
   };
 
-  const [time, setTime] = useState(getDateDifference());
+  const getPrice = (): string => {
+    if (booking) {
+      const actualDate = new Date();
+      const ms = actualDate.getTime() - new Date(booking.startDate).getTime();
+      const m = Math.ceil(ms / 1000 / 60);
+      setBattery(Math.round(ms / 1000 / 30));
+      const price: number =
+        Number(booking.vehicle.vehicleType.startPrice) + m * Number(booking.vehicle.vehicleType.pricePerMinute);
+      return price.toFixed(2);
+    }
+    return '0.00';
+  };
 
   const fetchBooking = async () => {
-    console.log('fetchBooking');
     const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
       /* 1 must be replaced with actual logged in userId */
       headers: { 'content-type': 'application/json' },
@@ -112,7 +143,6 @@ export const BookingPage = () => {
     if (userRequest.status === 200) {
       const userJSON = await userRequest.json();
       if (userJSON.data.actualBooking) {
-        console.log('in booking');
         const bookingRequest = await fetch(`/api/booking/${userJSON.data.actualBooking.bookingId}`, {
           headers: { 'content-type': 'application/json' },
           method: 'GET',
@@ -134,14 +164,15 @@ export const BookingPage = () => {
       body: JSON.stringify({
         endDate: new Date().toString(),
         paymentStatus: 'payed' /* maybe must be changed */,
-        price: 100 /* must be calculated */,
+        price: Number(currentPrice),
       }),
       headers: { 'content-type': 'application/json' },
       method: 'PATCH',
     });
 
     if (bookingPatch.status === 200) {
-      setVehicleStatus(booking?.vehicle.vehicleId, vehicle_status.Free);
+      const newBattery: number = Number(booking?.vehicle.batteryLevel) - battery;
+      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery);
 
       {
         /* updating user */
@@ -158,33 +189,20 @@ export const BookingPage = () => {
       if (userPatch.status === 200) {
         setBooking(undefined);
         fetchBooking();
+        socketclient.emit('stopBooking', { vehicleId: booking?.vehicle.vehicleId });
       } else {
-        console.log('error by updating user');
+        enqueueSnackbar(`Error while updating user!`, {
+          variant: 'error',
+        });
       }
     } else {
-      console.log('error by updating booking');
+      enqueueSnackbar(`Error while updating booking!`, {
+        variant: 'error',
+      });
     }
   };
 
-  useEffect(() => {
-    fetchBooking();
-    if (booking) setTime(getDateDifference());
-  }, []);
-
-  useEffect(() => {
-    if (booking) setTime(getDateDifference());
-  }, [booking]);
-
-  useEffect(() => {
-    if (booking) {
-      const timer = setTimeout(() => {
-        setTime(getDateDifference());
-      }, 1000);
-    }
-  });
-
   if (booking) {
-    console.log(booking);
     return (
       <Layout title="Booking">
         <BookingDiv>
@@ -221,48 +239,53 @@ export const BookingPage = () => {
             <Divider />
 
             {/* timer */}
-            <Time>{time}</Time>
+            <Main>{time}</Main>
+            <Main>{currentPrice ? `${currentPrice}€` : ''}</Main>
 
-            <Grid container spacing={3}>
-              <Grid item xs={2}>
-                {/* prefered payment */}
-                <TextField
-                  autoFocus
-                  name="preferedPayment"
-                  margin="dense"
-                  id="preferedPayment"
-                  select
-                  label="Payment"
-                  type="text"
-                  value={chosenPayment}
-                  onChange={handleChange}
-                >
-                  {PaymentMethod.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={4}>
-                {/* stop booking button */}
-                <Box mt={1} mb={1}>
-                  <ButtonStyle>
-                    <Button onClick={stopBooking}>Stop</Button>
-                  </ButtonStyle>
-                </Box>
-              </Grid>
-            </Grid>
+            <Heading>
+              {/* stop booking button */}
+              <ButtonStyle>
+                <PaymentContext.Provider value={paymentContext}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => {
+                      toggleOpenState();
+                      setStopButtonClicked(true);
+                      setTimeAtStopClicked(parseInt(time, 10));
+                    }}
+                  >
+                    Stop booking
+                  </Button>
+                  <Payment
+                    stopBooking={stopBooking}
+                    price={Number(currentPrice)}
+                    setStopButtonClicked={setStopButtonClicked}
+                  />
+                </PaymentContext.Provider>
+              </ButtonStyle>
+            </Heading>
           </Section>
         </BookingDiv>
       </Layout>
     );
   }
   return (
-    <Layout>
+    <Layout title="Booking">
       <BookingDiv>
         {/* hypertext with info */}
-        <Heading>No active booking!</Heading>
+        <Heading>
+          <p>No active booking!</p>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              history.push('/');
+            }}
+          >
+            Start bretsching now!
+          </Button>
+        </Heading>
       </BookingDiv>
     </Layout>
   );

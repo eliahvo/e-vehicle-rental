@@ -1,12 +1,10 @@
-import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
 import React, { useState } from 'react';
 import useLocalStorage from '../util/LocalStorageHook';
-import { RegisterContext } from './RegisterContext';
 
 export type JWTTokenData = {
   id: number;
   name: string;
+  role: string;
   email: string;
   iat: string;
   exp: string;
@@ -31,7 +29,7 @@ export type LoginOptions = {
 export type AuthContext = {
   token: string | null;
   actions: {
-    login: (options: LoginOptions) => Promise<void>;
+    login: (options: LoginOptions) => Promise<boolean>;
     register: (options: RegisterOptions) => Promise<void>;
     getTokenData: () => JWTTokenData | null;
     logout: () => void;
@@ -41,7 +39,7 @@ export type AuthContext = {
 export const initialAuthContext = {
   token: localStorage.getItem('token'),
   actions: {
-    login: async () => {},
+    login: async (): Promise<any> => {},
     register: async () => {},
     getTokenData: () => null,
     logout: () => {},
@@ -54,7 +52,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [tokenStorage, setTokenStorage] = useLocalStorage('App.token', '');
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
-  const login = async (values: LoginOptions) => {
+  const login = async (values: LoginOptions): Promise<boolean> => {
     try {
       const loginRequest = await fetch('/api/user/token', {
         method: 'POST',
@@ -66,9 +64,11 @@ export const AuthProvider: React.FC = ({ children }) => {
         setToken(data);
         setTokenStorage(data);
         localStorage.setItem('token', data);
+        return true;
       }
+      return false;
     } catch (e) {
-      console.log('Email or Password is wrong! ');
+      return false;
     }
   };
 

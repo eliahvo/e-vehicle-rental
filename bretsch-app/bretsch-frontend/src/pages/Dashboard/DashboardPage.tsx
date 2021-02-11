@@ -21,6 +21,10 @@ import VehicleInfoFormDialog from '../../components/VehicleInfoForBooking';
 import { setVehicleStatus } from '../../util/RequestHelper';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
+import { SocketclientContext } from '../../contexts/SocketclientContext';
+import { CheckDialog } from '../../components/CheckDialog';
+import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -45,25 +49,58 @@ export const DashboardPage = () => {
   const theme = useTheme();
   const classes = useStyles();
   const mapStyle = useMapStyle();
+  const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const { vehicles } = React.useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [openVehicleInfo, setOpenVehicleInfo] = React.useState(false);
-  const [currenVehicleIdForInfo, setCurrenVehicleIdForInfo] = React.useState(-1);
+  const [currentVehicleIdForInfo, setCurrenVehicleIdForInfo] = React.useState(-1);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [vehicleTypes, setVehicleTypes] = useLocalStorage<{ name: string; isChecked: boolean }[]>(
     'Dashboard.vehicleTypes',
     [],
   );
   const [displayVehicles, setDisplayVehicles] = useState(vehicles);
-  const { reloadAll } = React.useContext(AppContext);
+  const { reloadAll, reloadVehicles } = React.useContext(AppContext);
+  const [socketclient, setSocketclient] = React.useContext(SocketclientContext);
+  const [vehicleBlacklist, setVehicleBlacklist] = React.useState<number[]>([]);
 
   useEffect(() => {
     reloadAll();
   }, []);
 
   useEffect(() => {
+    if (socketclient) {
+      socketclient.on('booking', async (arg: any) => {
+        setVehicleBlacklist((blacklist) => [...blacklist, arg.vehicleId]);
+        console.log('arg: ', arg.vehicleId, ' current: ', currentVehicleIdForInfo);
+        if (
+          history.location.pathname.toLowerCase().includes('dashboard') &&
+          arg.vehicleId === currentVehicleIdForInfo
+        ) {
+          setOpenVehicleInfo(false);
+          enqueueSnackbar(`This vehicle is no longer available!`, {
+            variant: 'error',
+          });
+        }
+      });
+    }
+  }, [socketclient]);
+
+  useEffect(() => {
     updateAvailableVehicleTypes();
   }, [vehicles]);
+
+  useEffect(() => {
+    if (socketclient) {
+      socketclient.on('stopBooking', async (arg: any) => {
+        console.log('stopBooking');
+        await reloadVehicles();
+        const index = vehicleBlacklist.indexOf(arg.vehicleId);
+        setVehicleBlacklist((blacklist) => blacklist.filter((_, i) => i !== index));
+      });
+    }
+  }, [socketclient, vehicleBlacklist]);
 
   useEffect(() => {
     updateFilter();
@@ -76,7 +113,7 @@ export const DashboardPage = () => {
   const vehicleInfoContext = {
     open: openVehicleInfo,
     toggleOpen: toggleVehicleInfo,
-    vehicleId: currenVehicleIdForInfo,
+    vehicleId: currentVehicleIdForInfo,
   };
   const updateAvailableVehicleTypes = () => {
     const availableVehicles = vehicles.filter((v: Vehicle) => v.status === 'Free');
@@ -125,35 +162,42 @@ export const DashboardPage = () => {
       <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Button
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget)}
-        className={classes.filterButton}
-        variant="contained"
-        color="primary"
-      >
-        <FilterListIcon />
-      </Button>
-      <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        {vehicleTypes.map((vehicleType: { name: string; isChecked: boolean }) => {
-          return (
-            <MenuItem key={vehicleType.name} dense>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={vehicleType.isChecked}
-                    onChange={handleFilterChange}
-                    name={vehicleType.name}
-                    color="primary"
+      <CheckDialog text="Transaction successfully completed!" />
+      {vehicleTypes.length ? (
+        <>
+          <Button
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget)}
+            className={classes.filterButton}
+            variant="contained"
+            color="primary"
+          >
+            <FilterListIcon />
+          </Button>
+          <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+            {vehicleTypes.map((vehicleType: { name: string; isChecked: boolean }) => {
+              return (
+                <MenuItem key={vehicleType.name} dense>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={vehicleType.isChecked}
+                        onChange={handleFilterChange}
+                        name={vehicleType.name}
+                        color="primary"
+                      />
+                    }
+                    label={vehicleType.name}
                   />
-                }
-                label={vehicleType.name}
-              />
-            </MenuItem>
-          );
-        })}
-      </Menu>
+                </MenuItem>
+              );
+            })}
+          </Menu>
+        </>
+      ) : (
+        ''
+      )}
       <LoadScript
-        googleMapsApiKey="AIzaSyATr3q52hdyJ7sbnPIw69sp4k8rGGehO2Y"
+        googleMapsApiKey={process.env.REACT_APP_MAP_KEY}
         language="en"
         region="en"
         onLoad={() => setLoading(true)}
@@ -167,21 +211,18 @@ export const DashboardPage = () => {
               width: '100%',
             }}
             center={center}
-            zoom={15}
+            zoom={14}
             mapTypeId="roadmap"
             options={{
               backgroundColor: theme.palette.background,
               disableDefaultUI: true,
-              maxZoom: 20,
-              minZoom: 13,
               restriction: {
                 latLngBounds: {
-                  east: 8.960182,
-                  north: 49.984304,
-                  south: 49.758828,
-                  west: 8.291636,
+                  south: 47.2701114,
+                  west: 5.8663153,
+                  north: 55.099161,
+                  east: 15.0419319,
                 },
-                strictBounds: true,
               },
               styles: mapStyle,
             }}
@@ -194,7 +235,7 @@ export const DashboardPage = () => {
             >
               {(clusterer) =>
                 displayVehicles.map((vehicle: Vehicle) => {
-                  if (vehicle.status === 'Free') {
+                  if (vehicle.status === 'Free' && vehicleBlacklist.indexOf(vehicle.vehicleId)) {
                     return (
                       <Marker
                         key={vehicle.vehicleId}
@@ -204,8 +245,8 @@ export const DashboardPage = () => {
                         }}
                         onClick={() => {
                           setOpenVehicleInfo(true);
+                          console.log('vehicle: ', vehicle.vehicleId);
                           setCurrenVehicleIdForInfo(vehicle.vehicleId);
-                          setVehicleStatus(vehicle.vehicleId, vehicle_status.Reserved);
                         }}
                         icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
                         clusterer={clusterer}

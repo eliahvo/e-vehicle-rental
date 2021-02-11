@@ -10,36 +10,62 @@ import { fetchVehicles } from './util/RequestHelper';
 import { useSnackbar } from 'notistack';
 import { BookingPage } from './pages/Booking/BookingPage';
 import { PricePage } from './pages/Prices/PricesPage';
-import { SettingPage } from './pages/Settings/SettingPage';
 import { MyBookingPage } from './pages/MyBookings/MyBookingPage';
 import { ProfilePage } from './pages/Profile/ProfilePage';
 import { authContext, AuthProvider } from './contexts/AuthenticationContext';
 import { LoginContext } from './contexts/LoginContext';
 import { AdminPage } from './pages/Admin/AdminPage';
-import RegisterModal from './components/Register';
+import io from 'socket.io-client';
+import { SocketclientContext } from './contexts/SocketclientContext';
+
+const permittedRoles = ['admin']; // Have to be lowercase only!
+
+export const verifyAuthentication = (login, auth, suppressLogin = false): boolean => {
+  if (auth.token !== null) {
+    const tokenData = auth.actions.getTokenData();
+    if (tokenData !== null) {
+      const { exp } = tokenData;
+      if (parseInt(exp, 10) * 1000 > Date.now()) {
+        return true;
+      }
+      auth.actions.logout();
+      return false;
+    }
+  }
+  if (!suppressLogin) {
+    login.toggleOpen();
+  }
+  return false;
+};
+
+export const verifyPermittedRole = (login, auth, suppressLogin = false): boolean => {
+  if (
+    verifyAuthentication(login, auth, suppressLogin) &&
+    permittedRoles.includes(auth.actions.getTokenData().role.toLowerCase())
+  ) {
+    return true;
+  }
+  return false;
+};
 
 export const BasePage = () => {
   return <Redirect to="/dashboard" />;
 };
 
 const AuthenticatedRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
-  const loginContext = useContext(LoginContext);
-  const {
-    token,
-    actions: { getTokenData, logout },
-  } = useContext(authContext);
-  if (token !== null) {
-    const tokenData = getTokenData();
-    if (tokenData !== null) {
-      const { exp } = tokenData;
-      if (parseInt(exp, 10) * 1000 > Date.now()) {
-        return <Route {...routeProps} />;
-      }
-      logout();
-      return <Redirect to="/" />;
-    }
+  const login = useContext(LoginContext);
+  const auth = useContext(authContext);
+  if (verifyAuthentication(login, auth)) {
+    return <Route {...routeProps} />;
   }
-  loginContext.toggleOpen();
+  return <Redirect to="/" />;
+};
+const PermittedRolesRoute: React.FC<RouteProps> = ({ children, ...routeProps }) => {
+  const login = useContext(LoginContext);
+  const auth = useContext(authContext);
+  if (verifyPermittedRole(login, auth)) {
+    return <Route {...routeProps} />;
+  }
   return <Redirect to="/" />;
 };
 
@@ -48,6 +74,8 @@ export const App = () => {
   const [darkModeState, setDarkModeState] = useLocalStorage('App.darkModeState', true);
   const [vehicleData, setVehicleData] = useState<Vehicle[]>([]);
   const [openLogin, setOpenLogin] = React.useState(false);
+  const [socketclient, setSocketclient] = React.useState(null);
+  const [openCheckedDialog, setOpenCheckedDialog] = React.useState(false);
 
   const theme = React.useMemo(
     () =>
@@ -72,6 +100,8 @@ export const App = () => {
   useEffect(() => {
     (async () => {
       await loadAll();
+      /* setup socket.io-client */
+      setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
     })();
   }, []);
 
@@ -98,6 +128,12 @@ export const App = () => {
     setOpenLogin(!openLogin);
   };
 
+  const toggleOpenCheckedDialog = async () => {
+    setOpenCheckedDialog(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setOpenCheckedDialog(false);
+  };
+
   const loginContext = {
     open: openLogin,
     toggleOpen: toggleOpenState,
@@ -109,28 +145,32 @@ export const App = () => {
     reloadVehicles: loadVehicles,
     toggleDarkMode: toggleDarkModeState,
     vehicles: vehicleData,
+    toggleCheckDialog: toggleOpenCheckedDialog,
+    checkDialog: openCheckedDialog,
   };
 
+  // after dev:   <PermittedRolesRoute exact path="/admin" component={AdminPage} />
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <CssBaseline />
-        <AppContext.Provider value={context}>
-          <LoginContext.Provider value={loginContext}>
-            <BrowserRouter>
-              <Switch>
-                <Route path="/admin" component={AdminPage} />
-                <Route exact path="/dashboard" component={DashboardPage} />
-                <AuthenticatedRoute exact path="/booking" component={BookingPage} />
-                <Route exact path="/prices" component={PricePage} />
-                <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
-                <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
-                <AuthenticatedRoute exact path="/settings" component={SettingPage} />
-                <Route path="/" component={BasePage} />
-              </Switch>
-            </BrowserRouter>
-          </LoginContext.Provider>
-        </AppContext.Provider>
+        <SocketclientContext.Provider value={[socketclient, setSocketclient]}>
+          <AppContext.Provider value={context}>
+            <LoginContext.Provider value={loginContext}>
+              <BrowserRouter>
+                <Switch>
+                  <Route exact path="/dashboard" component={DashboardPage} />
+                  <AuthenticatedRoute exact path="/booking" component={BookingPage} />
+                  <Route exact path="/prices" component={PricePage} />
+                  <AuthenticatedRoute exact path="/profile" component={ProfilePage} />
+                  <AuthenticatedRoute exact path="/my-bookings" component={MyBookingPage} />
+                  <Route exact path="/admin" component={AdminPage} />
+                  <Route path="/" component={BasePage} />
+                </Switch>
+              </BrowserRouter>
+            </LoginContext.Provider>
+          </AppContext.Provider>
+        </SocketclientContext.Provider>
       </AuthProvider>
     </ThemeProvider>
   );

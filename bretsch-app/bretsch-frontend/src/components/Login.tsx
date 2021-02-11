@@ -4,39 +4,44 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { LoginContext } from '../contexts/LoginContext';
-import { Divider } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import { authContext, LoginOptions } from '../contexts/AuthenticationContext';
-import { useHistory } from 'react-router-dom';
 import RegisterModal from './Register';
 import { RegisterContext } from '../contexts/RegisterContext';
 
 export default function LoginFormDialog() {
   const auth = useContext(authContext);
   const loginContext = useContext(LoginContext);
-  let history = useHistory();
   const [values, setValues] = useState<LoginOptions>({ email: '', password: '' });
   const [openRegister, setOpenRegister] = React.useState(false);
+  const [errorText, setErrorText] = React.useState('');
 
   const handleClose = () => {
+    setValues({ ...values, password: '' });
     loginContext.toggleOpen();
   };
+
   const format = /[!#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]+/;
   const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (format.test(e.target.value)) {
-      alert('Sonderzeichen sind im Namen nicht erlaubt!');
-      e.target.value = '';
+      e.target.value = values.email;
     } else {
       setValues({ ...values, [e.target.name]: e.target.value });
+      setErrorText('');
     }
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    auth.actions.login(values);
-    handleClose();
+    const loggedIn: boolean = await auth.actions.login(values);
+    if (loggedIn) {
+      handleClose();
+    } else {
+      setErrorText('Incorrect email or password!');
+      setValues({ ...values, password: '' });
+    }
   };
 
   const toggleOpenState = () => {
@@ -44,6 +49,7 @@ export default function LoginFormDialog() {
   };
 
   const registerContext = {
+    email: values.email,
     open: openRegister,
     toggleOpen: toggleOpenState,
   };
@@ -57,20 +63,21 @@ export default function LoginFormDialog() {
             <DialogContent>
               <TextField
                 autoFocus
+                value={values.email}
                 name="email"
                 margin="dense"
-                id="name"
-                label="Email Address"
+                id="email"
+                label="E-Mail"
                 type="email"
                 fullWidth
                 onChange={fieldDidChange}
                 required
               />
               <TextField
-                autoFocus
+                value={values.password}
                 name="password"
                 margin="dense"
-                id="name"
+                id="password"
                 label="Password"
                 type="password"
                 fullWidth
@@ -79,6 +86,7 @@ export default function LoginFormDialog() {
               />
             </DialogContent>
             <DialogActions>
+              <Typography color="error">{errorText}</Typography>
               <Button type="submit" color="primary">
                 Sign In
               </Button>
@@ -86,7 +94,7 @@ export default function LoginFormDialog() {
           </form>
           <Divider />
           <DialogActions>
-            <DialogContentText> Not BRETSCHing yet?</DialogContentText>
+            <p>Not BRETSCHing yet?</p>
             <Button
               onClick={() => {
                 setOpenRegister(true);

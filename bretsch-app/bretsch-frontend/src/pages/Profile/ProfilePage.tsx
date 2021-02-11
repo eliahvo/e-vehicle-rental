@@ -4,13 +4,17 @@ import React, { ChangeEvent, FormEvent, useContext, useEffect, useState } from '
 import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
 import styled from 'styled-components';
 import { User } from '../../util/EntityInterfaces';
-import { Divider, Grid, IconButton, makeStyles, TextField } from '@material-ui/core';
+import { Divider, Grid, IconButton, makeStyles, MenuItem, TextField } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import EditIcon from '@material-ui/icons/Edit';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CheckIcon from '@material-ui/icons/Check';
 import { useSnackbar } from 'notistack';
 import { authContext } from '../../contexts/AuthenticationContext';
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
+import { maxDate, minAge, validateBirthday } from '../../util/ValidBirthday';
+import { validatePassword } from '../../util/RequestHelper';
 
 const useStyles = makeStyles((theme) => ({
   headings: {
@@ -36,6 +40,36 @@ export const Section = styled.div`
   margin: 1rem 0 0 0;
 `;
 
+const useDateStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  textField: {
+    marginRight: theme.spacing(1),
+    width: 175,
+  },
+}));
+
+const PaymentMethod = [
+  {
+    value: 'Paypal',
+    label: 'Paypal',
+  },
+  {
+    value: 'Visa',
+    label: 'Visa',
+  },
+  {
+    value: 'Bitcoin',
+    label: 'Bitcoin',
+  },
+  {
+    value: 'Mastercard',
+    label: 'Mastercard',
+  },
+];
+
 export const ProfilePage = () => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -47,6 +81,9 @@ export const ProfilePage = () => {
   const {
     actions: { getTokenData },
   } = useContext(authContext);
+  const [chosenPayment, setChosenPayment] = React.useState('');
+
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
 
   const fetchProfile = async () => {
     const profileRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
@@ -57,6 +94,12 @@ export const ProfilePage = () => {
     if (profileRequest.status === 200) {
       const profileJSON = await profileRequest.json();
       setProfile(profileJSON.data);
+
+      const bday = new Date(profileJSON.data?.birthDate);
+      bday.setHours(0, 0, 0, 0);
+      setSelectedDate(bday);
+
+      setChosenPayment(profileJSON.data?.preferedPayment);
     } else {
       enqueueSnackbar(`Error while fetching profile data!`, {
         variant: 'error',
@@ -74,13 +117,29 @@ export const ProfilePage = () => {
     firstName: profile?.firstName,
     password: '',
     passwordShadow: '',
+    passwordOld: '',
+    birthDate: profile?.birthDate,
     lastName: profile?.lastName,
     preferedPayment: profile?.preferedPayment,
     streetPlusNumber: profile?.streetPlusNumber,
   });
 
+  const handleDateChange = (date: Date) => {
+    if (date) {
+      date.setHours(0, 0, 0, 0);
+    }
+    setSelectedDate(date);
+    setValues({ ...values, birthDate: new Date(date).toDateString() });
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setChosenPayment(e.target.value);
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
   const fieldDidChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+
     if (e.target.name === 'passwordShadow') {
       if (values.password === e.target.value) {
         e.target.setCustomValidity('');
@@ -88,10 +147,27 @@ export const ProfilePage = () => {
         e.target.setCustomValidity("Passwords don't match!");
       }
     }
+
+    if (e.target.name === 'passwordOld') {
+      e.target.setCustomValidity('');
+    }
+  };
+
+  const validateOldPassword = async (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.name === 'passwordOld') {
+      if (!(await validatePassword(`${profile?.email}`, `${values.passwordOld}`))) {
+        e.target.setCustomValidity('Incorrect password!');
+      }
+    }
   };
 
   const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!validateBirthday(selectedDate)) {
+      return;
+    }
+
     await fetch(`/api/user/${getTokenData()?.id}`, {
       body: JSON.stringify({
         ...values,
@@ -273,8 +349,9 @@ export const ProfilePage = () => {
                     />
                     <TextField
                       onChange={fieldDidChange}
+                      onBlur={validateOldPassword}
                       margin="dense"
-                      name="passwordShadow"
+                      name="passwordOld"
                       label="Old Password"
                       type="password"
                       fullWidth
@@ -333,19 +410,32 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={4}>
                 {editPersonalSettings ? (
-                  <TextField
-                    autoFocus
-                    onChange={fieldDidChange}
-                    margin="dense"
-                    name="birthDate"
-                    label="Birthdate"
-                    defaultValue={profile?.birthDate}
-                    type="text"
-                    fullWidth
-                    required
-                  />
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container justify="space-around">
+                      <KeyboardDatePicker
+                        id="birthDate"
+                        name="birthDate"
+                        margin="normal"
+                        label="Birthdate"
+                        format="yyyy-MM-dd"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        required
+                        fullWidth
+                        disableFuture
+                        maxDate={maxDate}
+                        helperText={`You have to be at least ${minAge} years old!`}
+                      />
+                    </Grid>
+                  </MuiPickersUtilsProvider>
                 ) : (
-                  profile?.birthDate
+                  `${new Date(profile?.birthDate).getFullYear()}-${(
+                    '0' +
+                    (new Date(profile?.birthDate).getMonth() + 1)
+                  ).slice(-2)}-${('0' + new Date(profile?.birthDate).getDate()).slice(-2)}`
                 )}
               </Grid>
             </Grid>
@@ -439,15 +529,22 @@ export const ProfilePage = () => {
                 {editPaymentSettings ? (
                   <TextField
                     autoFocus
-                    onChange={fieldDidChange}
+                    onChange={handleChange}
                     margin="dense"
                     name="preferedPayment"
                     label="Preferred Payment"
-                    defaultValue={profile?.preferedPayment}
+                    value={chosenPayment}
                     type="text"
                     fullWidth
+                    select
                     required
-                  />
+                  >
+                    {PaymentMethod.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 ) : (
                   profile?.preferedPayment
                 )}
