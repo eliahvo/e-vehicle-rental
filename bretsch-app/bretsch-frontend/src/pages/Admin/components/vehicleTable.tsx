@@ -1,10 +1,21 @@
 import { DataGrid, FilterModel, ValueFormatterParams } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 import React, { useEffect, useState } from 'react';
-import { Vehicle } from '../../../util/EntityInterfaces';
+import { Vehicle, VehicleType } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Alert } from '@material-ui/lab';
-import { Snackbar } from '@material-ui/core';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  InputAdornment,
+  MenuItem,
+  OutlinedInput,
+  Snackbar,
+  TextField,
+} from '@material-ui/core';
 // progress style by https://codepen.io/restlessdesign/pen/CJrad
 export const BatteryProgressNumber = styled.span`
   position: absolute;
@@ -69,9 +80,31 @@ export const stripes = styled.div`
         transparent
 `;
 
-/*.stripes.reverse {
-    animation-direction: reverse;
-}*/
+/*
+  Used,
+  Free,
+  Not_available,
+  Reserved,
+}
+ */
+export const vehicleStatus = [
+  {
+    value: 0,
+    label: 'Used',
+  },
+  {
+    value: 1,
+    label: 'Free',
+  },
+  {
+    value: 2,
+    label: 'Not available',
+  },
+  {
+    value: 3,
+    label: 'Reserved',
+  },
+];
 
 export const Progressbarinner = styled.span`
   display: block;
@@ -86,11 +119,82 @@ export const Progressbarinner = styled.span`
 
 export const VehicleTable = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [vehicleTypes, setVehiclesType] = useState<VehicleType[]>([]);
+  const [vehicleTypesSelect, setVehiclesTypesSelect] = useState<any[]>([]);
   const [open, setOpen] = React.useState(false);
+  const [openDialogCreate, setDialogCreate] = React.useState(false);
+  const [licencePlateV, setLicencePlate] = React.useState<string>('');
+  const [vStatus, setVStatus] = React.useState(1);
+
+  const [errorLongitude, setLongitudeerror] = useState<string>(' ');
+  const [errorLatitude, setLatitudeerror] = useState<string>(' ');
+  const [bLevel, setBLevel] = useState<number>(100);
+  const [longitude, setLongitude] = useState<number>(0);
+  const [latitude, setLatitude] = useState<number>(0);
+  const [choosedVType, setchoosedVType] = useState<number>(0);
+  const [errorbLevel, setErrorbLevel] = useState<string>(' ');
+
+  // Create Dialog
+  const handleCreateDialogClose = () => {
+    setDialogCreate(false);
+  };
+  const handleCreateDialogOpen = () => {
+    setDialogCreate(true);
+  };
+  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setVStatus(parseInt(event.target.value, 10));
+  };
+  const handleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setchoosedVType(parseInt(event.target.value, 10));
+  };
+
+  const handleLPlateChange = (e) => {
+    setLicencePlate(e.target.value);
+  };
+
+  const handleBLevelChange = (e) => {
+    if (parseInt(e.target.value, 10) || e.target.value.empty) {
+      const num = parseInt(e.target.value, 10);
+      if (num < 100) {
+        setBLevel(parseInt(e.target.value, 10));
+        setErrorbLevel('');
+      } else {
+        setErrorbLevel('Error: Value should be smaller than 100');
+      }
+    } else {
+      setErrorbLevel('Error: Value should be a number');
+    }
+  };
+
+  const handleLongitudeChange = (e) => {
+    if (parseFloat(e.target.value) || e.target.value.empty) {
+      setLongitude(parseFloat(e.target.value));
+      setLongitudeerror('');
+    } else {
+      setLongitudeerror('Error: Value should be a number');
+    }
+  };
+
+  const handleLatitudeChange = (e) => {
+    if (parseFloat(e.target.value) || e.target.value.empty) {
+      setLatitude(parseFloat(e.target.value));
+      setLatitudeerror('');
+    } else {
+      setLatitudeerror('Error: Value should be a number');
+    }
+  };
 
   useEffect(() => {
-    allVehicles();
+    allVehicles().then((r) => {
+      allVehicleTypes().then((a) => {
+        createVehicleTypeArray();
+      });
+    });
   }, []);
+
+  useEffect(() => {
+    createVehicleTypeArray();
+  }, [vehicleTypes]);
 
   // get all vehicles
   const allVehicles = async () => {
@@ -104,10 +208,30 @@ export const VehicleTable = () => {
     }
   };
 
+  // get all Vehicle Types
+  const allVehicleTypes = async () => {
+    const vehicleTypeRequest = await fetch(`/api/vehicletype/`, {
+      headers: { 'content-type': 'application/json' },
+      method: 'GET',
+    });
+    if (vehicleTypeRequest.status === 200) {
+      const vehicleTypeJSON = await vehicleTypeRequest.json();
+      await setVehiclesType(vehicleTypeJSON.data);
+    }
+  };
+
+  const createVehicleTypeArray = () => {
+    const newArr = [];
+    for (const t of vehicleTypes) {
+      newArr.push({ value: t.vehicleTypeId, label: t.type });
+    }
+    console.log(newArr);
+    console.log(vehicleTypes);
+    setVehiclesTypesSelect(newArr);
+  };
+
   // delete vehicles
   const deleteVehicles = async (id: string) => {
-    // tslint:disable-next-line:prefer-template
-    console.log(id);
     const vehicleRequest = await fetch(`/api/vehicle/` + id, {
       headers: { 'content-type': 'application/json' },
       method: 'DELETE',
@@ -116,6 +240,121 @@ export const VehicleTable = () => {
       await allVehicles();
       setOpen(true);
     }
+  };
+
+  // delete vehicles
+  const createVehicle = async (e) => {
+    e.preventDefault();
+    console.log('Vehicle Type:' + choosedVType);
+    const vehicleRequest = await fetch(`/api/vehicle/`, {
+      headers: { 'content-type': 'application/json' },
+      method: 'POST',
+      body: JSON.stringify({
+        licencePlate: licencePlateV,
+        status: vStatus,
+        positionLongitude: longitude,
+        positionLatitude: latitude,
+        batteryLevel: bLevel,
+        vehicleType: choosedVType,
+      }),
+    });
+    if (vehicleRequest.status === 201) {
+      await allVehicles();
+      handleCreateDialogClose();
+    }else{
+      console.log(vehicleRequest);
+    }
+  };
+
+  const CreateVehicleDialog = () => {
+    return (
+      <Dialog onClose={handleCreateDialogClose} aria-labelledby="simple-dialog-title" open={openDialogCreate}>
+        <form onSubmit={createVehicle}>
+          <DialogTitle id="simple-dialog-title">Create Vehicle </DialogTitle>
+          <DialogContent dividers>
+            <p> Licence Plate: </p>
+            <FormControl required>
+              <TextField onChange={handleLPlateChange} id="outlined-required" variant="outlined" />
+            </FormControl>
+            <p> Battery Level: </p>
+            <FormControl required>
+              <OutlinedInput
+                id="filled-adornment-weight"
+                defaultValue={100}
+                onChange={handleBLevelChange}
+                endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                aria-describedby="filled-weight-helper-text"
+                inputProps={{
+                  'aria-label': 'weight',
+                }}
+              />
+            </FormControl>
+            <FormHelperText id="component-helper-text">{errorbLevel}</FormHelperText>
+            <p> Status: </p>
+            <FormControl required>
+              <TextField
+                id="outlined-select-currency"
+                select
+                value={vStatus}
+                onChange={handleStatusChange}
+                variant="outlined"
+              >
+                {vehicleStatus.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </FormControl>
+            <p> According VehicleType: </p>
+            <FormControl required>
+              <TextField
+                id="outlined-select-currency"
+                select
+                value={choosedVType}
+                onChange={handleTypeChange}
+                variant="outlined"
+              >
+                {vehicleTypesSelect.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </FormControl>
+            <p> Longitude: </p>
+            <FormControl required>
+              <OutlinedInput
+                id="filled-adornment-weight"
+                onChange={handleLongitudeChange}
+                aria-describedby="filled-weight-helper-text"
+                inputProps={{
+                  'aria-label': 'weight',
+                }}
+              />
+            </FormControl>
+            <FormHelperText id="component-helper-text">{errorLongitude}</FormHelperText>
+            <p> Latitude: </p>
+            <FormControl required>
+              <OutlinedInput
+                id="filled-adornment-weight"
+                onChange={handleLatitudeChange}
+                aria-describedby="filled-weight-helper-text"
+                inputProps={{
+                  'aria-label': 'weight',
+                }}
+              />
+            </FormControl>
+            <FormHelperText id="component-helper-text">{errorLatitude}</FormHelperText>
+          </DialogContent>
+          <div>
+            <Button type="submit" color="primary">
+              Create
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+    );
   };
 
   // all Vehicles
@@ -162,7 +401,7 @@ export const VehicleTable = () => {
   return (
     <>
       <CreateButton>
-        <Button variant="outlined" color="primary">
+        <Button variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
           Create
         </Button>
       </CreateButton>
@@ -176,6 +415,11 @@ export const VehicleTable = () => {
                   field: 'license_plate',
                   headerName: 'License Plate',
                   width: 150,
+                  renderCell: (params: ValueFormatterParams) => (
+                      <Button  color="primary">
+                        Create
+                      </Button>
+                  ),
                 },
                 { field: 'status', headerName: 'Status', width: 150 },
                 {
@@ -184,9 +428,7 @@ export const VehicleTable = () => {
                   width: 100,
                   renderCell: (params: ValueFormatterParams) => (
                     <>
-                      <Progressbar>
-                        <Progressbarinner style={{ width: params.value.toString() + '%' }} />
-                      </Progressbar>
+
                     </>
                   ),
                 },
@@ -221,9 +463,10 @@ export const VehicleTable = () => {
           </div>
         </div>
       </div>
+      {CreateVehicleDialog()}
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
-          A Vehicle was sucessfully deleted!
+          A Vehicle was successfully deleted!
         </Alert>
       </Snackbar>
     </>
