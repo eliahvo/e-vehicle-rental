@@ -1,15 +1,20 @@
 import { DataGrid, FilterModel, ValueFormatterParams } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
+import EditIcon from '@material-ui/icons/Edit';
 import React, { useEffect, useState } from 'react';
 import { Vehicle, VehicleType } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Alert } from '@material-ui/lab';
 import {
+  Chip,
   Dialog,
+  DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   FormControl,
   FormHelperText,
+  IconButton,
   InputAdornment,
   MenuItem,
   OutlinedInput,
@@ -91,18 +96,22 @@ export const vehicleStatus = [
   {
     value: 0,
     label: 'Used',
+    default: 'Used',
   },
   {
     value: 1,
     label: 'Free',
+    default: 'Free',
   },
   {
     value: 2,
     label: 'Not available',
+    default: 'Not_available',
   },
   {
     value: 3,
     label: 'Reserved',
+    default: 'Reserved',
   },
 ];
 
@@ -123,15 +132,17 @@ export const VehicleTable = () => {
   const [vehicleTypesSelect, setVehiclesTypesSelect] = useState<any[]>([]);
   const [open, setOpen] = React.useState(false);
   const [openDialogCreate, setDialogCreate] = React.useState(false);
+  const [openDialogUpdate, setDialogUpdate] = React.useState(false);
   const [licencePlateV, setLicencePlate] = React.useState<string>('');
-  const [vStatus, setVStatus] = React.useState(1);
+  const [vStatus, setVStatus] = React.useState<number>(1);
 
   const [errorLongitude, setLongitudeerror] = useState<string>(' ');
   const [errorLatitude, setLatitudeerror] = useState<string>(' ');
   const [bLevel, setBLevel] = useState<number>(100);
-  const [longitude, setLongitude] = useState<number>(0);
-  const [latitude, setLatitude] = useState<number>(0);
+  const [longitude, setLongitude] = useState<string>('');
+  const [latitude, setLatitude] = useState<string>('');
   const [choosedVType, setchoosedVType] = useState<number>(0);
+  const [choosedUpdateVehicle, setchoosedUpdateVehicle] = useState<Vehicle>();
   const [errorbLevel, setErrorbLevel] = useState<string>(' ');
 
   // Create Dialog
@@ -141,6 +152,15 @@ export const VehicleTable = () => {
   const handleCreateDialogOpen = () => {
     setDialogCreate(true);
   };
+
+  // Update Dialog
+  const handleUpdateDialogClose = () => {
+    setDialogUpdate(false);
+  };
+  const handleUpdateDialogOpen = () => {
+    setDialogUpdate(true);
+  };
+
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setVStatus(parseInt(event.target.value, 10));
   };
@@ -150,6 +170,26 @@ export const VehicleTable = () => {
 
   const handleLPlateChange = (e) => {
     setLicencePlate(e.target.value);
+  };
+
+  // Chips
+  const [chipSucCreate, setchipSucCreate] = React.useState(false);
+  const [chipErrorCreate, setchipErrorCreate] = React.useState(false);
+
+  const [chipSucUpdate, setchipSucUpdate] = React.useState(false);
+  const [chipErrorUpdate, setchipErrorUpdate] = React.useState(false);
+
+  const handleChipSucCreateClose = () => {
+    setchipSucCreate(false);
+  };
+  const handleChipErrorCreateClose = () => {
+    setchipErrorCreate(false);
+  };
+  const handleChipSucUpdateClose = () => {
+    setchipSucUpdate(false);
+  };
+  const handleChipErrorUpdateClose = () => {
+    setchipErrorUpdate(false);
   };
 
   const handleBLevelChange = (e) => {
@@ -167,28 +207,16 @@ export const VehicleTable = () => {
   };
 
   const handleLongitudeChange = (e) => {
-    if (parseFloat(e.target.value) || e.target.value.empty) {
-      setLongitude(parseFloat(e.target.value));
-      setLongitudeerror('');
-    } else {
-      setLongitudeerror('Error: Value should be a number');
-    }
+    setLongitude(e.target.value.toString());
   };
 
   const handleLatitudeChange = (e) => {
-    if (parseFloat(e.target.value) || e.target.value.empty) {
-      setLatitude(parseFloat(e.target.value));
-      setLatitudeerror('');
-    } else {
-      setLatitudeerror('Error: Value should be a number');
-    }
+    setLatitude(e.target.value);
   };
 
   useEffect(() => {
     allVehicles().then((r) => {
-      allVehicleTypes().then((a) => {
-        createVehicleTypeArray();
-      });
+      allVehicleTypes();
     });
   }, []);
 
@@ -225,8 +253,6 @@ export const VehicleTable = () => {
     for (const t of vehicleTypes) {
       newArr.push({ value: t.vehicleTypeId, label: t.type });
     }
-    console.log(newArr);
-    console.log(vehicleTypes);
     setVehiclesTypesSelect(newArr);
   };
 
@@ -243,9 +269,8 @@ export const VehicleTable = () => {
   };
 
   // delete vehicles
-  const createVehicle = async (e) => {
+  const createVehicleDB = async (e) => {
     e.preventDefault();
-    console.log('Vehicle Type:' + choosedVType);
     const vehicleRequest = await fetch(`/api/vehicle/`, {
       headers: { 'content-type': 'application/json' },
       method: 'POST',
@@ -261,26 +286,76 @@ export const VehicleTable = () => {
     if (vehicleRequest.status === 201) {
       await allVehicles();
       handleCreateDialogClose();
-    }else{
-      console.log(vehicleRequest);
     }
   };
 
-  const CreateVehicleDialog = () => {
+  // delete vehicles
+  const updateVehicleDB = async (e) => {
+    e.preventDefault();
+    if (choosedUpdateVehicle) {
+      const vehicleRequest = await fetch(`/api/vehicle/` + choosedUpdateVehicle.vehicleId, {
+        headers: { 'content-type': 'application/json' },
+        method: 'PATCH',
+        body: JSON.stringify({
+          licencePlate: licencePlateV,
+          status: vStatus,
+          positionLongitude: longitude,
+          positionLatitude: latitude,
+          batteryLevel: bLevel,
+          vehicleType: choosedVType,
+        }),
+      });
+      if (vehicleRequest.status === 200) {
+        await allVehicles();
+        handleUpdateDialogClose();
+      }
+    }
+  };
+
+  const fillInput = async (v: Vehicle) => {
+    setLicencePlate(v.licencePlate);
+    const choosedStatus = vehicleStatus.filter((s) => v.status === s.default);
+    if (choosedStatus.length === 1) {
+      setVStatus(choosedStatus[0].value);
+    }
+    setLongitude(v.positionLongitude);
+    setLatitude(v.positionLatitude);
+    setBLevel(v.batteryLevel);
+    setchoosedVType(v.vehicleType.vehicleTypeId);
+  };
+
+  const updateChoosedVehicle = async (lp: string) => {
+    const choosedVehicle = vehicles.filter((v) => v.licencePlate === lp);
+    if (choosedVehicle.length === 1) {
+      await fillInput(choosedVehicle[0]);
+      await setchoosedUpdateVehicle(choosedVehicle[0]);
+      handleUpdateDialogOpen();
+    }
+  };
+
+  const VehicleManageDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any) => {
     return (
-      <Dialog onClose={handleCreateDialogClose} aria-labelledby="simple-dialog-title" open={openDialogCreate}>
-        <form onSubmit={createVehicle}>
-          <DialogTitle id="simple-dialog-title">Create Vehicle </DialogTitle>
+      <Dialog onClose={hClose} aria-labelledby="simple-dialog-title" open={mOpen}>
+        <form onSubmit={finishFunc}>
+          <DialogTitle defaultValue={licencePlateV} id="simple-dialog-title">
+            {' '}
+            {actiontype} Vehicle{' '}
+          </DialogTitle>
           <DialogContent dividers>
             <p> Licence Plate: </p>
             <FormControl required>
-              <TextField onChange={handleLPlateChange} id="outlined-required" variant="outlined" />
+              <TextField
+                onChange={handleLPlateChange}
+                value={licencePlateV}
+                id="outlined-required"
+                variant="outlined"
+              />
             </FormControl>
             <p> Battery Level: </p>
             <FormControl required>
               <OutlinedInput
                 id="filled-adornment-weight"
-                defaultValue={100}
+                defaultValue={bLevel}
                 onChange={handleBLevelChange}
                 endAdornment={<InputAdornment position="end">%</InputAdornment>}
                 aria-describedby="filled-weight-helper-text"
@@ -327,6 +402,7 @@ export const VehicleTable = () => {
               <OutlinedInput
                 id="filled-adornment-weight"
                 onChange={handleLongitudeChange}
+                value={longitude}
                 aria-describedby="filled-weight-helper-text"
                 inputProps={{
                   'aria-label': 'weight',
@@ -339,6 +415,7 @@ export const VehicleTable = () => {
               <OutlinedInput
                 id="filled-adornment-weight"
                 onChange={handleLatitudeChange}
+                value={latitude}
                 aria-describedby="filled-weight-helper-text"
                 inputProps={{
                   'aria-label': 'weight',
@@ -349,7 +426,7 @@ export const VehicleTable = () => {
           </DialogContent>
           <div>
             <Button type="submit" color="primary">
-              Create
+              {actiontype}
             </Button>
           </div>
         </form>
@@ -391,12 +468,57 @@ export const VehicleTable = () => {
     items: [{ columnField: 'license_plate', operatorValue: 'contains', value: '' }],
   };
 
-  /*<div style={{ position: 'relative', width: '100%' }}>
-        <BatteryProgressNumber>{params.value}%</BatteryProgressNumber>
-        <ProgressBorder>
-            <div style={{ width: params.value.toString() + '%', background: '#75b800' }} />
-        </ProgressBorder>
-    </div>*/
+  /*const deleteDialog = () => {
+    let type = '';
+    if (choosedVehicleType) {
+      type = choosedVehicleType.type;
+      return (
+          <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+          >
+            <DialogContent>
+              <DialogTitle id="alert-dialog-title">{'Delete Vehicle Type: ' + type}</DialogTitle>
+              <DialogContentText id="alert-dialog-description">
+                <p>Are you sure you want to delete the following vehicle Type?</p>
+                <p>This will also delete all according Vehicles irrevocably.</p>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary" autoFocus>
+                NO!
+              </Button>
+              <Button onClick={deleteOneVehicleType} color="primary">
+                Delete irrevocably
+              </Button>
+            </DialogActions>
+          </Dialog>
+      );
+    }
+    return <></>;
+  };*/
+
+  const chipMessageSucess = (cOpen: any, chandleClose: any, msg: string) => {
+    return (
+      <Snackbar open={cOpen} autoHideDuration={6000} onClose={chandleClose}>
+        <Alert onClose={chandleClose} severity="success">
+          {msg}
+        </Alert>
+      </Snackbar>
+    );
+  };
+
+  const chipMessageError = (cOpen: boolean, chandleClose: any, msg: string) => {
+    return (
+      <Snackbar open={cOpen} autoHideDuration={6000} onClose={chandleClose}>
+        <Alert onClose={chandleClose} severity="error">
+          {msg}
+        </Alert>
+      </Snackbar>
+    );
+  };
 
   return (
     <>
@@ -416,9 +538,19 @@ export const VehicleTable = () => {
                   headerName: 'License Plate',
                   width: 150,
                   renderCell: (params: ValueFormatterParams) => (
-                      <Button  color="primary">
-                        Create
-                      </Button>
+                    <>
+                      <IconButton
+                        aria-label="info"
+                        color="primary"
+                        onClick={() => {
+                          updateChoosedVehicle(params.value.toString());
+                        }}
+                        style={{ marginRight: 5, color: 'primary' }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      {params.value.toString()}
+                    </>
                   ),
                 },
                 { field: 'status', headerName: 'Status', width: 150 },
@@ -428,7 +560,9 @@ export const VehicleTable = () => {
                   width: 100,
                   renderCell: (params: ValueFormatterParams) => (
                     <>
-
+                      <Progressbar>
+                        <Progressbarinner style={{ width: params.value.toString() + '%' }} />
+                      </Progressbar>
                     </>
                   ),
                 },
@@ -463,12 +597,20 @@ export const VehicleTable = () => {
           </div>
         </div>
       </div>
-      {CreateVehicleDialog()}
+      {VehicleManageDialog(openDialogCreate, handleCreateDialogClose, 'Create', createVehicleDB)}
+      {VehicleManageDialog(openDialogUpdate, handleUpdateDialogClose, 'Update', updateVehicleDB)}
+
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
           A Vehicle was successfully deleted!
         </Alert>
       </Snackbar>
+      {chipMessageError(chipErrorCreate, handleChipErrorCreateClose, 'Something went wrong. Could not create vehicle.')}
+      {chipMessageError(
+        chipErrorUpdate,
+        handleChipErrorUpdateClose,
+        'Something went wrong. Could not update vehicle.',
+      )}
     </>
   );
 };
