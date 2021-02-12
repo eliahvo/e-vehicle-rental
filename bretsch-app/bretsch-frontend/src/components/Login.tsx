@@ -95,7 +95,7 @@ export default function LoginFormDialog() {
           <Divider />
           <DialogActions>
             <p>Not BRETSCHing yet?</p>
-            <Button
+            <Button data-testid="register-button-id"
               onClick={() => {
                 setOpenRegister(true);
               }}
