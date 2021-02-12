@@ -38,3 +38,15 @@ export const setVehicleStats = async (
     });
   }
 };
+
+export const validatePassword = async (userEmail: string, userPassword: string): Promise<boolean> => {
+  const passwordRequest = await fetch(`/api/user/checkpwd`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: userEmail,
+      password: userPassword,
+    }),
+  });
+  return passwordRequest.status === 200;
+};
