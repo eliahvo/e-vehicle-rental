@@ -344,7 +344,7 @@ export const VehicleTable = () => {
           <DialogContent dividers>
             <p> Licence Plate: </p>
             <FormControl required>
-              <TextField
+              <TextField data-testid="admin-createVehicle-licensePlate"
                 onChange={handleLPlateChange}
                 value={licencePlateV}
                 id="outlined-required"
@@ -353,7 +353,7 @@ export const VehicleTable = () => {
             </FormControl>
             <p> Battery Level: </p>
             <FormControl required>
-              <OutlinedInput
+              <OutlinedInput data-testid="admin-createVehicle-battery"
                 id="filled-adornment-weight"
                 defaultValue={bLevel}
                 onChange={handleBLevelChange}
@@ -383,7 +383,7 @@ export const VehicleTable = () => {
             </FormControl>
             <p> According VehicleType: </p>
             <FormControl required>
-              <TextField
+              <TextField data-testid="admin-createVehicle-vehicleType"
                 id="outlined-select-currency"
                 select
                 value={choosedVType}
@@ -399,7 +399,7 @@ export const VehicleTable = () => {
             </FormControl>
             <p> Longitude: </p>
             <FormControl required>
-              <OutlinedInput
+              <OutlinedInput data-testid="admin-createVehicle-longitude"
                 id="filled-adornment-weight"
                 onChange={handleLongitudeChange}
                 value={longitude}
@@ -412,7 +412,7 @@ export const VehicleTable = () => {
             <FormHelperText id="component-helper-text">{errorLongitude}</FormHelperText>
             <p> Latitude: </p>
             <FormControl required>
-              <OutlinedInput
+              <OutlinedInput data-testid="admin-createVehicle-latitude"
                 id="filled-adornment-weight"
                 onChange={handleLatitudeChange}
                 value={latitude}
@@ -425,7 +425,7 @@ export const VehicleTable = () => {
             <FormHelperText id="component-helper-text">{errorLatitude}</FormHelperText>
           </DialogContent>
           <div>
-            <Button type="submit" color="primary">
+            <Button data-testid="admin-createVehicle-createSend" type="submit" color="primary">
               {actiontype}
             </Button>
           </div>
@@ -529,8 +529,8 @@ export const VehicleTable = () => {
       </CreateButton>
       <div style={{ height: 400, width: '100%' }}>
         <div style={{ display: 'flex', height: '100%' }}>
-          <div style={{ flexGrow: 1 }}>
-            <DataGrid
+          <div data-testid="admin-Vehicle-allVehicles" style={{ flexGrow: 1 }}>
+            <DataGrid 
               columns={[
                 { field: 'id', hide: true },
                 {
