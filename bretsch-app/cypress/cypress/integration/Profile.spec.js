@@ -16,17 +16,17 @@ it("can change profile values for Personal Settings", () => {
     cy.findByTestId(/Profile-button-id/i).click();
     cy.findByTestId(/profile-edit-personalSettings/i).click();
     cy.findByTestId(/profile-edit-birthDate/i).click();
-    cy.findByTestId(/profile-edit-birthDate/i).children().next().children().type('{backspace}');
-    cy.findByTestId(/profile-edit-birthDate/i).children().next().children().type(profile.birthdate);
+    cy.findByTestId(/profile-edit-birthDate/i).children().next().children().first().clear();
+    cy.findByTestId(/profile-edit-birthDate/i).children().next().children().first().type(profile.birthdate);
     cy.findByTestId(/profile-edit-adress/i).click();
     cy.findByTestId(/profile-edit-adress/i).children().next().children().clear();
-    cy.findByTestId(/profile-edit-adress/i).type(profile.adress);
+    cy.findByTestId(/profile-edit-adress/i).type(profile.streetAndNumber);
     cy.findByTestId(/profile-edit-city/i).click();
     cy.findByTestId(/profile-edit-city/i).children().next().children().clear();
     cy.findByTestId(/profile-edit-city/i).type(profile.city);
     cy.findByTestId(/profile-edit-personalSettings/i).click();
     cy.findByTestId(/profile-edit-personalSettings/i).click();
-    
+    expect(cy.findByTestId(/profile-edit-birthDate/i).children().next().children().first().should('have.text', `${profile.birthdate}`));
 })
 
 it("can change profile values for names", () => {
@@ -74,6 +74,11 @@ it("can change profile values for Main Settings", () => {
     cy.findByTestId(/profile-edit-mainSettings1/i).click();
     
 })
+
+
+
+
+
 
 
 

@@ -250,7 +250,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         <Divider />
         {/* ADD REFS TO OTHER SITES BELOW */}
         <List>
-          <ListItem
+          <ListItem data-testid="Dashboard-button-id"
             button
             onClick={() => {
               history.push('/');
@@ -261,7 +261,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
             </ListItemIcon>
             <ListItemText primary={'Dashboard'} />
           </ListItem>
-          <ListItem
+          <ListItem 
             button
             onClick={() => {
               history.push('/booking');
@@ -318,7 +318,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         )}
         <List>
           {verifyPermittedRole(login, auth, true) ? (
-            <ListItem
+            <ListItem data-testid="admin-button-id"
               button
               onClick={() => {
                 history.push('/admin');
