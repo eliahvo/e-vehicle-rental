@@ -288,7 +288,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         {token ? (
           <>
             <List>
-              <ListItem
+              <ListItem data-testid="Profile-button-id"
                 button
                 onClick={() => {
                   history.push('/profile');
