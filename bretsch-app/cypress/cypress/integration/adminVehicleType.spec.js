@@ -1,6 +1,5 @@
 import { adminBuilder } from '../builder/admin';
 import { loginBuilder } from '../builder/LoginUser';
-import { profileBuilder } from '../builder/profile';
 
 describe("Profile", () => {
 

@@ -523,7 +523,7 @@ export const VehicleTable = () => {
   return (
     <>
       <CreateButton>
-        <Button variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
+        <Button data-testid="admin-createVehicle-createButton" variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
           Create
         </Button>
       </CreateButton>
@@ -575,7 +575,7 @@ export const VehicleTable = () => {
                   width: 150,
                   renderCell: (params: ValueFormatterParams) => (
                     <strong>
-                      <Button
+                      <Button data-testid="admin-deleteVehicle-deleteButton"
                         id={params.value.toString()}
                         variant="outlined"
                         color="secondary"
