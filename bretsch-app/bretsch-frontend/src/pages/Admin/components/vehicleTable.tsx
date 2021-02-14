@@ -126,13 +126,71 @@ export const Progressbarinner = styled.span`
   animation: auto-progress 10s infinite linear;
 `;
 
+export const chipMessageSucess = (cOpen: any, chandleClose: any, msg: string) => {
+  return (
+    <Snackbar open={cOpen} autoHideDuration={6000} onClose={chandleClose}>
+      <Alert onClose={chandleClose} severity="success">
+        {msg}
+      </Alert>
+    </Snackbar>
+  );
+};
+
+export const chipMessageError = (cOpen: boolean, chandleClose: any, msg: string) => {
+  return (
+    <Snackbar open={cOpen} autoHideDuration={6000} onClose={chandleClose}>
+      <Alert onClose={chandleClose} severity="error">
+        {msg}
+      </Alert>
+    </Snackbar>
+  );
+};
+
+export const deleteDialog = (
+  nameValue: string,
+  deleteMsg: string,
+  handleClose: any,
+  deleteDB: any,
+  dialogstatus: boolean,
+) => {
+  if (nameValue) {
+    return (
+      <Dialog
+        open={dialogstatus}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogTitle id="alert-dialog-title">{'Delete '+ deleteMsg + ': ' + nameValue}</DialogTitle>
+          <DialogContentText id="alert-dialog-description">
+            <p>Are you sure you want to delete this {deleteMsg} ?</p>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary" autoFocus>
+            NO!
+          </Button>
+          <Button onClick={deleteDB} color="primary">
+            Delete irrevocably
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+};
+
 export const VehicleTable = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [choosedVehiclesDelete, setchoosedVehicleDelete] = useState<Vehicle>();
+  const [choosedVehiclesDeleteLicencePlate, setChoosedVehiclesDeleteLicencePlate] = useState<string>("")
   const [vehicleTypes, setVehiclesType] = useState<VehicleType[]>([]);
   const [vehicleTypesSelect, setVehiclesTypesSelect] = useState<any[]>([]);
   const [open, setOpen] = React.useState(false);
   const [openDialogCreate, setDialogCreate] = React.useState(false);
   const [openDialogUpdate, setDialogUpdate] = React.useState(false);
+  const [vDeleteDialog, setvDeleteDialog] = React.useState(false);
+
   const [licencePlateV, setLicencePlate] = React.useState<string>('');
   const [vStatus, setVStatus] = React.useState<number>(1);
 
@@ -145,11 +203,16 @@ export const VehicleTable = () => {
   const [choosedUpdateVehicle, setchoosedUpdateVehicle] = useState<Vehicle>();
   const [errorbLevel, setErrorbLevel] = useState<string>(' ');
 
+  const handleDeleteDialogClose = () => {
+    setvDeleteDialog(false);
+  };
+
   // Create Dialog
   const handleCreateDialogClose = () => {
     setDialogCreate(false);
   };
-  const handleCreateDialogOpen = () => {
+  const handleCreateDialogOpen = async () => {
+    await clearInput();
     setDialogCreate(true);
   };
 
@@ -179,6 +242,8 @@ export const VehicleTable = () => {
   const [chipSucUpdate, setchipSucUpdate] = React.useState(false);
   const [chipErrorUpdate, setchipErrorUpdate] = React.useState(false);
 
+  const [chipErrorDelete, setchipErrorDelete] = React.useState(false);
+
   const handleChipSucCreateClose = () => {
     setchipSucCreate(false);
   };
@@ -190,6 +255,9 @@ export const VehicleTable = () => {
   };
   const handleChipErrorUpdateClose = () => {
     setchipErrorUpdate(false);
+  };
+  const handleChipErrorDeleteClose = () => {
+    setchipErrorDelete(false);
   };
 
   const handleBLevelChange = (e) => {
@@ -224,6 +292,12 @@ export const VehicleTable = () => {
     createVehicleTypeArray();
   }, [vehicleTypes]);
 
+  useEffect(() => {
+    if (choosedVehiclesDelete){
+      setChoosedVehiclesDeleteLicencePlate(choosedVehiclesDelete.licencePlate)
+    }
+  }, [choosedVehiclesDelete]);
+
   // get all vehicles
   const allVehicles = async () => {
     const vehicleRequest = await fetch(`/api/vehicle/`, {
@@ -257,18 +331,23 @@ export const VehicleTable = () => {
   };
 
   // delete vehicles
-  const deleteVehicles = async (id: string) => {
-    const vehicleRequest = await fetch(`/api/vehicle/` + id, {
-      headers: { 'content-type': 'application/json' },
-      method: 'DELETE',
-    });
-    if (vehicleRequest.status === 204) {
-      await allVehicles();
-      setOpen(true);
+  const deleteVehicleDB = async () => {
+    if (choosedVehiclesDelete) {
+      const vehicleRequest = await fetch(`/api/vehicle/` + choosedVehiclesDelete.vehicleId, {
+        headers: { 'content-type': 'application/json' },
+        method: 'DELETE',
+      });
+      if (vehicleRequest.status === 204) {
+        await allVehicles();
+        setOpen(true);
+      } else {
+        setchipErrorDelete(true);
+      }
+      handleDeleteDialogClose();
     }
   };
 
-  // delete vehicles
+  // create vehicles
   const createVehicleDB = async (e) => {
     e.preventDefault();
     const vehicleRequest = await fetch(`/api/vehicle/`, {
@@ -286,7 +365,12 @@ export const VehicleTable = () => {
     if (vehicleRequest.status === 201) {
       await allVehicles();
       handleCreateDialogClose();
+      setchipSucCreate(true);
+    } else {
+      handleUpdateDialogClose();
+      setchipErrorCreate(true);
     }
+    await clearInput();
   };
 
   // delete vehicles
@@ -308,7 +392,12 @@ export const VehicleTable = () => {
       if (vehicleRequest.status === 200) {
         await allVehicles();
         handleUpdateDialogClose();
+        setchipSucUpdate(true);
+      } else {
+        handleUpdateDialogClose();
+        setchipErrorUpdate(true);
       }
+      await clearInput();
     }
   };
 
@@ -322,6 +411,15 @@ export const VehicleTable = () => {
     setLatitude(v.positionLatitude);
     setBLevel(v.batteryLevel);
     setchoosedVType(v.vehicleType.vehicleTypeId);
+  };
+
+  const clearInput = () => {
+    setLicencePlate('');
+    setVStatus(1);
+    setLongitude('');
+    setLatitude('');
+    setBLevel(100);
+    setchoosedVType(vehicleTypes[0].vehicleTypeId);
   };
 
   const updateChoosedVehicle = async (lp: string) => {
@@ -451,8 +549,12 @@ export const VehicleTable = () => {
 
   const handleDeleteVehicle = async (e: any) => {
     let id = '';
-    id = e.currentTarget.id;
-    await deleteVehicles(id);
+    id = e.currentTarget.id.toString();
+    const vDelete = vehicles.filter((v) => v.vehicleId.toString() === id);
+    if (vDelete.length === 1) {
+      await setchoosedVehicleDelete(vDelete[0]);
+      await setvDeleteDialog(true);
+    }
   };
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -466,58 +568,6 @@ export const VehicleTable = () => {
   let vehicleFilterModel: FilterModel;
   vehicleFilterModel = {
     items: [{ columnField: 'license_plate', operatorValue: 'contains', value: '' }],
-  };
-
-  /*const deleteDialog = () => {
-    let type = '';
-    if (choosedVehicleType) {
-      type = choosedVehicleType.type;
-      return (
-          <Dialog
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-          >
-            <DialogContent>
-              <DialogTitle id="alert-dialog-title">{'Delete Vehicle Type: ' + type}</DialogTitle>
-              <DialogContentText id="alert-dialog-description">
-                <p>Are you sure you want to delete the following vehicle Type?</p>
-                <p>This will also delete all according Vehicles irrevocably.</p>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose} color="primary" autoFocus>
-                NO!
-              </Button>
-              <Button onClick={deleteOneVehicleType} color="primary">
-                Delete irrevocably
-              </Button>
-            </DialogActions>
-          </Dialog>
-      );
-    }
-    return <></>;
-  };*/
-
-  const chipMessageSucess = (cOpen: any, chandleClose: any, msg: string) => {
-    return (
-      <Snackbar open={cOpen} autoHideDuration={6000} onClose={chandleClose}>
-        <Alert onClose={chandleClose} severity="success">
-          {msg}
-        </Alert>
-      </Snackbar>
-    );
-  };
-
-  const chipMessageError = (cOpen: boolean, chandleClose: any, msg: string) => {
-    return (
-      <Snackbar open={cOpen} autoHideDuration={6000} onClose={chandleClose}>
-        <Alert onClose={chandleClose} severity="error">
-          {msg}
-        </Alert>
-      </Snackbar>
-    );
   };
 
   return (
@@ -605,11 +655,18 @@ export const VehicleTable = () => {
           A Vehicle was successfully deleted!
         </Alert>
       </Snackbar>
+      {chipMessageError(chipErrorDelete, handleChipErrorDeleteClose, 'Something went wrong. Could not delete vehicle.')}
+      {chipMessageSucess(chipSucCreate, handleChipSucCreateClose, 'Successfully create vehicle.')}
+      {chipMessageSucess(chipSucUpdate, handleChipSucUpdateClose, 'Successfully update vehicle.')}
       {chipMessageError(chipErrorCreate, handleChipErrorCreateClose, 'Something went wrong. Could not create vehicle.')}
-      {chipMessageError(
-        chipErrorUpdate,
-        handleChipErrorUpdateClose,
-        'Something went wrong. Could not update vehicle.',
+      {chipMessageError(chipErrorUpdate, handleChipErrorUpdateClose, 'Something went wrong. Could not update vehicle.')}
+
+      {deleteDialog(
+        choosedVehiclesDeleteLicencePlate,
+        'Vehicle',
+        handleDeleteDialogClose,
+        deleteVehicleDB,
+        vDeleteDialog,
       )}
     </>
   );
