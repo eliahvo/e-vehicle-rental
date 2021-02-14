@@ -127,15 +127,15 @@ export const VehicleTypeChips = () => {
     const chips = [];
     chips.push(
       <ChipsPos>
-        <Button variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
+        <Button data-testid="admin-create-button" variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
           Create
         </Button>
       </ChipsPos>,
     );
     for (const t of vehicleTypes) {
       chips.push(
-        <ChipsPos id={t.vehicleTypeId.toString()}>
-          <Chip
+        <ChipsPos  id={t.vehicleTypeId.toString()}>
+          <Chip 
             label={t.type}
             onClick={() => {
               updateVehicleType(t);
@@ -160,11 +160,11 @@ export const VehicleTypeChips = () => {
           <DialogContent dividers>
             <p> Name: </p>
             <FormControl required>
-              <TextField onChange={handleNameChange} id="outlined-basic" variant="outlined" />
+              <TextField data-testid="admin-createVehicleType-name" onChange={handleNameChange} id="outlined-basic" variant="outlined" />
             </FormControl>
             <p> Price </p>
             <FormControl required>
-              <OutlinedInput
+              <OutlinedInput data-testid="admin-createVehicleType-price"
                 id="filled-adornment-weight"
                 onChange={handlePriceChange}
                 endAdornment={<InputAdornment position="end">€/min</InputAdornment>}
@@ -177,7 +177,7 @@ export const VehicleTypeChips = () => {
             <FormHelperText id="component-helper-text">{errorprice}</FormHelperText>
             <p> Minimal Battery Level: </p>
             <FormControl required>
-              <OutlinedInput
+              <OutlinedInput data-testid="admin-createVehicleType-battery"
                 id="filled-adornment-weight"
                 onChange={handleBLevelChange}
                 endAdornment={<InputAdornment position="end">%</InputAdornment>}
@@ -191,7 +191,7 @@ export const VehicleTypeChips = () => {
           </DialogContent>
 
           <div>
-            <Button type="submit" color="primary">
+            <Button data-testid="admin-createVehicleType-create" type="submit" color="primary">
               Create
             </Button>
           </div>
@@ -208,11 +208,11 @@ export const VehicleTypeChips = () => {
           <DialogContent dividers>
             <p> Name: </p>
             <FormControl>
-              <TextField required  onChange={handleNameChange}  id="outlined-required" defaultValue={name} variant="outlined" />
+              <TextField data-testid="admin-updateVehicleType-name" required  onChange={handleNameChange}  id="outlined-required" defaultValue={name} variant="outlined" />
             </FormControl>
             <p> Price </p>
             <FormControl required>
-              <OutlinedInput
+              <OutlinedInput data-testid="admin-updateVehicleType-price"
                 id="filled-adornment-weight"
                 defaultValue={price}
                 onChange={handlePriceChange}
@@ -226,7 +226,7 @@ export const VehicleTypeChips = () => {
             <FormHelperText id="component-helper-text">{errorprice}</FormHelperText>
             <p> Minimal Battery Level: </p>
             <FormControl required>
-              <OutlinedInput
+              <OutlinedInput data-testid="admin-updateVehicleType-battery"
                 id="filled-adornment-weight"
                 defaultValue={bLevel}
                 onChange={handleBLevelChange}
@@ -241,7 +241,7 @@ export const VehicleTypeChips = () => {
           </DialogContent>
 
           <div>
-            <Button type="submit" color="primary">
+            <Button data-testid="admin-updateVehicleType-update" type="submit" color="primary">
               Update
             </Button>
           </div>
@@ -345,7 +345,7 @@ export const VehicleTypeChips = () => {
             <Button onClick={handleClose} color="primary" autoFocus>
               NO!
             </Button>
-            <Button onClick={deleteOneVehicleType} color="primary">
+            <Button data-testid="admin-createVehicleType-deleteIrrevocably>" onClick={deleteOneVehicleType} color="primary">
               Delete irrevocably
             </Button>
           </DialogActions>

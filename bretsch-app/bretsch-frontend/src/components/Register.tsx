@@ -176,6 +176,7 @@ export default function RegisterModal() {
                     helperText={mailError}
                   />
                   <TextField
+                    data-testid="password-id1"
                     defaultValue={values.password}
                     name="password"
                     margin="dense"
@@ -187,6 +188,7 @@ export default function RegisterModal() {
                     required
                   />
                   <TextField
+                    data-testid="confpassword-id2"
                     defaultValue={values.passwordShadow}
                     onChange={fieldDidChange}
                     margin="dense"
@@ -300,7 +302,7 @@ export default function RegisterModal() {
             <Button disabled={activeStep === 0} onClick={handleBack} className={classes.backButton}>
               Back
             </Button>
-            <Button variant="contained" color="primary" type="submit">
+            <Button data-testid="next-finish-id" variant="contained" color="primary" type="submit">
               {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
             </Button>
           </DialogActions>

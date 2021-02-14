@@ -165,7 +165,7 @@ export const DashboardPage = () => {
       <CheckDialog text="Transaction successfully completed!" />
       {vehicleTypes.length ? (
         <>
-          <Button
+          <Button data-testid="dashboard-filterButton1"
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget)}
             className={classes.filterButton}
             variant="contained"
@@ -173,13 +173,14 @@ export const DashboardPage = () => {
           >
             <FilterListIcon />
           </Button>
-          <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+          
+          <Menu data-testid="dashboard-filterButtonOption2" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
             {vehicleTypes.map((vehicleType: { name: string; isChecked: boolean }) => {
               return (
-                <MenuItem key={vehicleType.name} dense>
+                <MenuItem key={vehicleType.name} dense >
                   <FormControlLabel
                     control={
-                      <Checkbox
+                      <Checkbox 
                         checked={vehicleType.isChecked}
                         onChange={handleFilterChange}
                         name={vehicleType.name}
@@ -192,6 +193,7 @@ export const DashboardPage = () => {
               );
             })}
           </Menu>
+          
         </>
       ) : (
         ''
@@ -203,7 +205,7 @@ export const DashboardPage = () => {
         onLoad={() => setLoading(true)}
       >
         <VehicleInfoContext.Provider value={vehicleInfoContext}>
-          <GoogleMap
+          <GoogleMap data-testid="dashboard-map1"
             onLoad={() => setLoading(true)}
             onTilesLoaded={() => setLoading(false)}
             mapContainerStyle={{
@@ -227,7 +229,7 @@ export const DashboardPage = () => {
               styles: mapStyle,
             }}
           >
-            <MarkerClusterer
+            <MarkerClusterer 
               averageCenter={true}
               options={{
                 imagePath: './icons/clusterer/m',
@@ -237,7 +239,7 @@ export const DashboardPage = () => {
                 displayVehicles.map((vehicle: Vehicle) => {
                   if (vehicle.status === 'Free' && vehicleBlacklist.indexOf(vehicle.vehicleId)) {
                     return (
-                      <Marker
+                      <Marker data-testid="dashboard-pointer1"
                         key={vehicle.vehicleId}
                         position={{
                           lat: parseFloat(vehicle.positionLatitude),

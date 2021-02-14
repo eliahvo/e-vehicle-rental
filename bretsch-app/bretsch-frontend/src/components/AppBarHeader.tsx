@@ -182,7 +182,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         })}
       >
         <Toolbar>
-          <IconButton
+          <IconButton data-testid="drawer-id"
             color="inherit"
             onClick={handleDrawerOpen}
             edge="start"
@@ -250,7 +250,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         <Divider />
         {/* ADD REFS TO OTHER SITES BELOW */}
         <List>
-          <ListItem
+          <ListItem data-testid="Dashboard-button-id"
             button
             onClick={() => {
               history.push('/');
@@ -261,7 +261,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
             </ListItemIcon>
             <ListItemText primary={'Dashboard'} />
           </ListItem>
-          <ListItem
+          <ListItem 
             button
             onClick={() => {
               history.push('/booking');
@@ -288,7 +288,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         {token ? (
           <>
             <List>
-              <ListItem
+              <ListItem data-testid="Profile-button-id"
                 button
                 onClick={() => {
                   history.push('/profile');
@@ -318,7 +318,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         )}
         <List>
           {verifyPermittedRole(login, auth, true) ? (
-            <ListItem
+            <ListItem data-testid="admin-button-id"
               button
               onClick={() => {
                 history.push('/admin');
@@ -332,7 +332,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           ) : (
             ''
           )}
-          <ListItem
+          <ListItem data-testid="login-button-id"
             button
             onClick={() => {
               token ? exitApp() : login.toggleOpen();
@@ -346,8 +346,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           <>
             <Divider />
             <List dense className={classes.userinfo}>
-              <ListItem>Logged in as {getTokenData().name}.</ListItem>
-              <ListItem>Role: '{getTokenData().role}'.</ListItem>
+              <ListItem data-testid="user-name-id">Logged in as {getTokenData().name}.</ListItem>
+              <ListItem data-testid="role-id">Role: '{getTokenData().role}'.</ListItem>
             </List>
           </>
         ) : (

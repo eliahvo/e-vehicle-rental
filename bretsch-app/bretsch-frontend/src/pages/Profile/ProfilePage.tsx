@@ -14,6 +14,7 @@ import { authContext } from '../../contexts/AuthenticationContext';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { maxDate, minAge, validateBirthday } from '../../util/ValidBirthday';
+import { validatePassword } from '../../util/RequestHelper';
 
 const useStyles = makeStyles((theme) => ({
   headings: {
@@ -116,38 +117,12 @@ export const ProfilePage = () => {
     firstName: profile?.firstName,
     password: '',
     passwordShadow: '',
+    passwordOld: '',
     birthDate: profile?.birthDate,
     lastName: profile?.lastName,
     preferedPayment: profile?.preferedPayment,
     streetPlusNumber: profile?.streetPlusNumber,
   });
-
-  const validateOldPassword = (oldPass: string): boolean => {
-    // ToDo: Use Backend to check whether the given password matches the old one or not
-    console.log(oldPass);
-
-    let rightPwd = false;
-    const validatePassword = async () => {
-      const passwordRequest = await fetch(`/api/user/checkpwd`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: `${profile?.email}`,
-          password: `${oldPass}`,
-        }),
-      });
-      if (passwordRequest.status === 200) {
-        rightPwd = true;
-      } else {
-        console.log(rightPwd, 'else');
-        rightPwd = false;
-      }
-    };
-    validatePassword();
-
-    console.log(rightPwd, 'Unten');
-    return rightPwd;
-  };
 
   const handleDateChange = (date: Date) => {
     if (date) {
@@ -174,9 +149,13 @@ export const ProfilePage = () => {
     }
 
     if (e.target.name === 'passwordOld') {
-      if (validateOldPassword(e.target.value)) {
-        e.target.setCustomValidity('');
-      } else {
+      e.target.setCustomValidity('');
+    }
+  };
+
+  const validateOldPassword = async (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.name === 'passwordOld') {
+      if (!(await validatePassword(`${profile?.email}`, `${values.passwordOld}`))) {
         e.target.setCustomValidity('Incorrect password!');
       }
     }
@@ -212,9 +191,9 @@ export const ProfilePage = () => {
       <MyProfile>
         <form onSubmit={onSubmitForm}>
           <AccountCircleTwoToneIcon style={{ fontSize: 100 }} className={classes.headings} />
-          <ProfileName>
+          <ProfileName data-testid="profile-edit-profilename">
             {editNameSettings ? (
-              <TextField
+              <TextField data-testid="profile-edit-firstname1"
                 onChange={fieldDidChange}
                 margin="dense"
                 name="firstName"
@@ -222,12 +201,12 @@ export const ProfilePage = () => {
                 defaultValue={profile?.firstName}
                 type="text"
                 required
-              />
-            ) : (
-              `${profile?.firstName} `
+              /> 
+            ) : ( 
+              `${profile?.firstName }`
             )}
             {editNameSettings ? (
-              <TextField
+              <TextField data-testid="profile-edit-lastname2"
                 onChange={fieldDidChange}
                 margin="dense"
                 name="lastName"
@@ -252,7 +231,7 @@ export const ProfilePage = () => {
                   />
                 </IconButton>
                 <IconButton type="submit">
-                  <CheckIcon
+                  <CheckIcon data-testid="profile-edit-name"
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                     className={classes.headings}
                     type="submit"
@@ -263,7 +242,7 @@ export const ProfilePage = () => {
               <IconButton
                 disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
               >
-                <EditIcon
+                <EditIcon data-testid="profile-edit-name"
                   style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                   className={classes.headings}
                   onClick={() => {
@@ -292,7 +271,7 @@ export const ProfilePage = () => {
                   />
                 </IconButton>
                 <IconButton type="submit">
-                  <CheckIcon
+                  <CheckIcon data-testid="profile-edit-mainSettings1"
                     type="submit"
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                     className={classes.headings}
@@ -303,7 +282,7 @@ export const ProfilePage = () => {
               <IconButton
                 disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
               >
-                <EditIcon
+                <EditIcon data-testid="profile-edit-mainSettings1"
                   style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                   className={classes.headings}
                   onClick={() => {
@@ -323,7 +302,7 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={5}>
                 {editMainSettings ? (
-                  <TextField
+                  <TextField data-testid="profile-edit-email1"
                     autoFocus
                     onChange={fieldDidChange}
                     margin="dense"
@@ -346,7 +325,7 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={5}>
                 {editMainSettings ? (
-                  <TextField
+                  <TextField data-testid="profile-edit-password1"
                     onChange={fieldDidChange}
                     margin="dense"
                     name="password"
@@ -359,7 +338,7 @@ export const ProfilePage = () => {
                 )}
                 {values.password ? (
                   <>
-                    <TextField
+                    <TextField data-testid="profile-edit-password2"
                       onChange={fieldDidChange}
                       margin="dense"
                       name="passwordShadow"
@@ -368,8 +347,9 @@ export const ProfilePage = () => {
                       fullWidth
                       required
                     />
-                    <TextField
+                    <TextField data-testid="profile-edit-password3"
                       onChange={fieldDidChange}
+                      onBlur={validateOldPassword}
                       margin="dense"
                       name="passwordOld"
                       label="Old Password"
@@ -400,7 +380,7 @@ export const ProfilePage = () => {
                   </IconButton>
 
                   <IconButton type="submit">
-                    <CheckIcon
+                    <CheckIcon data-testid="profile-edit-personalSettings"
                       type="submit"
                       style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                       className={classes.headings}
@@ -411,7 +391,7 @@ export const ProfilePage = () => {
                 <IconButton
                   disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
                 >
-                  <EditIcon
+                  <EditIcon data-testid="profile-edit-personalSettings"
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                     className={classes.headings}
                     onClick={() => {
@@ -432,7 +412,7 @@ export const ProfilePage = () => {
                 {editPersonalSettings ? (
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container justify="space-around">
-                      <KeyboardDatePicker
+                      <KeyboardDatePicker data-testid="profile-edit-birthDate"
                         id="birthDate"
                         name="birthDate"
                         margin="normal"
@@ -465,7 +445,7 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={4}>
                 {editPersonalSettings ? (
-                  <TextField
+                  <TextField data-testid="profile-edit-adress"
                     onChange={fieldDidChange}
                     margin="dense"
                     name="streetPlusNumber"
@@ -486,7 +466,7 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={4}>
                 {editPersonalSettings ? (
-                  <TextField
+                  <TextField data-testid="profile-edit-city"
                     onChange={fieldDidChange}
                     margin="dense"
                     name="city"
@@ -517,7 +497,7 @@ export const ProfilePage = () => {
                     />
                   </IconButton>
                   <IconButton type="submit">
-                    <CheckIcon
+                    <CheckIcon data-testid="profile-edit-paymentSettings"
                       type="submit"
                       style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                       className={classes.headings}
@@ -528,7 +508,7 @@ export const ProfilePage = () => {
                 <IconButton
                   disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
                 >
-                  <EditIcon
+                  <EditIcon data-testid="profile-edit-paymentSettings"
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                     className={classes.headings}
                     onClick={() => {
@@ -547,7 +527,7 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={4}>
                 {editPaymentSettings ? (
-                  <TextField
+                  <TextField data-testid="profile-edit-payment"
                     autoFocus
                     onChange={handleChange}
                     margin="dense"
