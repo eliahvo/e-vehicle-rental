@@ -146,35 +146,44 @@ export const chipMessageError = (cOpen: boolean, chandleClose: any, msg: string)
   );
 };
 
-const deleteDialog = (nameValue: string, deleteMsg: string, handleClose: any, deleteDB: any, dialogstatus: boolean) => {
-  return (
-    <Dialog
-      open={dialogstatus}
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogContent>
-        <DialogTitle id="alert-dialog-title">{'Delete Vehicle: ' + nameValue}</DialogTitle>
-        <DialogContentText id="alert-dialog-description">
-          <p>Are you sure you want to delete the this {deleteMsg} ?</p>
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary" autoFocus>
-          NO!
-        </Button>
-        <Button onClick={deleteDB} color="primary">
-          Delete irrevocably
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
+export const deleteDialog = (
+  nameValue: string,
+  deleteMsg: string,
+  handleClose: any,
+  deleteDB: any,
+  dialogstatus: boolean,
+) => {
+  if (nameValue) {
+    return (
+      <Dialog
+        open={dialogstatus}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogTitle id="alert-dialog-title">{'Delete '+ deleteMsg + ': ' + nameValue}</DialogTitle>
+          <DialogContentText id="alert-dialog-description">
+            <p>Are you sure you want to delete this {deleteMsg} ?</p>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary" autoFocus>
+            NO!
+          </Button>
+          <Button onClick={deleteDB} color="primary">
+            Delete irrevocably
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
 };
 
 export const VehicleTable = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [choosedVehiclesDelete, setchoosedVehicleDelete] = useState<Vehicle>();
+  const [choosedVehiclesDeleteLicencePlate, setChoosedVehiclesDeleteLicencePlate] = useState<string>("")
   const [vehicleTypes, setVehiclesType] = useState<VehicleType[]>([]);
   const [vehicleTypesSelect, setVehiclesTypesSelect] = useState<any[]>([]);
   const [open, setOpen] = React.useState(false);
@@ -282,6 +291,12 @@ export const VehicleTable = () => {
   useEffect(() => {
     createVehicleTypeArray();
   }, [vehicleTypes]);
+
+  useEffect(() => {
+    if (choosedVehiclesDelete){
+      setChoosedVehiclesDeleteLicencePlate(choosedVehiclesDelete.licencePlate)
+    }
+  }, [choosedVehiclesDelete]);
 
   // get all vehicles
   const allVehicles = async () => {
@@ -537,7 +552,7 @@ export const VehicleTable = () => {
     id = e.currentTarget.id.toString();
     const vDelete = vehicles.filter((v) => v.vehicleId.toString() === id);
     if (vDelete.length === 1) {
-      setchoosedVehicleDelete(vDelete[0]);
+      await setchoosedVehicleDelete(vDelete[0]);
       await setvDeleteDialog(true);
     }
   };
@@ -553,26 +568,6 @@ export const VehicleTable = () => {
   let vehicleFilterModel: FilterModel;
   vehicleFilterModel = {
     items: [{ columnField: 'license_plate', operatorValue: 'contains', value: '' }],
-  };
-
-  const chipMessageSucess = (cOpen: any, chandleClose: any, msg: string) => {
-    return (
-      <Snackbar open={cOpen} autoHideDuration={6000} onClose={chandleClose}>
-        <Alert onClose={chandleClose} severity="success">
-          {msg}
-        </Alert>
-      </Snackbar>
-    );
-  };
-
-  const chipMessageError = (cOpen: boolean, chandleClose: any, msg: string) => {
-    return (
-      <Snackbar open={cOpen} autoHideDuration={6000} onClose={chandleClose}>
-        <Alert onClose={chandleClose} severity="error">
-          {msg}
-        </Alert>
-      </Snackbar>
-    );
   };
 
   return (
@@ -665,8 +660,14 @@ export const VehicleTable = () => {
       {chipMessageSucess(chipSucUpdate, handleChipSucUpdateClose, 'Successfully update vehicle.')}
       {chipMessageError(chipErrorCreate, handleChipErrorCreateClose, 'Something went wrong. Could not create vehicle.')}
       {chipMessageError(chipErrorUpdate, handleChipErrorUpdateClose, 'Something went wrong. Could not update vehicle.')}
-      //(nameValue: string, deleteMsg: string, handleClose: any, deleteDB: any, dialogstatus: boolean)
-      {deleteDialog()}
+
+      {deleteDialog(
+        choosedVehiclesDeleteLicencePlate,
+        'Vehicle',
+        handleDeleteDialogClose,
+        deleteVehicleDB,
+        vDeleteDialog,
+      )}
     </>
   );
 };
