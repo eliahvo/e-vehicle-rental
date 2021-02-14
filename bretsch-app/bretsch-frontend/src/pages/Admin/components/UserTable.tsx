@@ -15,10 +15,12 @@ import {
   InputAdornment,
   MenuItem,
   OutlinedInput,
-  TextField,
+  TextField, Typography,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DateFnsUtils from '@date-io/date-fns';
+import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
+import { BookingTable } from './bookingTable';
 
 export const UserTable = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -63,6 +65,7 @@ export const UserTable = () => {
   const [deleteDialogUser, setDeleteDialogUser] = useState<boolean>(false);
   const [createDialogUser, setCreateDialogUser] = useState<boolean>(false);
   const [updateDialogUser, setUpdateDialogUser] = useState<boolean>(false);
+  const [bookingDialog, setBookingDialog] = useState<boolean>(false);
 
   const handleDeleteDialogClose = () => {
     setDeleteDialogUser(false);
@@ -81,6 +84,10 @@ export const UserTable = () => {
 
   const handleUpdateDialogClose = () => {
     setUpdateDialogUser(false);
+  };
+
+  const handleBookingDialogClose = () => {
+    setBookingDialog(false);
   };
   // Chips
   const [chipUserDelete, setchipUserDelete] = useState<boolean>(false);
@@ -358,6 +365,32 @@ export const UserTable = () => {
       </Dialog>
     );
   };
+  const bookingTable = () => {
+    console.log(choosedUser)
+    if (choosedUser) {
+      return (
+        <Dialog
+          maxWidth="lg"
+          fullWidth={true}
+          onClose={handleBookingDialogClose}
+          aria-labelledby="simple-dialog-title"
+          open={bookingDialog}
+        >
+          <h1> Bookings of User {choosedUser.firstName} {choosedUser.lastName}</h1>
+          <BookingTable bookings={choosedUser.bookings} />
+        </Dialog>
+      );
+    }
+  };
+
+  const bookingDialogOpen = async (id: string) => {
+    const choosedUserBooking = users.filter((u) => u.userId.toString() === id.toString());
+    if (choosedUserBooking.length === 1) {
+      await setchoosedUsers(choosedUserBooking[0]);
+      setBookingDialog(true);
+    }
+  };
+
   const handleUpdateUser = async (id: string) => {
     const choosedUserToUpdate = users.filter((u) => u.userId.toString() === id);
     if (choosedUserToUpdate.length === 1) {
@@ -378,6 +411,7 @@ export const UserTable = () => {
       preferedPayment: user.preferedPayment,
       adress: user.streetPlusNumber + ' ' + user.city,
       button: user.userId,
+      bookings: [user.userId, user.bookings.length],
     });
   }
 
@@ -418,15 +452,30 @@ export const UserTable = () => {
                 {
                   field: 'userRole',
                   headerName: 'userRole',
-                  width: 150,
                 },
                 { field: 'birthday', headerName: 'birth date' },
                 { field: 'preferedPayment', headerName: 'prefered payment', width: 150 },
                 { field: 'adress', headerName: 'adress', width: 300 },
                 {
+                  field: 'bookings',
+                  headerName: 'Number of bookings',
+                  renderCell: (params: ValueFormatterParams) => (
+                    <>
+                      {params.value[1]}
+                      <IconButton
+                        aria-label="info"
+                        color="primary"
+                        onClick={() => bookingDialogOpen(params.value[0])}
+                        style={{ marginRight: 5, color: 'primary' }}
+                      >
+                        <SpeakerNotesIcon />
+                      </IconButton>
+                    </>
+                  ),
+                },
+                {
                   field: 'button',
                   headerName: '',
-                  width: 150,
                   renderCell: (params: ValueFormatterParams) => (
                     <strong>
                       <Button
@@ -474,6 +523,7 @@ export const UserTable = () => {
       {deleteDialog(choosedUserName, 'User', handleDeleteDialogClose, deleteUserDB, deleteDialogUser)}
       {userManageDialog(createDialogUser, handleCreateDialogClose, 'Create', createUserDB)}
       {userManageDialog(updateDialogUser, handleUpdateDialogClose, 'Update', updateUserDB)}
+      {bookingTable()}
     </>
   );
 };
