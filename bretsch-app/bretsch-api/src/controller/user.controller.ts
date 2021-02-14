@@ -150,7 +150,9 @@ export const deleteUser = async (req: Request, res: Response) => {
  */
 export const getAllUser = async (_: Request, res: Response) => {
   const userRepository = getRepository(User);
-  const users = await userRepository.find();
+  const users = await userRepository.find({
+    relations: ["bookings"],
+  });
 
   res.status(200).send({
     data: users,

@@ -190,7 +190,6 @@ export const UserTable = () => {
     if (choosedUser.userId) {
       let userRequest;
       if (upassword === '') {
-        console.log('Password not changed')
         userRequest = await fetch(`/api/user/` + choosedUser.userId, {
           headers: { 'content-type': 'application/json' },
           method: 'PATCH',
@@ -205,7 +204,6 @@ export const UserTable = () => {
           }),
         });
       } else {
-        console.log('Password changed')
         userRequest = await fetch(`/api/user/` + choosedUser.userId, {
           headers: { 'content-type': 'application/json' },
           method: 'PATCH',
@@ -479,4 +477,3 @@ export const UserTable = () => {
     </>
   );
 };
-// UserManageDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any)
