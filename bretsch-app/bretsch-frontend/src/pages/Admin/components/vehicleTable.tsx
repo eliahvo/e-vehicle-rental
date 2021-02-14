@@ -580,7 +580,7 @@ export const VehicleTable = () => {
       <div style={{ height: 400, width: '100%' }}>
         <div style={{ display: 'flex', height: '100%' }}>
           <div data-testid="admin-Vehicle-allVehicles" style={{ flexGrow: 1 }}>
-            <DataGrid 
+            <DataGrid
               columns={[
                 { field: 'id', hide: true },
                 {
