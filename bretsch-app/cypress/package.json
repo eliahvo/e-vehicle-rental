@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Bretsch React Cypress for a e-vehicle app",
   "scripts": {
-    "cypress": "npx cypress open"
+    "cypress": "npx cypress open",
+    "test": "npx cypress run"
   },
   "keywords": [
     "Bretsch",
