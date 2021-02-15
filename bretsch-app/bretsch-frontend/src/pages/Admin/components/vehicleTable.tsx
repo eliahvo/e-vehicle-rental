@@ -373,7 +373,7 @@ export const VehicleTable = () => {
     await clearInput();
   };
 
-  // delete vehicles
+  // update vehicles
   const updateVehicleDB = async (e) => {
     e.preventDefault();
     if (choosedUpdateVehicle) {

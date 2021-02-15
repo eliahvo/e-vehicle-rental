@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTitle, FormControl, IconButton, MenuItem, 
 import EditIcon from '@material-ui/icons/Edit';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import Button from '@material-ui/core/Button';
-import { CreateButton, deleteDialog } from './vehicleTable';
+import { chipMessageError, chipMessageSucess, CreateButton, deleteDialog } from './vehicleTable';
 import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
@@ -21,10 +21,10 @@ export const BookingTable = (props) => {
   const [choosedBookingsDeleteID, setchoosebBookingsDeleteID] = useState<string>();
 
   const [bDeleteDialog, setbDeleteDialog] = useState(false);
+
   const handleBDeleteDialogClose = () => {
     setbDeleteDialog(false);
   };
-
   // create and update dialog
   const [bStartDate, setbStartDate] = useState<Date | null>(new Date());
   const [bEndDate, setbEndDate] = useState<Date | null>(new Date());
@@ -54,12 +54,48 @@ export const BookingTable = (props) => {
 
   // Dialog
   const [createDialogBooking, setCreateDialogBooking] = useState<boolean>(false);
+  const [updateDialogBooking, setUpdateDialogBooking] = useState<boolean>(false);
 
   const handleCreateDialogOpen = () => {
     setCreateDialogBooking(true);
   };
   const handleCreateDialogClose = () => {
     setCreateDialogBooking(false);
+    clearInput();
+  };
+  const handleUpdateDialogClose = () => {
+    setUpdateDialogBooking(false);
+    clearInput();
+  };
+
+  // Chips
+  const [chipBookingDelete, setchipBookingDelete] = useState<boolean>(false);
+  const [chipErrorDelete, setchipErrorDelete] = useState<boolean>(false);
+
+  const [chipBookingUpdate, setchipBookingUpdate] = useState<boolean>(false);
+  const [chipErrorUpdate, setchipErrorUpdate] = useState<boolean>(false);
+
+  const [chipBookingCreate, setchipBookingCreate] = useState<boolean>(false);
+  const [chipErrorCreate, setchipErrorCreate] = useState<boolean>(false);
+
+
+  const handleBookingDeleteSucChipClose = () => {
+    setchipBookingDelete(false);
+  };
+  const handleBookingDeleteErrorChipClose = () => {
+    setchipErrorDelete(false);
+  };
+  const handleBookingUpdateSucChipClose = () => {
+    setchipBookingUpdate(false);
+  };
+  const handleBookingUpdateErrorChipClose = () => {
+    setchipErrorUpdate(false);
+  };
+  const handleBookingCreateSucChipClose = () => {
+    setchipBookingCreate(false);
+  };
+  const handleBookingCreateErrorChipClose = () => {
+    setchipErrorCreate(false);
   };
 
   useEffect(() => {
@@ -77,6 +113,7 @@ export const BookingTable = (props) => {
   useEffect(() => {
     if (choosedBookings) {
       setchoosebBookingsDeleteID(choosedBookings.bookingId.toString());
+      fillInput();
     }
   }, [choosedBookings]);
 
@@ -152,12 +189,12 @@ export const BookingTable = (props) => {
       if (bookingRequest.status === 200) {
         await allBookings();
       }
-      // setchipBookingCreate(true);
+      setchipBookingCreate(true);
     } else {
-      // setchipErrorCreate(true);
+      setchipErrorCreate(true);
     }
     handleCreateDialogClose();
-    // await clearInput();
+    await clearInput();
   };
 
   // delete booking
@@ -169,11 +206,61 @@ export const BookingTable = (props) => {
       });
       if (vehicleRequest.status === 200) {
         await allBookings();
-        // setOpen(true);
+        setchipBookingDelete(true);
       } else {
-        // setchipErrorDelete(true);
+        setchipErrorDelete(true);
       }
       handleBDeleteDialogClose();
+    }
+  };
+
+  // update vehicles
+  const updateBookingDB = async (e) => {
+    e.preventDefault();
+    if (choosedBookings) {
+      const vehicleRequest = await fetch(`/api/booking/` + choosedBookings.bookingId, {
+        headers: { 'content-type': 'application/json' },
+        method: 'PATCH',
+        body: JSON.stringify({
+          endDate: bEndDate,
+          price: bPrice,
+          paymentStatus: bpaymentStatus,
+        }),
+      });
+      if (vehicleRequest.status === 200) {
+        await allBookings();
+        handleUpdateDialogClose();
+        setchipBookingUpdate(true);
+      } else {
+        handleUpdateDialogClose();
+        setchipErrorUpdate(true);
+      }
+      await clearInput();
+    }
+  };
+
+  const fillInput = () => {
+    if (choosedBookings) {
+      setbpaymentStatus(choosedBookings.paymentStatus);
+      setbEndDate(choosedBookings.endDate);
+      setubPrice(choosedBookings.price.toString());
+    }
+  };
+
+  const clearInput = () => {
+    setbStartDate(new Date());
+    setbEndDate(new Date());
+    setbpaymentStatus('');
+    setubPrice('');
+    setbVehicleId('');
+    setbUserId('');
+  };
+
+  const updateChoosedBooking = async (id: string) => {
+    const choosedBooking = bookings.filter((b) => b.bookingId.toString() === id);
+    if (choosedBooking.length === 1) {
+      await setChoosebBookings(choosedBooking[0]);
+      setUpdateDialogBooking(true);
     }
   };
 
@@ -191,7 +278,7 @@ export const BookingTable = (props) => {
       button: booking.bookingId,
     });
   }
-  const bookingEditDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any) => {
+  const bookingUpdateDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any) => {
     return (
       <Dialog onClose={hClose} aria-labelledby="simple-dialog-title" open={mOpen}>
         <form onSubmit={finishFunc}>
@@ -361,7 +448,25 @@ export const BookingTable = (props) => {
           <div style={{ flexGrow: 1 }}>
             <DataGrid
               columns={[
-                { field: 'id', headerName: 'ID' },
+                {
+                  field: 'id',
+                  headerName: 'ID',
+                  renderCell: (params: ValueFormatterParams) => (
+                    <>
+                      <IconButton
+                        aria-label="info"
+                        color="primary"
+                        onClick={() => {
+                          updateChoosedBooking(params.value.toString());
+                        }}
+                        style={{ marginRight: 5, color: 'primary' }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      {params.value.toString()}
+                    </>
+                  ),
+                },
                 {
                   field: 'user',
                   headerName: 'User',
@@ -403,7 +508,29 @@ export const BookingTable = (props) => {
           </div>
         </div>
       </div>
+      {chipMessageSucess(chipBookingDelete, handleBookingDeleteSucChipClose, 'Successfully delete Booking.')}
+      {chipMessageError(
+        chipErrorDelete,
+        handleBookingDeleteErrorChipClose,
+        'Something went wrong. Could not delete booking.',
+      )}
+
+      {chipMessageSucess(chipBookingUpdate, handleBookingUpdateSucChipClose, 'Successfully update Booking.')}
+      {chipMessageError(
+        chipErrorUpdate,
+        handleBookingUpdateErrorChipClose,
+        'Something went wrong. Could not update booking.',
+      )}
+
+      {chipMessageSucess(chipBookingCreate, handleBookingCreateSucChipClose, 'Successfully create Booking.')}
+      {chipMessageError(
+        chipErrorCreate,
+        handleBookingCreateErrorChipClose,
+        'Something went wrong. Could not create booking.',
+      )}
+
       {bookingCreateDialog(createDialogBooking, handleCreateDialogClose, 'Create', createBookingDB)}
+      {bookingUpdateDialog(updateDialogBooking, handleUpdateDialogClose, 'Update', updateBookingDB)}
       {deleteDialog(choosedBookingsDeleteID, 'Booking', handleBDeleteDialogClose, deleteBookingDB, bDeleteDialog)}
     </>
   );
