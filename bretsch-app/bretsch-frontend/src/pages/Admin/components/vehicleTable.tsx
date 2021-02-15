@@ -293,8 +293,8 @@ export const VehicleTable = () => {
   }, [vehicleTypes]);
 
   useEffect(() => {
-    if (choosedVehiclesDelete){
-      setChoosedVehiclesDeleteLicencePlate(choosedVehiclesDelete.licencePlate)
+    if (choosedVehiclesDelete) {
+      setChoosedVehiclesDeleteLicencePlate(choosedVehiclesDelete.licencePlate);
     }
   }, [choosedVehiclesDelete]);
 

@@ -15,7 +15,8 @@ import {
   InputAdornment,
   MenuItem,
   OutlinedInput,
-  TextField, Typography,
+  TextField,
+  Typography,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DateFnsUtils from '@date-io/date-fns';
@@ -135,7 +136,7 @@ export const UserTable = () => {
     }
   }, [choosedUser]);
 
-  // get all vehicles
+  // get all users
   const allUsers = async () => {
     const userRequest = await fetch(`/api/user/`, {
       headers: { 'content-type': 'application/json' },
@@ -147,7 +148,7 @@ export const UserTable = () => {
     }
   };
 
-  // delete vehicles
+  // delete user
   const deleteUserDB = async () => {
     if (choosedUser) {
       const userRequest = await fetch(`/api/user/` + choosedUser.userId.toString(), {
@@ -164,7 +165,7 @@ export const UserTable = () => {
     }
   };
 
-  // create vehicles
+  // create User
   const createUserDB = async (e) => {
     e.preventDefault();
     const userRequest = await fetch(`/api/user/`, {
@@ -258,8 +259,6 @@ export const UserTable = () => {
     setuStreetPlusNumber('');
     setucity('');
   };
-
-  const fillInput = () => {};
 
   const userManageDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any) => {
     return (
@@ -366,7 +365,7 @@ export const UserTable = () => {
     );
   };
   const bookingTable = () => {
-    console.log(choosedUser)
+    console.log(choosedUser);
     if (choosedUser) {
       return (
         <Dialog
@@ -376,7 +375,10 @@ export const UserTable = () => {
           aria-labelledby="simple-dialog-title"
           open={bookingDialog}
         >
-          <h1> Bookings of User {choosedUser.firstName} {choosedUser.lastName}</h1>
+          <h1>
+            {' '}
+            Bookings of User {choosedUser.firstName} {choosedUser.lastName}
+          </h1>
           <BookingTable bookings={choosedUser.bookings} />
         </Dialog>
       );
@@ -459,19 +461,7 @@ export const UserTable = () => {
                 {
                   field: 'bookings',
                   headerName: 'Number of bookings',
-                  renderCell: (params: ValueFormatterParams) => (
-                    <>
-                      {params.value[1]}
-                      <IconButton
-                        aria-label="info"
-                        color="primary"
-                        onClick={() => bookingDialogOpen(params.value[0])}
-                        style={{ marginRight: 5, color: 'primary' }}
-                      >
-                        <SpeakerNotesIcon />
-                      </IconButton>
-                    </>
-                  ),
+                  renderCell: (params: ValueFormatterParams) => <>{params.value[1]}</>,
                 },
                 {
                   field: 'button',

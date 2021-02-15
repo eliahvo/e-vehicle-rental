@@ -11,6 +11,7 @@ import { UserTable } from './components/UserTable';
 import Typography from '@material-ui/core/Typography';
 import { Theme } from '@material-ui/core/styles';
 import {VehicleTypeChips} from "./components/vehicleTypeChips";
+import {BookingTable} from "./components/bookingTable";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -82,6 +83,8 @@ export const AdminPage = () => {
           <VehicleTable />
           <h1 className={classes.headings}>Users</h1>
           <UserTable />
+          <h1 className={classes.headings}>Bookings</h1>
+          <BookingTable />
         </TabPanel>
       </MyAdmin>
     </Layout>
