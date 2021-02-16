@@ -10,7 +10,8 @@ import { VehicleTable } from './components/vehicleTable';
 import { UserTable } from './components/UserTable';
 import Typography from '@material-ui/core/Typography';
 import { Theme } from '@material-ui/core/styles';
-import {VehicleTypeChips} from "./components/vehicleTypeChips";
+import { VehicleTypeChips } from './components/vehicleTypeChips';
+import { BookingTable } from './components/bookingTable';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -67,22 +68,14 @@ export const AdminPage = () => {
   return (
     <Layout title="Admin">
       <MyAdmin>
-        <Paper className={classes.root}>
-          <AppBar position="sticky">
-            <Tabs value={value} onChange={handleChange} indicatorColor="secondary" centered>
-              <Tab label="Data" />
-              <Tab label="Statistics" />
-            </Tabs>
-          </AppBar>
-        </Paper>
-        <TabPanel value={value} index={0}>
-          <h1 className={classes.headings}>Vehicle Type</h1>
-          <VehicleTypeChips />
-          <h1 className={classes.headings}>Vehicles</h1>
-          <VehicleTable />
-          <h1 className={classes.headings}>Users</h1>
-          <UserTable />
-        </TabPanel>
+        <h1 className={classes.headings}>Vehicle Type</h1>
+        <VehicleTypeChips />
+        <h1 className={classes.headings}>Vehicles</h1>
+        <VehicleTable />
+        <h1 className={classes.headings}>Users</h1>
+        <UserTable />
+        <h1 className={classes.headings}>Bookings</h1>
+        <BookingTable />
       </MyAdmin>
     </Layout>
   );

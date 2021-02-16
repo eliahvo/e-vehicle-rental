@@ -300,7 +300,7 @@ export const VehicleTypeChips = () => {
       }),
       method: 'POST',
     });
-    if (vehicleTypeRequest.status === 200) {
+    if (vehicleTypeRequest.status === 201) {
       await allVehicleTypes();
       handleCreateDialogClose();
       setSucCreate(true);
