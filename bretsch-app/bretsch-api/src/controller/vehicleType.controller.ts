@@ -34,7 +34,7 @@ export const createVehicleType = async (req: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
   const createdVehicleType = await vehicleTypeRepository.save(vehicleType);
 
-  res.status(200).send({
+  res.status(201).send({
     data: createdVehicleType,
   });
 };
@@ -52,7 +52,9 @@ export const deleteVehicleType = async (req: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
-    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId);
+    const vehicleType = await vehicleTypeRepository.findOneOrFail(
+      vehicleTypeId
+    );
     await vehicleTypeRepository.remove(vehicleType);
     res.status(200).send({});
   } catch (error) {
@@ -70,12 +72,18 @@ export const deleteVehicleType = async (req: Request, res: Response) => {
  * @param {Request}req Request
  * @param {Response}res Response
  */
-export const getAllVehiclesByVehicleTypeId = async (req: Request, res: Response) => {
+export const getAllVehiclesByVehicleTypeId = async (
+  req: Request,
+  res: Response
+) => {
   const vehicleTypeId = req.params.vehicleTypeId;
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
-    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId, { relations: ["vehicles"] });
+    const vehicleType = await vehicleTypeRepository.findOneOrFail(
+      vehicleTypeId,
+      { relations: ["vehicles"] }
+    );
     const vehicleList = vehicleType.vehicles;
     res.status(200).send({ data: vehicleList });
   } catch (error) {
@@ -94,7 +102,9 @@ export const getAllVehiclesByVehicleTypeId = async (req: Request, res: Response)
  */
 export const getAllVehicleType = async (_: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
-  const vehicleTypes = await vehicleTypeRepository.find({ relations: ["vehicles"] });
+  const vehicleTypes = await vehicleTypeRepository.find({
+    relations: ["vehicles"],
+  });
 
   res.status(200).send({
     data: vehicleTypes,
@@ -114,7 +124,10 @@ export const getSpecificVehicleType = async (req: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
-    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId, { relations: ["vehicles"] });
+    const vehicleType = await vehicleTypeRepository.findOneOrFail(
+      vehicleTypeId,
+      { relations: ["vehicles"] }
+    );
     res.status(200).send({
       data: vehicleType,
     });
