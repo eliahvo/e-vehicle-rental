@@ -63,6 +63,7 @@ export const BookingPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [booking, setBooking] = useState<Booking>();
   const {
+    token,
     actions: { getTokenData },
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
@@ -136,7 +137,7 @@ export const BookingPage = () => {
   const fetchBooking = async () => {
     const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
       /* 1 must be replaced with actual logged in userId */
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
 
@@ -144,7 +145,7 @@ export const BookingPage = () => {
       const userJSON = await userRequest.json();
       if (userJSON.data.actualBooking) {
         const bookingRequest = await fetch(`/api/booking/${userJSON.data.actualBooking.bookingId}`, {
-          headers: { 'content-type': 'application/json' },
+          headers: { 'content-type': 'application/json', Authorization: token },
           method: 'GET',
         });
 
@@ -166,7 +167,7 @@ export const BookingPage = () => {
         paymentStatus: 'payed' /* maybe must be changed */,
         price: Number(currentPrice),
       }),
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'PATCH',
     });
 
@@ -182,7 +183,7 @@ export const BookingPage = () => {
         body: JSON.stringify({
           actualBookingId: -1,
         }),
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: token },
         method: 'PATCH',
       });
 
