@@ -120,7 +120,7 @@ export default function vehicleInfoFormDialog() {
         headers: { 'Content-Type': 'application/json' },
         method: 'POST',
       });
-      if (createBookingRequest.status === 200) {
+      if (createBookingRequest.status === 201) {
         const createBookingJSON = await createBookingRequest.json();
         try {
           const bookingId = createBookingJSON['data']['bookingId'];
