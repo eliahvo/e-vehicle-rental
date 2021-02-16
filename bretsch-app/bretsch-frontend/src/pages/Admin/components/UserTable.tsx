@@ -70,13 +70,16 @@ export const UserTable = () => {
 
   const handleDeleteDialogClose = () => {
     setDeleteDialogUser(false);
+    clearInput();
   };
   const handleCreateDialogOpen = () => {
+    clearInput();
     setCreateDialogUser(true);
   };
 
   const handleCreateDialogClose = () => {
     setCreateDialogUser(false);
+    clearInput();
   };
 
   const handleUpdateDialogOpen = () => {
@@ -365,7 +368,6 @@ export const UserTable = () => {
     );
   };
   const bookingTable = () => {
-    console.log(choosedUser);
     if (choosedUser) {
       return (
         <Dialog
