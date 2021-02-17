@@ -1,11 +1,11 @@
-import { Helper } from "../../helper";
-import request from "supertest";
-import { VehicleType } from "../../../src/entity/VehicleType.entity";
+import { Helper } from '../../helper';
+import request from 'supertest';
+import { VehicleType } from '../../../src/entity/VehicleType.entity';
 
 const helper = new Helper();
 helper.init();
 
-describe("Tests for the VehicleType class", () => {
+describe('Tests for the VehicleType class', () => {
   const helper = new Helper();
 
   beforeAll(async () => {
@@ -16,33 +16,35 @@ describe("Tests for the VehicleType class", () => {
     await helper.shutdown();
   });
 
-  it("it should create new vehicle type", async (done) => {
+  it('it should create new vehicle type', async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
 
     request(helper.app)
-      .post("/api/vehicletype")
+      .post('/api/vehicletype')
       .send({
-        type: "Scooter",
+        type: 'Scooter',
         pricePerMinute: 7,
         minimalBatteryLevel: 17,
         vehicles: [],
       })
-      .set("Content-Type", "application/json")
-      .set("Accept", "application/json")
-      .expect(200)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .expect(201)
       .end(async (err, res) => {
         if (err) throw err;
-        const [, vehiclyTypes] = await helper.getRepo(VehicleType).findAndCount();
+        const [, vehiclyTypes] = await helper
+          .getRepo(VehicleType)
+          .findAndCount();
         expect(vehiclyTypes).toBe(3);
-        expect(res.body.data.type).toBe("Scooter");
+        expect(res.body.data.type).toBe('Scooter');
         expect(res.body.data.pricePerMinute).toBe(7);
         expect(res.body.data.minimalBatteryLevel).toBe(17);
         done();
       });
   });
 
-  it("should delete a vehicle type by id", async (done) => {
+  it('should delete a vehicle type by id', async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     let vehicleType = new VehicleType();
@@ -51,8 +53,8 @@ describe("Tests for the VehicleType class", () => {
       .findOneOrFail({ vehicleTypeId: 1 });
     request(helper.app)
       .delete(`/api/vehicletype/${vehicleType.vehicleTypeId}`)
-      .set("Content-Type", "application/json")
-      .set("Accept", "application/json")
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
       .end(async (err) => {
         if (err) throw err;
         const [, vehicleTypeCount] = await helper
@@ -63,22 +65,24 @@ describe("Tests for the VehicleType class", () => {
       });
   });
 
-  it("should get specific type by id", async (done) => {
+  it('should get specific type by id', async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     const vehicletype = new VehicleType();
-    vehicletype.type = "Bike";
+    vehicletype.type = 'Bike';
     vehicletype.pricePerMinute = 8;
     vehicletype.minimalBatteryLevel = 19;
-    const savedVehicleType = await helper.getRepo(VehicleType).save(vehicletype);
+    const savedVehicleType = await helper
+      .getRepo(VehicleType)
+      .save(vehicletype);
     request(helper.app)
       .get(`/api/vehicletype/${savedVehicleType.vehicleTypeId}`)
-      .set("Content-Type", "application/json")
-      .set("Accept", "application/json")
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
       .expect(200)
       .end((err, res) => {
         if (err) throw err;
-        expect(res.body.data.type).toBe("Bike");
+        expect(res.body.data.type).toBe('Bike');
         done();
       });
   });
@@ -87,33 +91,32 @@ describe("Tests for the VehicleType class", () => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     request(helper.app)
-        .get('/api/vehicletype')
-        .set('Content-Type', 'application/json')
-        .set('Accept', 'application/json')
-        .expect(200)
-        .end((err, res) => {
-            if (err) throw err;
-            expect(res.body.data.length).toBe(2);
-            expect(res.body.data[1].type).toBe('car');
-            done();
-        });
-});
+      .get('/api/vehicletype')
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .expect(200)
+      .end((err, res) => {
+        if (err) throw err;
+        expect(res.body.data.length).toBe(2);
+        expect(res.body.data[1].type).toBe('car');
+        done();
+      });
+  });
 
-
-it("should get all vehicles by vehicle type id", async (done) => {
+  it('should get all vehicles by vehicle type id', async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     const vehicleTypeId = 2;
-    
+
     request(helper.app)
       .get(`/api/vehicletype/${vehicleTypeId}/vehicles`)
-      .set("Content-Type", "application/json")
-      .set("Accept", "application/json")
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
       .expect(200)
       .end((err, res) => {
         if (err) throw err;
         expect(res.body.data.length).toBe(1);
-        expect(res.body.data[0].licencePlate).toBe("DA-BR-002");
+        expect(res.body.data[0].licencePlate).toBe('DA-BR-002');
         done();
       });
   });
@@ -122,19 +125,20 @@ it("should get all vehicles by vehicle type id", async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
     let vehicleType = new VehicleType();
-    vehicleType = await helper.getRepo(VehicleType).findOneOrFail({ vehicleTypeId: 1 });
+    vehicleType = await helper
+      .getRepo(VehicleType)
+      .findOneOrFail({ vehicleTypeId: 1 });
     request(helper.app)
-        .patch(`/api/vehicletype/${vehicleType.vehicleTypeId}`)
-        .send({
-            type: 'plane',
-        })
-        .set('Content-Type', 'application/json')
-        .set('Accept', 'application/json')
-        .end(async (err, res) => {
-            if (err) throw err;
-            expect(res.body.data.type).toBe('plane');
-            done();
-        });
-});
-
+      .patch(`/api/vehicletype/${vehicleType.vehicleTypeId}`)
+      .send({
+        type: 'plane',
+      })
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .end(async (err, res) => {
+        if (err) throw err;
+        expect(res.body.data.type).toBe('plane');
+        done();
+      });
+  });
 });
