@@ -243,8 +243,13 @@ export const updateVehicle = async (req: Request, res: Response) => {
         return;
       }
     }
+    if (validBatteryNumber(batteryLevel)) {
+      vehicle.batteryLevel = batteryLevel;
+    } else {
+      res.status(404).send({ status: 'Battery Level must be between 0 and 100' });
+      return;
+    }
 
-    vehicle.batteryLevel = batteryLevel;
     if (vehicleType) {
       // get update wanted VehicleType
       const repVehicleType = await getRepository(VehicleType);

@@ -271,6 +271,7 @@ export const VehicleTable = () => {
         setBLevel(parseInt(e.target.value, 10));
         setErrorbLevel('');
       } else {
+        setBLevel(parseInt(e.target.value, 10));
         setErrorbLevel('Error: Value should be smaller than 100');
       }
     } else {
@@ -371,7 +372,6 @@ export const VehicleTable = () => {
       handleCreateDialogClose();
       setchipSucCreate(true);
     } else {
-      handleUpdateDialogClose();
       setchipErrorCreate(true);
     }
     await clearInput();
@@ -395,12 +395,11 @@ export const VehicleTable = () => {
       });
       if (vehicleRequest.status === 200) {
         await allVehicles();
-        handleUpdateDialogClose();
         setchipSucUpdate(true);
       } else {
-        handleUpdateDialogClose();
         setchipErrorUpdate(true);
       }
+      handleUpdateDialogClose();
       await clearInput();
     }
   };
