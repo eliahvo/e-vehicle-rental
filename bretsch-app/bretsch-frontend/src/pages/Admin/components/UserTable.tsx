@@ -27,6 +27,17 @@ export const Refresh = styled.div`
   margin-left: 2%;
 `;
 
+export const userRole = [
+  {
+    value: 0,
+    label: 'user',
+  },
+  {
+    value: 1,
+    label: 'admin',
+  },
+];
+
 export const UserTable = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [choosedUser, setchoosedUsers] = useState<User>();
@@ -41,6 +52,7 @@ export const UserTable = () => {
   const [uPreferedPayment, setuPreferedPayment] = useState<string>('');
   const [uStreetPlusNumber, setuStreetPlusNumber] = useState<string>('');
   const [ucity, setucity] = useState<string>('');
+  const [urole, seturole] = useState<number>(0);
 
   const handleUEmailChange = (e) => {
     setuemail(e.target.value.toString());
@@ -65,6 +77,9 @@ export const UserTable = () => {
   };
   const handleUCityChange = (e) => {
     setucity(e.target.value.toString());
+  };
+  const handleURoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    seturole(parseInt(event.target.value, 10));
   };
   // Dialogs
   const [deleteDialogUser, setDeleteDialogUser] = useState<boolean>(false);
@@ -144,6 +159,10 @@ export const UserTable = () => {
       setuPreferedPayment(choosedUser.preferedPayment);
       setuStreetPlusNumber(choosedUser.streetPlusNumber);
       setucity(choosedUser.city);
+      const r = userRole.filter((u) => u.label === choosedUser.userRole);
+      if (r.length === 1) {
+        seturole(r[0].value);
+      }
     }
   }, [choosedUser]);
 
@@ -220,6 +239,7 @@ export const UserTable = () => {
             preferedPayment: uPreferedPayment,
             streetPlusNumber: uStreetPlusNumber,
             city: ucity,
+            userRole: userRole[urole].label,
           }),
         });
       } else {
@@ -300,9 +320,37 @@ export const UserTable = () => {
     setuPreferedPayment('');
     setuStreetPlusNumber('');
     setucity('');
+    seturole(0);
   };
 
-  const userManageDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any) => {
+  // role -> false: create true:update
+  const checkRoleUpdate = (role: boolean) => {
+    if (role) {
+      return (
+        <>
+          <p> Role: </p>
+          <FormControl required>
+            <TextField
+              id="outlined-select-currency"
+              select
+              value={urole}
+              onChange={handleURoleChange}
+              variant="outlined"
+            >
+              {userRole.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+        </>
+      );
+    }
+    return <></>;
+  };
+
+  const userManageDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any, role: boolean) => {
     return (
       <Dialog onClose={hClose} aria-labelledby="simple-dialog-title" open={mOpen}>
         <form onSubmit={finishFunc}>
@@ -350,8 +398,8 @@ export const UserTable = () => {
                 variant="outlined"
               />
             </FormControl>
+            {checkRoleUpdate(role)}
             <p>Birthdate:</p>
-
             <FormControl required>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
@@ -406,6 +454,7 @@ export const UserTable = () => {
       </Dialog>
     );
   };
+
   const bookingTable = () => {
     if (choosedUser) {
       return (
@@ -561,8 +610,8 @@ export const UserTable = () => {
       )}
 
       {deleteDialog(choosedUserName, 'User', handleDeleteDialogClose, deleteUserDB, deleteDialogUser)}
-      {userManageDialog(createDialogUser, handleCreateDialogClose, 'Create', createUserDB)}
-      {userManageDialog(updateDialogUser, handleUpdateDialogClose, 'Update', updateUserDB)}
+      {userManageDialog(createDialogUser, handleCreateDialogClose, 'Create', createUserDB, false)}
+      {userManageDialog(updateDialogUser, handleUpdateDialogClose, 'Update', updateUserDB, true)}
       {bookingTable()}
     </>
   );
