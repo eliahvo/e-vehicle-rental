@@ -21,9 +21,27 @@ import { Authentication } from '../middleware/authentication';
  * @param {Response}res Response
  */
 export const registerUser = async (req: Request, res: Response) => {
-  const { email, password, firstName, lastName, birthDate, preferedPayment, streetPlusNumber, city } = req.body;
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    birthDate,
+    preferedPayment,
+    streetPlusNumber,
+    city,
+  } = req.body;
   const userRepository = getRepository(User);
-  if (!email || !password || !firstName || !lastName || !birthDate || !preferedPayment || !streetPlusNumber || !city) {
+  if (
+    !email ||
+    !password ||
+    !firstName ||
+    !lastName ||
+    !birthDate ||
+    !preferedPayment ||
+    !streetPlusNumber ||
+    !city
+  ) {
     return res.status(400).send({
       status: 'Error: Parameter missing!',
     });
@@ -79,7 +97,10 @@ export const validatePassword = async (req: Request, res: Response) => {
     return res.status(404).send({ status: 'user not found' });
   }
 
-  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(password, user.hashedPassword);
+  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(
+    password,
+    user.hashedPassword
+  );
   if (!matchingPasswords) {
     return res.status(401).send();
   }
@@ -91,7 +112,14 @@ export const loginUser = async (req: Request, res: Response) => {
   const userRepository = await getRepository(User);
   // Check if user exists
   const user = await userRepository.findOne({
-    select: ['hashedPassword', 'email', 'firstName', 'lastName', 'userId', 'userRole'],
+    select: [
+      'hashedPassword',
+      'email',
+      'firstName',
+      'lastName',
+      'userId',
+      'userRole',
+    ],
     where: {
       email,
     },
@@ -101,7 +129,10 @@ export const loginUser = async (req: Request, res: Response) => {
     return res.status(401).send({ status: 'unauthorized1' });
   }
 
-  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(password, user.hashedPassword);
+  const matchingPasswords: boolean = await Authentication.comparePasswordWithHash(
+    password,
+    user.hashedPassword
+  );
   if (!matchingPasswords) {
     return res.status(401).send({ status: 'unauthorized2' });
   }
@@ -171,7 +202,11 @@ export const getBookingsByUserId = async (req: Request, res: Response) => {
 
   try {
     const user = await userRepository.findOneOrFail(userId, {
-      relations: ['bookings', 'bookings.vehicle', 'bookings.vehicle.vehicleType'],
+      relations: [
+        'bookings',
+        'bookings.vehicle',
+        'bookings.vehicle.vehicleType',
+      ],
     });
     const userBookingList = user.bookings;
     res.status(200).send({
@@ -251,6 +286,7 @@ export const updateUser = async (req: Request, res: Response) => {
   const {
     email,
     password,
+    userRole,
     firstName,
     lastName,
     birthDate,
@@ -266,6 +302,7 @@ export const updateUser = async (req: Request, res: Response) => {
       relations: ['bookings', 'actualBooking'],
     });
     user.email = email;
+    user.userRole = userRole;
     user.firstName = firstName;
     user.lastName = lastName;
     user.birthDate = birthDate;
@@ -279,13 +316,17 @@ export const updateUser = async (req: Request, res: Response) => {
       } else {
         const bookingRepository = getRepository(Booking);
 
-        let actualBooking = await bookingRepository.findOneOrFail(actualBookingId);
+        let actualBooking = await bookingRepository.findOneOrFail(
+          actualBookingId
+        );
         user.actualBooking = actualBooking;
       }
     }
 
     if (password) {
-      const hashedPassword: string = await Authentication.hashPassword(password);
+      const hashedPassword: string = await Authentication.hashPassword(
+        password
+      );
       user.hashedPassword = hashedPassword;
     }
 
