@@ -597,6 +597,9 @@ export const VehicleTable = () => {
         >
           Create
         </Button>
+        <Button style={{ margin: 10 }} variant="outlined" onClick={allVehicles}>
+          Refresh
+        </Button>
       </CreateButton>
       <div style={{ height: 400, width: '100%' }}>
         <div style={{ display: 'flex', height: '100%' }}>
