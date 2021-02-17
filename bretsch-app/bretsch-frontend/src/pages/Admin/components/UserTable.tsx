@@ -1,7 +1,7 @@
 import { DataGrid, FilterModel, ValueFormatterParams } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 import React, { useEffect, useState } from 'react';
-import { User, Vehicle } from '../../../util/EntityInterfaces';
+import { Booking, User, Vehicle } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { chipMessageError, chipMessageSucess, CreateButton, deleteDialog, vehicleStatus } from './vehicleTable';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -96,6 +96,7 @@ export const UserTable = () => {
   // Chips
   const [chipUserDelete, setchipUserDelete] = useState<boolean>(false);
   const [chipErrorDelete, setchipErrorDelete] = useState<boolean>(false);
+  const [chipErrorDeleteValid, setchipErrorDeleteValid] = useState<boolean>(false);
 
   const [chipUserCreate, setchipUserCreate] = useState<boolean>(false);
   const [chipErrorCreate, setchipErrorCreate] = useState<boolean>(false);
@@ -108,6 +109,9 @@ export const UserTable = () => {
   };
   const handleUserDeleteErrorChipClose = () => {
     setchipErrorDelete(false);
+  };
+  const handleUserDeleteErrorValidChipClose = () => {
+    setchipErrorDeleteValid(false);
   };
   const handleUserCreateSucChipClose = () => {
     setchipUserCreate(false);
@@ -247,9 +251,40 @@ export const UserTable = () => {
     id = e.currentTarget.id.toString();
     const uDelete = users.filter((u) => u.userId.toString() === id);
     if (uDelete.length === 1) {
-      await setchoosedUsers(uDelete[0]);
-      await setDeleteDialogUser(true);
+      const validDelete = await userToDelete(id);
+      if (validDelete) {
+        await setchoosedUsers(uDelete[0]);
+        await setDeleteDialogUser(true);
+      } else {
+        setchipErrorDeleteValid(true);
+      }
     }
+  };
+
+  const userToDelete = async (uid: string) => {
+    const bookings = await bookingsByUserDB(uid);
+    if (bookings && bookings.length > 0) {
+      const notPayedBookings = bookings.filter((b) => b.paymentStatus === 'not payed');
+      if (notPayedBookings.length === 0) {
+        return true;
+      }
+    } else {
+      return true;
+    }
+    return false;
+  };
+
+  const bookingsByUserDB = async (uid: string) => {
+    const userRequest = await fetch(`/api/user/` + uid + `/bookings`, {
+      headers: { 'content-type': 'application/json' },
+      method: 'GET',
+    });
+    if (userRequest.status === 200) {
+      const bookingsJSON = await userRequest.json();
+      const bookings: Booking[] = bookingsJSON.data;
+      return bookings;
+    }
+    return null;
   };
 
   const clearInput = () => {
@@ -496,6 +531,11 @@ export const UserTable = () => {
         chipErrorDelete,
         handleUserDeleteErrorChipClose,
         'Something went wrong. Could not delete user.',
+      )}
+      {chipMessageError(
+        chipErrorDeleteValid,
+        handleUserDeleteErrorValidChipClose,
+        'Something went wrong. Can not delete user with an open booking.',
       )}
 
       {chipMessageSucess(chipUserUpdate, handleUserUpdateSucChipClose, 'Successfully update user.')}
