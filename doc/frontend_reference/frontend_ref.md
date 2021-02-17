@@ -11,13 +11,16 @@ This button will get you back to the Dashboard Map
 ### 2 - Active Booking
 This will direct you to your currently running bookings<br>
 **For example**:
-<img src="pic/Frontend_active_running_booking.png" alt="Site of running booking">
+
+<img src="pic/Frontend_active_running_booking.png" alt="Site of running booking" width=400>
+
 #### Stop Booking
 1. Select the pay option (in this project exist a paypal sandbox for testing)
-![Checkout Paypal checkout](pic/Frontend_checkout_active_booking.png =150x)
+<img src="pic/Frontend_checkout_active_booking.png" alt="Checkout Paypal checkout" width=300>
 <br>
+
 2. Finally pay with a paypal sandbox. <br>
-<img src="pic/Frontend_checkout_active_booking_paypal.png" alt="Paypal checkout">
+<img src="pic/Frontend_checkout_active_booking_paypal.png" alt="Paypal checkout" width=300>
 
 ### 3 - The Pricing
 This will show you all pricings of the different vehicle types <br>
@@ -30,6 +33,7 @@ This will open a login window to login or register. After that the Meunue will l
 **For example**: <br>
 #### Log in
 <img src="pic/Frontend_Login.png" alt="Register User">
+
 #### Register
 <img src="pic/Frontend_Register_1.png" alt="Register User">
 
@@ -47,17 +51,35 @@ This menue let you switch between dark and light mode, reload data or clear your
 On this site you can edit the profile data of the logged in user. <br>
 **For example**: <br>
 
-<img src="pic/Frontend_profile.png" alt="Profile of one user">
+<img src="pic/Frontend_profile.png" alt="Profile of one user" width=600>
 
 
 ### 9 - All Bookings of one users
 On this site you can see all bookings of the logged in user.
 **For example**: <br>
 
-<img src="pic/Frontend_myBookings.png" alt="All bookings of one user">
+<img src="pic/Frontend_myBookings.png" alt="All bookings of one user" width=600>
 
 ### 10 - log output
 This will log out the user.
 
 
 ## The Admin Page
+This page make it possible to see, create, update and delete Vehicle types, Vehicles, Users and Bookings.
+This page is accessable for all user with role admin.
+
+### Vehicle Type
+<img src="pic/Frontend_Admin_VehicleType.png" alt="All bookings of one user" width=200>
+<br>
+
+### Vehicles
+<img src="pic/Frontend_Admin_Vehicle.png" alt="All bookings of one user" width=700>
+<br>
+
+### Users
+<img src="pic/Frontend_Admin_Users.png" alt="All bookings of one user" width=700>
+<br>
+
+### Booking
+<img src="pic/Frontend_Admin_Bookings.png" alt="All bookings of one user" width=700>
+<br>
