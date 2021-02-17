@@ -69,7 +69,7 @@ This page make it possible to see, create, update and delete Vehicle types, Vehi
 This page is accessable for all user with role admin.
 
 ### Vehicle Type
-<img src="pic/Frontend_Admin_VehicleType.png" alt="All bookings of one user" width=200>
+<img src="pic/Frontend_Admin_VehicleType.png" alt="All bookings of one user" width=500>
 <br>
 
 ### Vehicles
