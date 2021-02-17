@@ -439,6 +439,9 @@ export const BookingTable = (props) => {
         <Button variant="outlined" onClick={handleCreateDialogOpen} color="primary">
           Create
         </Button>
+        <Button style={{ margin: 10 }} variant="outlined" onClick={allBookings}>
+          Refresh
+        </Button>
       </CreateButton>
       <div style={{ height: 400, width: '100%' }}>
         <div style={{ display: 'flex', height: '100%' }}>
