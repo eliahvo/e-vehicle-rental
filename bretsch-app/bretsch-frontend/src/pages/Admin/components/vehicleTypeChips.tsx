@@ -187,7 +187,7 @@ export const VehicleTypeChips = () => {
             <p> Start Price </p>
             <FormControl required>
               <OutlinedInput
-                data-testid="admin-createVehicleType-price"
+                data-testid="admin-createVehicleType-startPrice"
                 id="filled-adornment-weight"
                 defaultValue={vstartPrice}
                 onChange={handleStartPriceChange}
