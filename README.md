@@ -29,22 +29,22 @@
 
 The participants or contributors of this project include:
 
-🎓 **Cimpoes, Vitali**  
+🎓 **Cimpoes, Vitali**
 GitLab: [@istvicimp](https://code.fbi.h-da.de/istvicimp "@istvicimp")<br>
 
-🎓 **Cincato, Ricardo**  
+🎓 **Cincato, Ricardo**
 GitLab: [@istricinc](https://code.fbi.h-da.de/istricinc "@istricinc")<br>
 
-🎓 **Heymel, Celine**  
+🎓 **Heymel, Celine**
 GitLab: [@istceheym](https://code.fbi.h-da.de/istceheym "@istceheym")<br>
 
-🎓 **Vogel, Eliah**  
+🎓 **Vogel, Eliah**
 GitLab: [@istelvoge](https://code.fbi.h-da.de/istelvoge "@istelvoge")<br>
 
-🎓 **Walther, Ramon**  
+🎓 **Walther, Ramon**
 GitLab: [@istrawalt](https://code.fbi.h-da.de/istrawalt "@istrawalt")<br>
 
-🎓 **Werner, Niklas**  
+🎓 **Werner, Niklas**
 GitLab: [@istnswern](https://code.fbi.h-da.de/istnswern "@istnswern")<br>
 
 _This project is kindly supervised by T. Sauer / D. Schulz / D. Wohlfarth._
@@ -56,17 +56,17 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 1. Move over to the `bretsch-app/bretsch-api/` folder and create a `.env` file based on the `.env.example`. For default values use the `.env.dist` as base. After that repeat this process for the `bretsch-app/bretsch-frontend/` folder. Finally mve over to the `bretsch-app/bretsch-socket-server/` folder and create a `.env` file based on the `.env.example`.
 2. Now head back to the root folder and execute the following command:
 
-   
 
-   ``` 
+
+   ```
    make start
    ```
 
    Alternatively if you can't use `make` , run:
 
-   
 
-   ``` 
+
+   ```
    docker-compose up
    ```
 
@@ -74,25 +74,25 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 
    **Note:** In some cases, the creation of the DB docker is slower than the API docker. This is resulting in the API docker failing to connect to the DB and automatically synchronies the db schema. If this is the case, make sure to restart the project or execute the following command manually as soon as the db is up and running:
 
-   
 
-   ``` 
+
+   ```
    make dbsync
    ```
 
    Alternatively if you can't use `make` , run:
 
-   
 
-   ``` 
+
+   ```
    docker-compose exec bretsch-api npm run typeorm schema:sync
    ```
 
 3. Thats it, your done, it's as simple as that! Your servers should be running now and got a working connection to the DB. You can verify this by checking the console output, which should tell you something like this:
 
-   
 
-   ``` 
+
+   ```
    You can now view bretsch-frontend in the browser.
 
       Local:            http://localhost:80
@@ -103,13 +103,13 @@ There is barley nothing easier than setting up this project. Just follow this 3 
 
 Oh and by the way, if you're willing to stop the running server ever again, try executing the following command at the root dir:
 
-``` 
+```
 make stop
 ```
 
 Alternatively if you can't use `make` , run:
 
-``` 
+```
 docker-compose down
 ```
 
@@ -121,7 +121,7 @@ Replace in the ` `  ` command `  `  ` -field of the .yml file in the images ` br
 
 that it look like the following:
 
-``` 
+```
 command: npm start
 ```
 
@@ -157,13 +157,13 @@ This project includes defined automated tests (using jest and cypress). This hel
 
 To run all tests, you have to simply start the servers and execute the following command at the root dir:
 
-``` 
+```
 make test
 ```
 
 Alternatively if you can't use `make` , run:
 
-``` 
+```
 docker-compose exec bretsch-api npm run test
 docker-compose exec bretsch-frontend npm run test
 ```
@@ -174,13 +174,13 @@ Depending on the system you're running the tests on, this takes up to a couple o
 
 To start the cypress test environment execute the following command at the root dir:
 
-``` 
+```
 make cypress
 ```
 
 Alternatively if you can't use `make` , move over to the `bretsch-app/cypress/` folder and run:
 
-``` 
+```
 npm i
 npm run cypress
 ```
@@ -189,25 +189,25 @@ npm run cypress
 
 If you just want to run the **frontend** tests, execute the following command at the root dir:
 
-``` 
+```
 make ftest
 ```
 
 Alternatively if you can't use `make` , run:
 
-``` 
+```
 docker-compose exec bretsch-frontend npm run test
 ```
 
 And if you just wanna run the **backend** tests, execute the following command at the root dir:
 
-``` 
+```
 make btest
 ```
 
 Alternatively if you can't use `make` , run:
 
-``` 
+```
 docker-compose exec bretsch-api npm run test
 ```
 
@@ -217,13 +217,13 @@ If you willing to test the project, especially the backend, manually or wanna te
 
 Note that the predefined postman collection is based on the fixtures also delivered with the project. To add this example fixtures to your database simple execute the following command at the root dir:
 
-``` 
+```
 make fixtures
 ```
 
 Alternatively if you can't use `make` , run:
 
-``` 
+```
 docker-compose exec bretsch-api npm run fixtures
 ```
 
@@ -231,7 +231,7 @@ docker-compose exec bretsch-api npm run fixtures
 
 This is a short introduction to the essential functions as well as to some special features. But for most parts, the frontend is very user friendly and self-explanatory. So we keep this Reference kinda short by purpose. Well, then lets start already!
 
-> TODO
+[Little Frontend Guide](doc/frontend_reference/frontend_ref.md)
 
 Okay, so that should be enough for now. As we said, the rest is super easy to understand and shouldn't pose any major difficulties. But If it does, feel free to contact us!
 
