@@ -171,7 +171,7 @@ export const deleteDialog = (
           <Button onClick={handleClose} color="primary" autoFocus>
             NO!
           </Button>
-          <Button onClick={deleteDB} color="primary">
+          <Button data-testid="admin-deleteVehicle-deleteIrrevocably" onClick={deleteDB} color="primary">
             Delete irrevocably
           </Button>
         </DialogActions>
@@ -611,7 +611,7 @@ export const VehicleTable = () => {
                   width: 150,
                   renderCell: (params: ValueFormatterParams) => (
                     <>
-                      <IconButton
+                      <IconButton data-testid="admin-updateVehicle-button"
                         aria-label="info"
                         color="primary"
                         onClick={() => {

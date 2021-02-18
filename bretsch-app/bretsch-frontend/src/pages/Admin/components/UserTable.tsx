@@ -361,7 +361,7 @@ export const UserTable = () => {
             <p>E-mail: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Email"
                 onChange={handleUEmailChange}
                 value={uemail}
                 id="outlined-required"
@@ -371,7 +371,7 @@ export const UserTable = () => {
             <p>Password: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Password"
                 onChange={handleUPasswordChange}
                 value={upassword}
                 id="outlined-required"
@@ -381,7 +381,7 @@ export const UserTable = () => {
             <p>Firstname: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Firstname"
                 onChange={handleUFirstName}
                 value={ufirstName}
                 id="outlined-required"
@@ -391,7 +391,7 @@ export const UserTable = () => {
             <p>Lastname: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Lastname"
                 onChange={handleULastName}
                 value={ulastName}
                 id="outlined-required"
@@ -417,7 +417,7 @@ export const UserTable = () => {
             <p>Prefered Payment: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-PreferedPayment"
                 onChange={handleUPreferedPaymentChange}
                 value={uPreferedPayment}
                 id="outlined-required"
@@ -427,7 +427,7 @@ export const UserTable = () => {
             <p>Street and street number: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Street"
                 onChange={handleUStreetPlusNameChange}
                 value={uStreetPlusNumber}
                 id="outlined-required"
@@ -437,7 +437,7 @@ export const UserTable = () => {
             <p>City: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-City"
                 onChange={handleUCityChange}
                 value={ucity}
                 id="outlined-required"
@@ -510,7 +510,7 @@ export const UserTable = () => {
   return (
     <>
       <CreateButton>
-        <Button variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
+        <Button data-testid="admin-createUser-button" variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
           Create
         </Button>
         <Button style={{ margin: 10 }} variant="outlined" onClick={allUsers}>
