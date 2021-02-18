@@ -14,9 +14,7 @@
 ``` json
 {
   "startDate": "19.01.2021",
-  "endDate": "22.01.2021",
   "paymentStatus": "payed",
-  "price": 90,
   "vehicleId": 1,
   "userId": 1
 }
