@@ -1,7 +1,7 @@
 import { DataGrid, FilterModel, ValueFormatterParams } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 import React, { useEffect, useState } from 'react';
-import { User, Vehicle } from '../../../util/EntityInterfaces';
+import { Booking, User, Vehicle } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { chipMessageError, chipMessageSucess, CreateButton, deleteDialog, vehicleStatus } from './vehicleTable';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -16,9 +16,27 @@ import {
   MenuItem,
   OutlinedInput,
   TextField,
+  Typography,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DateFnsUtils from '@date-io/date-fns';
+import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
+import { BookingTable } from './bookingTable';
+
+export const Refresh = styled.div`
+  margin-left: 2%;
+`;
+
+export const userRole = [
+  {
+    value: 0,
+    label: 'user',
+  },
+  {
+    value: 1,
+    label: 'admin',
+  },
+];
 
 export const UserTable = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -34,6 +52,7 @@ export const UserTable = () => {
   const [uPreferedPayment, setuPreferedPayment] = useState<string>('');
   const [uStreetPlusNumber, setuStreetPlusNumber] = useState<string>('');
   const [ucity, setucity] = useState<string>('');
+  const [urole, seturole] = useState<number>(0);
 
   const handleUEmailChange = (e) => {
     setuemail(e.target.value.toString());
@@ -59,20 +78,27 @@ export const UserTable = () => {
   const handleUCityChange = (e) => {
     setucity(e.target.value.toString());
   };
+  const handleURoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    seturole(parseInt(event.target.value, 10));
+  };
   // Dialogs
   const [deleteDialogUser, setDeleteDialogUser] = useState<boolean>(false);
   const [createDialogUser, setCreateDialogUser] = useState<boolean>(false);
   const [updateDialogUser, setUpdateDialogUser] = useState<boolean>(false);
+  const [bookingDialog, setBookingDialog] = useState<boolean>(false);
 
   const handleDeleteDialogClose = () => {
     setDeleteDialogUser(false);
+    clearInput();
   };
   const handleCreateDialogOpen = () => {
+    clearInput();
     setCreateDialogUser(true);
   };
 
   const handleCreateDialogClose = () => {
     setCreateDialogUser(false);
+    clearInput();
   };
 
   const handleUpdateDialogOpen = () => {
@@ -82,9 +108,14 @@ export const UserTable = () => {
   const handleUpdateDialogClose = () => {
     setUpdateDialogUser(false);
   };
+
+  const handleBookingDialogClose = () => {
+    setBookingDialog(false);
+  };
   // Chips
   const [chipUserDelete, setchipUserDelete] = useState<boolean>(false);
   const [chipErrorDelete, setchipErrorDelete] = useState<boolean>(false);
+  const [chipErrorDeleteValid, setchipErrorDeleteValid] = useState<boolean>(false);
 
   const [chipUserCreate, setchipUserCreate] = useState<boolean>(false);
   const [chipErrorCreate, setchipErrorCreate] = useState<boolean>(false);
@@ -97,6 +128,9 @@ export const UserTable = () => {
   };
   const handleUserDeleteErrorChipClose = () => {
     setchipErrorDelete(false);
+  };
+  const handleUserDeleteErrorValidChipClose = () => {
+    setchipErrorDeleteValid(false);
   };
   const handleUserCreateSucChipClose = () => {
     setchipUserCreate(false);
@@ -125,10 +159,14 @@ export const UserTable = () => {
       setuPreferedPayment(choosedUser.preferedPayment);
       setuStreetPlusNumber(choosedUser.streetPlusNumber);
       setucity(choosedUser.city);
+      const r = userRole.filter((u) => u.label === choosedUser.userRole);
+      if (r.length === 1) {
+        seturole(r[0].value);
+      }
     }
   }, [choosedUser]);
 
-  // get all vehicles
+  // get all users
   const allUsers = async () => {
     const userRequest = await fetch(`/api/user/`, {
       headers: { 'content-type': 'application/json' },
@@ -140,7 +178,7 @@ export const UserTable = () => {
     }
   };
 
-  // delete vehicles
+  // delete user
   const deleteUserDB = async () => {
     if (choosedUser) {
       const userRequest = await fetch(`/api/user/` + choosedUser.userId.toString(), {
@@ -157,7 +195,7 @@ export const UserTable = () => {
     }
   };
 
-  // create vehicles
+  // create User
   const createUserDB = async (e) => {
     e.preventDefault();
     const userRequest = await fetch(`/api/user/`, {
@@ -201,6 +239,7 @@ export const UserTable = () => {
             preferedPayment: uPreferedPayment,
             streetPlusNumber: uStreetPlusNumber,
             city: ucity,
+            userRole: userRole[urole].label,
           }),
         });
       } else {
@@ -236,9 +275,40 @@ export const UserTable = () => {
     id = e.currentTarget.id.toString();
     const uDelete = users.filter((u) => u.userId.toString() === id);
     if (uDelete.length === 1) {
-      await setchoosedUsers(uDelete[0]);
-      await setDeleteDialogUser(true);
+      const validDelete = await userToDelete(id);
+      if (validDelete) {
+        await setchoosedUsers(uDelete[0]);
+        await setDeleteDialogUser(true);
+      } else {
+        setchipErrorDeleteValid(true);
+      }
     }
+  };
+
+  const userToDelete = async (uid: string) => {
+    const bookings = await bookingsByUserDB(uid);
+    if (bookings && bookings.length > 0) {
+      const notPayedBookings = bookings.filter((b) => b.paymentStatus === 'not payed');
+      if (notPayedBookings.length === 0) {
+        return true;
+      }
+    } else {
+      return true;
+    }
+    return false;
+  };
+
+  const bookingsByUserDB = async (uid: string) => {
+    const userRequest = await fetch(`/api/user/` + uid + `/bookings`, {
+      headers: { 'content-type': 'application/json' },
+      method: 'GET',
+    });
+    if (userRequest.status === 200) {
+      const bookingsJSON = await userRequest.json();
+      const bookings: Booking[] = bookingsJSON.data;
+      return bookings;
+    }
+    return null;
   };
 
   const clearInput = () => {
@@ -250,11 +320,37 @@ export const UserTable = () => {
     setuPreferedPayment('');
     setuStreetPlusNumber('');
     setucity('');
+    seturole(0);
   };
 
-  const fillInput = () => {};
+  // role -> false: create true:update
+  const checkRoleUpdate = (role: boolean) => {
+    if (role) {
+      return (
+        <>
+          <p> Role: </p>
+          <FormControl required>
+            <TextField
+              id="outlined-select-currency"
+              select
+              value={urole}
+              onChange={handleURoleChange}
+              variant="outlined"
+            >
+              {userRole.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+        </>
+      );
+    }
+    return <></>;
+  };
 
-  const userManageDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any) => {
+  const userManageDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any, role: boolean) => {
     return (
       <Dialog onClose={hClose} aria-labelledby="simple-dialog-title" open={mOpen}>
         <form onSubmit={finishFunc}>
@@ -265,7 +361,7 @@ export const UserTable = () => {
             <p>E-mail: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Email"
                 onChange={handleUEmailChange}
                 value={uemail}
                 id="outlined-required"
@@ -275,7 +371,7 @@ export const UserTable = () => {
             <p>Password: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Password"
                 onChange={handleUPasswordChange}
                 value={upassword}
                 id="outlined-required"
@@ -285,7 +381,7 @@ export const UserTable = () => {
             <p>Firstname: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Firstname"
                 onChange={handleUFirstName}
                 value={ufirstName}
                 id="outlined-required"
@@ -295,15 +391,15 @@ export const UserTable = () => {
             <p>Lastname: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Lastname"
                 onChange={handleULastName}
                 value={ulastName}
                 id="outlined-required"
                 variant="outlined"
               />
             </FormControl>
+            {checkRoleUpdate(role)}
             <p>Birthdate:</p>
-
             <FormControl required>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
@@ -321,7 +417,7 @@ export const UserTable = () => {
             <p>Prefered Payment: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-PreferedPayment"
                 onChange={handleUPreferedPaymentChange}
                 value={uPreferedPayment}
                 id="outlined-required"
@@ -331,7 +427,7 @@ export const UserTable = () => {
             <p>Street and street number: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-Street"
                 onChange={handleUStreetPlusNameChange}
                 value={uStreetPlusNumber}
                 id="outlined-required"
@@ -341,7 +437,7 @@ export const UserTable = () => {
             <p>City: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createAdmin-City"
                 onChange={handleUCityChange}
                 value={ucity}
                 id="outlined-required"
@@ -358,6 +454,35 @@ export const UserTable = () => {
       </Dialog>
     );
   };
+
+  const bookingTable = () => {
+    if (choosedUser) {
+      return (
+        <Dialog
+          maxWidth="lg"
+          fullWidth={true}
+          onClose={handleBookingDialogClose}
+          aria-labelledby="simple-dialog-title"
+          open={bookingDialog}
+        >
+          <h1>
+            {' '}
+            Bookings of User {choosedUser.firstName} {choosedUser.lastName}
+          </h1>
+          <BookingTable bookings={choosedUser.bookings} />
+        </Dialog>
+      );
+    }
+  };
+
+  const bookingDialogOpen = async (id: string) => {
+    const choosedUserBooking = users.filter((u) => u.userId.toString() === id.toString());
+    if (choosedUserBooking.length === 1) {
+      await setchoosedUsers(choosedUserBooking[0]);
+      setBookingDialog(true);
+    }
+  };
+
   const handleUpdateUser = async (id: string) => {
     const choosedUserToUpdate = users.filter((u) => u.userId.toString() === id);
     if (choosedUserToUpdate.length === 1) {
@@ -378,16 +503,21 @@ export const UserTable = () => {
       preferedPayment: user.preferedPayment,
       adress: user.streetPlusNumber + ' ' + user.city,
       button: user.userId,
+      bookings: [user.userId, user.bookings.length],
     });
   }
 
   return (
     <>
       <CreateButton>
-        <Button variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
+        <Button data-testid="admin-createUser-button" variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
           Create
         </Button>
+        <Button style={{ margin: 10 }} variant="outlined" onClick={allUsers}>
+          Refresh
+        </Button>
       </CreateButton>
+
       <div style={{ height: 400, width: '100%' }}>
         <div style={{ display: 'flex', height: '100%' }}>
           <div style={{ flexGrow: 1 }}>
@@ -418,15 +548,18 @@ export const UserTable = () => {
                 {
                   field: 'userRole',
                   headerName: 'userRole',
-                  width: 150,
                 },
                 { field: 'birthday', headerName: 'birth date' },
                 { field: 'preferedPayment', headerName: 'prefered payment', width: 150 },
                 { field: 'adress', headerName: 'adress', width: 300 },
                 {
+                  field: 'bookings',
+                  headerName: 'Number of bookings',
+                  renderCell: (params: ValueFormatterParams) => <>{params.value[1]}</>,
+                },
+                {
                   field: 'button',
                   headerName: '',
-                  width: 150,
                   renderCell: (params: ValueFormatterParams) => (
                     <strong>
                       <Button
@@ -456,6 +589,11 @@ export const UserTable = () => {
         handleUserDeleteErrorChipClose,
         'Something went wrong. Could not delete user.',
       )}
+      {chipMessageError(
+        chipErrorDeleteValid,
+        handleUserDeleteErrorValidChipClose,
+        'Something went wrong. Can not delete user with an open booking.',
+      )}
 
       {chipMessageSucess(chipUserUpdate, handleUserUpdateSucChipClose, 'Successfully update user.')}
       {chipMessageError(
@@ -472,8 +610,9 @@ export const UserTable = () => {
       )}
 
       {deleteDialog(choosedUserName, 'User', handleDeleteDialogClose, deleteUserDB, deleteDialogUser)}
-      {userManageDialog(createDialogUser, handleCreateDialogClose, 'Create', createUserDB)}
-      {userManageDialog(updateDialogUser, handleUpdateDialogClose, 'Update', updateUserDB)}
+      {userManageDialog(createDialogUser, handleCreateDialogClose, 'Create', createUserDB, false)}
+      {userManageDialog(updateDialogUser, handleUpdateDialogClose, 'Update', updateUserDB, true)}
+      {bookingTable()}
     </>
   );
 };
