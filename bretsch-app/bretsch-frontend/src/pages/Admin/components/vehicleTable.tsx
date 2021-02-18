@@ -427,7 +427,6 @@ export const VehicleTable = () => {
 
   const updateChoosedVehicle = async (id: string) => {
     const choosedVehicle = vehicles.filter((v) => v.vehicleId.toString() === id);
-    console.log(choosedVehicle);
     if (choosedVehicle.length === 1) {
       await fillInput(choosedVehicle[0]);
       await setchoosedUpdateVehicle(choosedVehicle[0]);

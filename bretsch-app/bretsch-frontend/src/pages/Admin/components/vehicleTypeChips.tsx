@@ -42,7 +42,7 @@ export const VehicleTypeChips = () => {
   // Create and Update Vehicle Type
   const [name, setname] = useState<string>(' ');
   const [price, setPrice] = useState<number>(0);
-  const [errorprice, setErrorprice] = useState<string>(' ');
+  const [vstartPrice, setvStartPrice] = useState<number>(0);
   const [bLevel, setBLevel] = useState<number>(0);
   const [errorbLevel, setErrorbLevel] = useState<string>(' ');
   const [typeId, setTypeId] = useState<string>(' ');
@@ -79,7 +79,8 @@ export const VehicleTypeChips = () => {
     setDialogCreate(false);
   };
 
-  const handleCreateDialogOpen = () => {
+  const handleCreateDialogOpen = async () => {
+    clearInput();
     setDialogCreate(true);
   };
 
@@ -90,9 +91,13 @@ export const VehicleTypeChips = () => {
   const handlePriceChange = (e) => {
     if (parseFloat(e.target.value) || e.target.value.empty) {
       setPrice(parseFloat(e.target.value));
-      setErrorprice('');
-    } else {
-      setErrorprice('Error: Value should be a number');
+    }
+  };
+
+  const handleStartPriceChange = (e) => {
+    console.log(e.target.value);
+    if (parseFloat(e.target.value) || e.target.value.empty) {
+      setvStartPrice(parseFloat(e.target.value));
     }
   };
 
@@ -130,12 +135,15 @@ export const VehicleTypeChips = () => {
         <Button data-testid="admin-create-button" variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
           Create
         </Button>
+        <Button style={{ margin: 10 }} variant="outlined" onClick={allVehicleTypes}>
+          Refresh
+        </Button>
       </ChipsPos>,
     );
     for (const t of vehicleTypes) {
       chips.push(
-        <ChipsPos  id={t.vehicleTypeId.toString()}>
-          <Chip 
+        <ChipsPos id={t.vehicleTypeId.toString()}>
+          <Chip
             label={t.type}
             onClick={() => {
               updateVehicleType(t);
@@ -152,20 +160,50 @@ export const VehicleTypeChips = () => {
     return chips;
   };
 
-  const createVehicleTypeDialog = () => {
+  const clearInput = () => {
+    setname(' ');
+    setPrice(0);
+    setvStartPrice(0);
+    setBLevel(0);
+    setTypeId(' ');
+  };
+
+  const manageVehicleTypeDialog = (mOpen: boolean, hClose: any, actiontype: string, finishFunc: any) => {
     return (
-      <Dialog onClose={handleCreateDialogClose} aria-labelledby="simple-dialog-title" open={openDialogCreate}>
-        <form onSubmit={createVehicleType}>
+      <Dialog onClose={hClose} aria-labelledby="simple-dialog-title" open={mOpen}>
+        <form onSubmit={finishFunc}>
           <DialogTitle id="simple-dialog-title">Create new vehicle type</DialogTitle>
           <DialogContent dividers>
             <p> Name: </p>
             <FormControl required>
-              <TextField data-testid="admin-createVehicleType-name" onChange={handleNameChange} id="outlined-basic" variant="outlined" />
+              <TextField
+                data-testid="admin-createVehicleType-name"
+                defaultValue={name}
+                onChange={handleNameChange}
+                id="outlined-basic"
+                variant="outlined"
+              />
+            </FormControl>
+            <p> Start Price </p>
+            <FormControl required>
+              <OutlinedInput
+                data-testid="admin-createVehicleType-price"
+                id="filled-adornment-weight"
+                defaultValue={vstartPrice}
+                onChange={handleStartPriceChange}
+                endAdornment={<InputAdornment position="end">€</InputAdornment>}
+                aria-describedby="filled-weight-helper-text"
+                inputProps={{
+                  'aria-label': 'weight',
+                }}
+              />
             </FormControl>
             <p> Price </p>
             <FormControl required>
-              <OutlinedInput data-testid="admin-createVehicleType-price"
+              <OutlinedInput
+                data-testid="admin-createVehicleType-price"
                 id="filled-adornment-weight"
+                defaultValue={price}
                 onChange={handlePriceChange}
                 endAdornment={<InputAdornment position="end">€/min</InputAdornment>}
                 aria-describedby="filled-weight-helper-text"
@@ -174,11 +212,13 @@ export const VehicleTypeChips = () => {
                 }}
               />
             </FormControl>
-            <FormHelperText id="component-helper-text">{errorprice}</FormHelperText>
+
             <p> Minimal Battery Level: </p>
             <FormControl required>
-              <OutlinedInput data-testid="admin-createVehicleType-battery"
+              <OutlinedInput
+                data-testid="admin-createVehicleType-battery"
                 id="filled-adornment-weight"
+                defaultValue={bLevel}
                 onChange={handleBLevelChange}
                 endAdornment={<InputAdornment position="end">%</InputAdornment>}
                 aria-describedby="filled-weight-helper-text"
@@ -192,7 +232,7 @@ export const VehicleTypeChips = () => {
 
           <div>
             <Button data-testid="admin-createVehicleType-create" type="submit" color="primary">
-              Create
+              {actiontype}
             </Button>
           </div>
         </form>
@@ -200,7 +240,7 @@ export const VehicleTypeChips = () => {
     );
   };
 
-  const updateVehicleTypeDialog = () => {
+  /*const updateVehicleTypeDialog = () => {
     return (
       <Dialog onClose={handleUpdateDialogClose} aria-labelledby="simple-dialog-title" open={openDialogUpdate}>
         <form onSubmit={updateVehicleTypeDB}>
@@ -248,7 +288,7 @@ export const VehicleTypeChips = () => {
         </form>
       </Dialog>
     );
-  };
+  };*/
 
   const allVehicleTypes = async () => {
     const vehicleTypeRequest = await fetch(`/api/vehicletype/`, {
@@ -266,6 +306,7 @@ export const VehicleTypeChips = () => {
     await setPrice(t.pricePerMinute);
     await setBLevel(t.minimalBatteryLevel);
     await setTypeId(t.vehicleTypeId.toString());
+    await setvStartPrice(t.startPrice);
     handleUpdateDialogOpen();
   };
 
@@ -277,16 +318,18 @@ export const VehicleTypeChips = () => {
         type: name,
         pricePerMinute: price,
         minimalBatteryLevel: bLevel,
+        startPrice: vstartPrice,
       }),
       method: 'PATCH',
     });
     if (vehicleTypeRequest.status === 200) {
       await allVehicleTypes();
-      handleUpdateDialogClose();
       setSucUpdate(true);
     } else {
       setAlertUpdate(true);
     }
+    handleUpdateDialogClose();
+    await clearInput();
   };
 
   const createVehicleType = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -297,16 +340,18 @@ export const VehicleTypeChips = () => {
         type: name,
         pricePerMinute: price,
         minimalBatteryLevel: bLevel,
+        startPrice: vstartPrice,
       }),
       method: 'POST',
     });
     if (vehicleTypeRequest.status === 201) {
       await allVehicleTypes();
-      handleCreateDialogClose();
       setSucCreate(true);
     } else {
       setAlertCreate(true);
     }
+    handleCreateDialogClose();
+    await clearInput();
   };
 
   const deleteOneVehicleType = async (e: any) => {
@@ -345,7 +390,11 @@ export const VehicleTypeChips = () => {
             <Button onClick={handleClose} color="primary" autoFocus>
               NO!
             </Button>
-            <Button data-testid="admin-createVehicleType-deleteIrrevocably>" onClick={deleteOneVehicleType} color="primary">
+            <Button
+              data-testid="admin-createVehicleType-deleteIrrevocably>"
+              onClick={deleteOneVehicleType}
+              color="primary"
+            >
               Delete irrevocably
             </Button>
           </DialogActions>
@@ -360,8 +409,8 @@ export const VehicleTypeChips = () => {
       <div>
         {printChips()}
         {dialog()}
-        {createVehicleTypeDialog()}
-        {updateVehicleTypeDialog()}
+        {manageVehicleTypeDialog(openDialogCreate, handleCreateDialogClose, 'Create', createVehicleType)}
+        {manageVehicleTypeDialog(openDialogUpdate, handleUpdateDialogClose, 'Update', updateVehicleTypeDB)}
       </div>
       <Snackbar open={alert} autoHideDuration={6000} onClose={handleAlertClose}>
         <Alert onClose={handleAlertClose} severity="success">
