@@ -66,7 +66,12 @@ This will log out the user.
 
 ## The Admin Page
 This page make it possible to see, create, update and delete Vehicle types, Vehicles, Users and Bookings.
-This page is accessable for all user with role admin.
+This page is accessable for all user with role "admin".
+<img src="pic/Frontend_Admin_Access.png" alt="Admin page access">
+<br>
+
+### 11 - Admin page
+With the right access rights you get the option to enter the Admin page
 
 ### Vehicle Type
 <img src="pic/Frontend_Admin_VehicleType.png" alt="All bookings of one user" width=500>
