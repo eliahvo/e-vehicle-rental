@@ -30,12 +30,10 @@ export const MyBookingPage = () => {
       headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
-    console.log(userBookingsRequest);
     if (userBookingsRequest.status === 200) {
       const taskJSON = await userBookingsRequest.json();
       setUserBookings(taskJSON.data);
     }
-    console.log(userBookings);
   };
 
   React.useEffect(() => {
@@ -45,9 +43,11 @@ export const MyBookingPage = () => {
   if (userBookings.length) {
     return (
       <Layout title="My Bookings">
-        {userBookings.map((booking: Booking) => (
-          <UserBookingItem key={booking.bookingId} booking={booking} />
-        ))}
+        {userBookings.reverse().map((booking: Booking) => {
+          if (booking.paymentStatus === 'payed') {
+            return <UserBookingItem key={booking.bookingId} booking={booking} />;
+          }
+        })}
       </Layout>
     );
   } else {
