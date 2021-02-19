@@ -25,7 +25,7 @@ In the following guide you get a quick overview over the use of Bretsch.
 <img src="pic/Frontend_Dasboard.png" alt="Dashboard logged out">
 <img src="pic/Frontend_Dashboard_loggedIn.png" alt="Dashboard logged in">
 
-### [1 - The Map](#map)
+### 1 - The Map
 This button directs back to the Dashboard Map.
 
 ### 2 - Active Booking
@@ -124,11 +124,13 @@ With the right access rights you get the option to enter the Admin page
 ### Users
 <img src="pic/Frontend_Admin_Users.png" alt="All bookings of one user" width=700>
 <br><br>
+
 **Create**:  email, password, firstname, lastname, birth date, prefered payment, street and streetnumber, city <br>
 **Update**:  email, password, firstname, role, lastname, birth date, prefered payment, street and streetnumber, city <br>
 
 ### Booking
 <img src="pic/Frontend_Admin_Bookings.png" alt="All bookings of one user" width=700>
 <br><br>
+
 **Create**:  payment status, start time (date and time), vehicle, user <br>
 **Update**:  payment status, end time (date and time), price <br>
