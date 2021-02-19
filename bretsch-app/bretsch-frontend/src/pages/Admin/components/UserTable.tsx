@@ -255,6 +255,7 @@ export const UserTable = () => {
             preferedPayment: uPreferedPayment,
             streetPlusNumber: uStreetPlusNumber,
             city: ucity,
+            userRole: userRole[urole].label,
           }),
         });
       }
@@ -361,7 +362,7 @@ export const UserTable = () => {
             <p>E-mail: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createAdmin-Email"
+                data-testid="admin-createUser-Email"
                 onChange={handleUEmailChange}
                 value={uemail}
                 id="outlined-required"
@@ -371,7 +372,7 @@ export const UserTable = () => {
             <p>Password: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createAdmin-Password"
+                data-testid="admin-createUser-Password"
                 onChange={handleUPasswordChange}
                 value={upassword}
                 id="outlined-required"
@@ -381,7 +382,7 @@ export const UserTable = () => {
             <p>Firstname: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createAdmin-Firstname"
+                data-testid="admin-createUser-Firstname"
                 onChange={handleUFirstName}
                 value={ufirstName}
                 id="outlined-required"
@@ -390,8 +391,8 @@ export const UserTable = () => {
             </FormControl>
             <p>Lastname: </p>
             <FormControl required>
-              <TextField
-                data-testid="admin-createAdmin-Lastname"
+              <TextField 
+                data-testid="admin-createUser-Lastname"
                 onChange={handleULastName}
                 value={ulastName}
                 id="outlined-required"
@@ -402,7 +403,7 @@ export const UserTable = () => {
             <p>Birthdate:</p>
             <FormControl required>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
+                <KeyboardDatePicker data-testid="admin-createUser-Bday"
                   margin="normal"
                   id="date-picker-dialog"
                   format="dd/MM/yyyy"
@@ -417,7 +418,7 @@ export const UserTable = () => {
             <p>Prefered Payment: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createAdmin-PreferedPayment"
+                data-testid="admin-createUser-PreferedPayment"
                 onChange={handleUPreferedPaymentChange}
                 value={uPreferedPayment}
                 id="outlined-required"
@@ -427,7 +428,7 @@ export const UserTable = () => {
             <p>Street and street number: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createAdmin-Street"
+                data-testid="admin-createUser-Street"
                 onChange={handleUStreetPlusNameChange}
                 value={uStreetPlusNumber}
                 id="outlined-required"
@@ -437,7 +438,7 @@ export const UserTable = () => {
             <p>City: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createAdmin-City"
+                data-testid="admin-createUser-City"
                 onChange={handleUCityChange}
                 value={ucity}
                 id="outlined-required"
@@ -562,7 +563,7 @@ export const UserTable = () => {
                   headerName: '',
                   renderCell: (params: ValueFormatterParams) => (
                     <strong>
-                      <Button
+                      <Button data-testid="admin-deleteUser-button"
                         id={params.value.toString()}
                         onClick={handleDeleteUser}
                         variant="outlined"
