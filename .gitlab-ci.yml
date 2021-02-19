@@ -7,7 +7,7 @@ stages:
   - deploy
 
 variables:
-    BASE: /builds/bretsch/ci-cd-test-environment/bretsch-app
+    BASE: /builds/bretsch/main_project/bretsch-app
     API: $BASE/bretsch-api
     FRONTEND: $BASE/bretsch-frontend
     SOCKET_SERVER: $BASE/bretsch-socket-server
