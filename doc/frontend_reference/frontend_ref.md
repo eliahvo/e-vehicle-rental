@@ -94,7 +94,12 @@ This will log out the user.
 
 ## The Admin Page
 This page make it possible to see, create, update and delete Vehicle types, Vehicles, Users and Bookings.
-This page is accessable for all user with role "admin".
+This page is accessable for all user with role "admin". <br>
+
+For test cases exists a admin user in the fixtures
+> _E-mail_: user1@bretsch.eu <br>
+> _Password_: bretsch1
+
 <img src="pic/Frontend_Admin_Access.png" alt="Admin page access">
 <br>
 
@@ -103,16 +108,27 @@ With the right access rights you get the option to enter the Admin page
 
 ### Vehicle Type
 <img src="pic/Frontend_Admin_VehicleType.png" alt="All bookings of one user" width=500>
-<br>
+<br><br>
+
+**Create**: name, start price, price, minimal battery level <br>
+**Update**: name, start price, price, minimal battery level
 
 ### Vehicles
 <img src="pic/Frontend_Admin_Vehicle.png" alt="All bookings of one user" width=700>
-<br>
+<br><br>
+
+**Create**:  Licence Plate (is fully generated - 'DA-BR' + number), battery level, status, according vehicle type, longitude (for car position), latitude (for car position)<br>
+**Update**: Licence Plate (can be fully replaced by an individual licence plate), battery level, status, according vehicle type, longitude (for car position), latitude (for car position)<br>
+
 
 ### Users
 <img src="pic/Frontend_Admin_Users.png" alt="All bookings of one user" width=700>
-<br>
+<br><br>
+**Create**:  email, password, firstname, lastname, birth date, prefered payment, street and streetnumber, city <br>
+**Update**:  email, password, firstname, role, lastname, birth date, prefered payment, street and streetnumber, city <br>
 
 ### Booking
 <img src="pic/Frontend_Admin_Bookings.png" alt="All bookings of one user" width=700>
-<br>
+<br><br>
+**Create**:  payment status, start time (date and time), vehicle, user <br>
+**Update**:  payment status, end time (date and time), price <br>
