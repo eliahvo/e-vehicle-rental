@@ -2,18 +2,18 @@ entity: Booking
 items:
   Booking1:
     paymentStatus: payed
-    price: 6.20
+    price: 1
     vehicle: "@Vehicle1"
     user: "@User1"
 
   Booking2:
     paymentStatus: payed
-    price: 10
+    price: 2
     vehicle: "@Vehicle2"
     user: "@User2"
 
   Booking3:
     paymentStatus: payed
-    price: 20
+    price: 1
     vehicle: "@Vehicle3"
     user: "@User3"
