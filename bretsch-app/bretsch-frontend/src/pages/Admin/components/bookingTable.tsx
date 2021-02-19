@@ -284,7 +284,7 @@ export const BookingTable = (props) => {
             <p>Payment Status: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-updateBooking-PaymentStatus"
                 onChange={handleUPaymentStatusChange}
                 value={bpaymentStatus}
                 id="outlined-required"
@@ -294,7 +294,7 @@ export const BookingTable = (props) => {
             <p>End:</p>
             <FormControl required>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
+                <KeyboardDatePicker data-testid="admin-updateBooking-End"
                   margin="normal"
                   id="date-picker-dialog"
                   format="dd/MM/yyyy"
@@ -304,7 +304,7 @@ export const BookingTable = (props) => {
                     'aria-label': 'change date',
                   }}
                 />
-                <KeyboardTimePicker
+                <KeyboardTimePicker data-testid="admin-updateBooking-TimePicker"
                   margin="normal"
                   id="time-picker"
                   label="Time picker"
@@ -319,7 +319,7 @@ export const BookingTable = (props) => {
             <p>Price: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-updateBooking-Price"
                 onChange={handleBPriceChange}
                 value={bPrice}
                 id="outlined-required"
@@ -346,7 +346,7 @@ export const BookingTable = (props) => {
             <p>Payment Status: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-licensePlate"
+                data-testid="admin-createBooking-PaymentStatus"
                 onChange={handleUPaymentStatusChange}
                 value={bpaymentStatus}
                 id="outlined-required"
@@ -356,7 +356,7 @@ export const BookingTable = (props) => {
             <p>Start:</p>
             <FormControl required>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
+                <KeyboardDatePicker data-testid="admin-createBooking-Start"
                   margin="normal"
                   id="date-picker-dialog"
                   format="dd/MM/yyyy"
@@ -366,7 +366,7 @@ export const BookingTable = (props) => {
                     'aria-label': 'change date',
                   }}
                 />
-                <KeyboardTimePicker
+                <KeyboardTimePicker data-testid="admin-createBooking-TimePicker"
                   margin="normal"
                   id="time-picker"
                   label="Time picker"
@@ -381,7 +381,7 @@ export const BookingTable = (props) => {
             <p>Vehicle: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-vehicleType"
+                data-testid="admin-createBooking-Vehicle"
                 id="outlined-select-currency"
                 select
                 value={bVehicleId}
@@ -398,7 +398,7 @@ export const BookingTable = (props) => {
             <p>User: </p>
             <FormControl required>
               <TextField
-                data-testid="admin-createVehicle-vehicleType"
+                data-testid="admin-createVehicle-User"
                 id="outlined-select-currency"
                 select
                 value={buserId}
@@ -436,7 +436,7 @@ export const BookingTable = (props) => {
   return (
     <>
       <CreateButton>
-        <Button variant="outlined" onClick={handleCreateDialogOpen} color="primary">
+        <Button data-testid="admin-createBooking-createButton" variant="outlined" onClick={handleCreateDialogOpen} color="primary">
           Create
         </Button>
         <Button style={{ margin: 10 }} variant="outlined" onClick={allBookings}>
