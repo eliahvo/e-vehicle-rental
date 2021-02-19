@@ -184,7 +184,7 @@ export const BookingTable = (props) => {
         userId: buserId,
       }),
     });
-    if (bookingRequest.status === 201) {
+    if (bookingRequest.status === 200) {
       await allBookings();
       setchipBookingCreate(true);
     } else {
