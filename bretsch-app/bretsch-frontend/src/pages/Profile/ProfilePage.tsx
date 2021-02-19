@@ -79,6 +79,7 @@ export const ProfilePage = () => {
   const [editPersonalSettings, setEditPersonalSettings] = React.useState(false);
   const [editPaymentSettings, setEditPaymentSettings] = React.useState(false);
   const {
+    token,
     actions: { getTokenData },
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('');
@@ -87,7 +88,7 @@ export const ProfilePage = () => {
 
   const fetchProfile = async () => {
     const profileRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
 
@@ -155,7 +156,7 @@ export const ProfilePage = () => {
 
   const validateOldPassword = async (e: React.FocusEvent<HTMLInputElement>) => {
     if (e.target.name === 'passwordOld') {
-      if (!(await validatePassword(`${profile?.email}`, `${values.passwordOld}`))) {
+      if (!(await validatePassword(`${profile?.email}`, `${values.passwordOld}`, token))) {
         e.target.setCustomValidity('Incorrect password!');
       }
     }
@@ -172,7 +173,7 @@ export const ProfilePage = () => {
       body: JSON.stringify({
         ...values,
       }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: token },
       method: 'PATCH',
     });
     enqueueSnackbar(`Saved changes!`, {
@@ -193,7 +194,8 @@ export const ProfilePage = () => {
           <AccountCircleTwoToneIcon style={{ fontSize: 100 }} className={classes.headings} />
           <ProfileName data-testid="profile-edit-profilename">
             {editNameSettings ? (
-              <TextField data-testid="profile-edit-firstname1"
+              <TextField
+                data-testid="profile-edit-firstname1"
                 onChange={fieldDidChange}
                 margin="dense"
                 name="firstName"
@@ -201,12 +203,13 @@ export const ProfilePage = () => {
                 defaultValue={profile?.firstName}
                 type="text"
                 required
-              /> 
-            ) : ( 
-              `${profile?.firstName }`
+              />
+            ) : (
+              `${profile?.firstName}`
             )}
             {editNameSettings ? (
-              <TextField data-testid="profile-edit-lastname2"
+              <TextField
+                data-testid="profile-edit-lastname2"
                 onChange={fieldDidChange}
                 margin="dense"
                 name="lastName"
@@ -231,7 +234,8 @@ export const ProfilePage = () => {
                   />
                 </IconButton>
                 <IconButton type="submit">
-                  <CheckIcon data-testid="profile-edit-name"
+                  <CheckIcon
+                    data-testid="profile-edit-name"
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                     className={classes.headings}
                     type="submit"
@@ -242,7 +246,8 @@ export const ProfilePage = () => {
               <IconButton
                 disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
               >
-                <EditIcon data-testid="profile-edit-name"
+                <EditIcon
+                  data-testid="profile-edit-name"
                   style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                   className={classes.headings}
                   onClick={() => {
@@ -271,7 +276,8 @@ export const ProfilePage = () => {
                   />
                 </IconButton>
                 <IconButton type="submit">
-                  <CheckIcon data-testid="profile-edit-mainSettings1"
+                  <CheckIcon
+                    data-testid="profile-edit-mainSettings1"
                     type="submit"
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                     className={classes.headings}
@@ -282,7 +288,8 @@ export const ProfilePage = () => {
               <IconButton
                 disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
               >
-                <EditIcon data-testid="profile-edit-mainSettings1"
+                <EditIcon
+                  data-testid="profile-edit-mainSettings1"
                   style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                   className={classes.headings}
                   onClick={() => {
@@ -302,7 +309,8 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={5}>
                 {editMainSettings ? (
-                  <TextField data-testid="profile-edit-email1"
+                  <TextField
+                    data-testid="profile-edit-email1"
                     autoFocus
                     onChange={fieldDidChange}
                     margin="dense"
@@ -325,7 +333,8 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={5}>
                 {editMainSettings ? (
-                  <TextField data-testid="profile-edit-password1"
+                  <TextField
+                    data-testid="profile-edit-password1"
                     onChange={fieldDidChange}
                     margin="dense"
                     name="password"
@@ -338,7 +347,8 @@ export const ProfilePage = () => {
                 )}
                 {values.password ? (
                   <>
-                    <TextField data-testid="profile-edit-password2"
+                    <TextField
+                      data-testid="profile-edit-password2"
                       onChange={fieldDidChange}
                       margin="dense"
                       name="passwordShadow"
@@ -347,7 +357,8 @@ export const ProfilePage = () => {
                       fullWidth
                       required
                     />
-                    <TextField data-testid="profile-edit-password3"
+                    <TextField
+                      data-testid="profile-edit-password3"
                       onChange={fieldDidChange}
                       onBlur={validateOldPassword}
                       margin="dense"
@@ -380,7 +391,8 @@ export const ProfilePage = () => {
                   </IconButton>
 
                   <IconButton type="submit">
-                    <CheckIcon data-testid="profile-edit-personalSettings"
+                    <CheckIcon
+                      data-testid="profile-edit-personalSettings"
                       type="submit"
                       style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                       className={classes.headings}
@@ -391,7 +403,8 @@ export const ProfilePage = () => {
                 <IconButton
                   disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
                 >
-                  <EditIcon data-testid="profile-edit-personalSettings"
+                  <EditIcon
+                    data-testid="profile-edit-personalSettings"
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                     className={classes.headings}
                     onClick={() => {
@@ -412,7 +425,8 @@ export const ProfilePage = () => {
                 {editPersonalSettings ? (
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container justify="space-around">
-                      <KeyboardDatePicker data-testid="profile-edit-birthDate"
+                      <KeyboardDatePicker
+                        data-testid="profile-edit-birthDate"
                         id="birthDate"
                         name="birthDate"
                         margin="normal"
@@ -445,7 +459,8 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={4}>
                 {editPersonalSettings ? (
-                  <TextField data-testid="profile-edit-adress"
+                  <TextField
+                    data-testid="profile-edit-adress"
                     onChange={fieldDidChange}
                     margin="dense"
                     name="streetPlusNumber"
@@ -466,7 +481,8 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={4}>
                 {editPersonalSettings ? (
-                  <TextField data-testid="profile-edit-city"
+                  <TextField
+                    data-testid="profile-edit-city"
                     onChange={fieldDidChange}
                     margin="dense"
                     name="city"
@@ -497,7 +513,8 @@ export const ProfilePage = () => {
                     />
                   </IconButton>
                   <IconButton type="submit">
-                    <CheckIcon data-testid="profile-edit-paymentSettings"
+                    <CheckIcon
+                      data-testid="profile-edit-paymentSettings"
                       type="submit"
                       style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                       className={classes.headings}
@@ -508,7 +525,8 @@ export const ProfilePage = () => {
                 <IconButton
                   disabled={editNameSettings || editMainSettings || editPersonalSettings || editPaymentSettings}
                 >
-                  <EditIcon data-testid="profile-edit-paymentSettings"
+                  <EditIcon
+                    data-testid="profile-edit-paymentSettings"
                     style={{ margin: '0 0 0 0.5rem', fontSize: 30 }}
                     className={classes.headings}
                     onClick={() => {
@@ -527,7 +545,8 @@ export const ProfilePage = () => {
               </Grid>
               <Grid item xs={4}>
                 {editPaymentSettings ? (
-                  <TextField data-testid="profile-edit-payment"
+                  <TextField
+                    data-testid="profile-edit-payment"
                     autoFocus
                     onChange={handleChange}
                     margin="dense"

@@ -9,7 +9,7 @@ import { Box, Chip, Divider, makeStyles } from '@material-ui/core';
 import { Booking, Vehicle, vehicle_status } from '../util/EntityInterfaces';
 import styled from 'styled-components';
 import WarningIcon from '@material-ui/icons/Warning';
-import { setVehicleStatus } from '../util/RequestHelper';
+import { setVehicleStats } from '../util/RequestHelper';
 import { authContext } from '../contexts/AuthenticationContext';
 import { LoginContext } from '../contexts/LoginContext';
 import { SocketclientContext } from '../contexts/SocketclientContext';
@@ -61,7 +61,7 @@ export default function vehicleInfoFormDialog() {
   const fetchActualBooking = async () => {
     if (verifyAuthentication(login, auth) && getTokenData()?.id) {
       const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: token },
         method: 'GET',
       });
       if (userRequest.status === 200) {
@@ -78,9 +78,9 @@ export default function vehicleInfoFormDialog() {
     }
   }, [vehicleInfoContext.vehicleId]);
 
-  const handleClose = (submitForm: boolean) => {
+  const handleClose = async (submitForm: boolean) => {
     vehicleInfoContext.toggleOpen();
-    if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
+    if (submitForm) setVehicleStats(vehicle?.vehicleId, vehicle_status.Used, vehicle?.batteryLevel, token);
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -117,10 +117,10 @@ export default function vehicleInfoFormDialog() {
           userId: getTokenData()?.id,
           vehicleId: vehicle?.vehicleId,
         }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: token },
         method: 'POST',
       });
-      if (createBookingRequest.status === 200) {
+      if (createBookingRequest.status === 201) {
         const createBookingJSON = await createBookingRequest.json();
         try {
           const bookingId = createBookingJSON['data']['bookingId'];
@@ -128,7 +128,7 @@ export default function vehicleInfoFormDialog() {
             body: JSON.stringify({
               actualBookingId: bookingId,
             }),
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Authorization: token },
             method: 'PATCH',
           });
           if (updateUserRequest.status === 200) {

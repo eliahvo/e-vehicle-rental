@@ -18,7 +18,6 @@ import {
 import { useMapStyle } from './util/mapStyle';
 import { VehicleInfoContext } from '../../contexts/VehicleInfoContext';
 import VehicleInfoFormDialog from '../../components/VehicleInfoForBooking';
-import { setVehicleStatus } from '../../util/RequestHelper';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import useLocalStorage from '../../util/LocalStorageHook';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
@@ -165,7 +164,8 @@ export const DashboardPage = () => {
       <CheckDialog text="Transaction successfully completed!" />
       {vehicleTypes.length ? (
         <>
-          <Button data-testid="dashboard-filterButton1"
+          <Button
+            data-testid="dashboard-filterButton1"
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget)}
             className={classes.filterButton}
             variant="contained"
@@ -173,14 +173,20 @@ export const DashboardPage = () => {
           >
             <FilterListIcon />
           </Button>
-          
-          <Menu data-testid="dashboard-filterButtonOption2" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+
+          <Menu
+            data-testid="dashboard-filterButtonOption2"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+          >
             {vehicleTypes.map((vehicleType: { name: string; isChecked: boolean }) => {
               return (
-                <MenuItem key={vehicleType.name} dense >
+                <MenuItem key={vehicleType.name} dense>
                   <FormControlLabel
                     control={
-                      <Checkbox 
+                      <Checkbox
                         checked={vehicleType.isChecked}
                         onChange={handleFilterChange}
                         name={vehicleType.name}
@@ -193,7 +199,6 @@ export const DashboardPage = () => {
               );
             })}
           </Menu>
-          
         </>
       ) : (
         ''
@@ -205,7 +210,8 @@ export const DashboardPage = () => {
         onLoad={() => setLoading(true)}
       >
         <VehicleInfoContext.Provider value={vehicleInfoContext}>
-          <GoogleMap data-testid="dashboard-map1"
+          <GoogleMap
+            data-testid="dashboard-map1"
             onLoad={() => setLoading(true)}
             onTilesLoaded={() => setLoading(false)}
             mapContainerStyle={{
@@ -229,7 +235,7 @@ export const DashboardPage = () => {
               styles: mapStyle,
             }}
           >
-            <MarkerClusterer 
+            <MarkerClusterer
               averageCenter={true}
               options={{
                 imagePath: './icons/clusterer/m',
@@ -239,7 +245,8 @@ export const DashboardPage = () => {
                 displayVehicles.map((vehicle: Vehicle) => {
                   if (vehicle.status === 'Free' && vehicleBlacklist.indexOf(vehicle.vehicleId)) {
                     return (
-                      <Marker data-testid="dashboard-pointer1"
+                      <Marker
+                        data-testid="dashboard-pointer1"
                         key={vehicle.vehicleId}
                         position={{
                           lat: parseFloat(vehicle.positionLatitude),

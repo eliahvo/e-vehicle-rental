@@ -4,7 +4,7 @@ import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
-import { setVehicleStats, setVehicleStatus } from '../../util/RequestHelper';
+import { setVehicleStats } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 import { PaymentContext } from '../../contexts/PaymentContext';
@@ -63,6 +63,7 @@ export const BookingPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [booking, setBooking] = useState<Booking>();
   const {
+    token,
     actions: { getTokenData },
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('Paypal'); // must be changed later
@@ -136,7 +137,7 @@ export const BookingPage = () => {
   const fetchBooking = async () => {
     const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
       /* 1 must be replaced with actual logged in userId */
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
 
@@ -144,7 +145,7 @@ export const BookingPage = () => {
       const userJSON = await userRequest.json();
       if (userJSON.data.actualBooking) {
         const bookingRequest = await fetch(`/api/booking/${userJSON.data.actualBooking.bookingId}`, {
-          headers: { 'content-type': 'application/json' },
+          headers: { 'content-type': 'application/json', Authorization: token },
           method: 'GET',
         });
 
@@ -166,23 +167,22 @@ export const BookingPage = () => {
         paymentStatus: 'payed' /* maybe must be changed */,
         price: Number(currentPrice),
       }),
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'PATCH',
     });
 
     if (bookingPatch.status === 200) {
       const newBattery: number = Number(booking?.vehicle.batteryLevel) - battery;
-      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery);
+      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery, token);
 
       {
         /* updating user */
       }
       const userPatch = await fetch(`/api/user/${getTokenData()?.id}`, {
-        /* 1 must be changed to logged in userId */
         body: JSON.stringify({
           actualBookingId: -1,
         }),
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: token },
         method: 'PATCH',
       });
 

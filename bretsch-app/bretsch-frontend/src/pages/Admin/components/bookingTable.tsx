@@ -1,5 +1,5 @@
 import { Booking, User, Vehicle } from '../../../util/EntityInterfaces';
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { DataGrid, ValueFormatterParams } from '@material-ui/data-grid';
 import { Dialog, DialogContent, DialogTitle, FormControl, IconButton, MenuItem, TextField } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
@@ -8,8 +8,11 @@ import Button from '@material-ui/core/Button';
 import { chipMessageError, chipMessageSucess, CreateButton, deleteDialog } from './vehicleTable';
 import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { authContext } from '../../../contexts/AuthenticationContext';
 
-export const BookingTable = (props) => {
+export const BookingTable = () => {
+  const { token } = useContext(authContext);
+
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -148,7 +151,7 @@ export const BookingTable = (props) => {
   // get all users
   const allUsers = async () => {
     const userRequest = await fetch(`/api/user/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
     if (userRequest.status === 200) {
@@ -160,7 +163,7 @@ export const BookingTable = (props) => {
   // get all bookings
   const allBookings = async () => {
     const userRequest = await fetch(`/api/booking/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
     if (userRequest.status === 200) {
@@ -173,7 +176,7 @@ export const BookingTable = (props) => {
   const createBookingDB = async (e) => {
     e.preventDefault();
     const bookingRequest = await fetch(`/api/booking/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'POST',
       body: JSON.stringify({
         startDate: bStartDate.toDateString(),
@@ -198,7 +201,7 @@ export const BookingTable = (props) => {
   const deleteBookingDB = async () => {
     if (choosedBookings) {
       const vehicleRequest = await fetch(`/api/booking/` + choosedBookings.bookingId, {
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: token },
         method: 'DELETE',
       });
       if (vehicleRequest.status === 200) {
@@ -216,7 +219,7 @@ export const BookingTable = (props) => {
     e.preventDefault();
     if (choosedBookings) {
       const vehicleRequest = await fetch(`/api/booking/` + choosedBookings.bookingId, {
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: token },
         method: 'PATCH',
         body: JSON.stringify({
           endDate: bEndDate,
