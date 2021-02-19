@@ -255,6 +255,7 @@ export const UserTable = () => {
             preferedPayment: uPreferedPayment,
             streetPlusNumber: uStreetPlusNumber,
             city: ucity,
+            userRole: userRole[urole].label,
           }),
         });
       }
