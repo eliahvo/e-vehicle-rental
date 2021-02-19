@@ -215,7 +215,7 @@ export const UserTable = () => {
         city: ucity,
       }),
     });
-    if (userRequest.status === 200) {
+    if (userRequest.status === 201) {
       await allUsers();
       setchipUserCreate(true);
     } else {
@@ -459,26 +459,6 @@ export const UserTable = () => {
       </Dialog>
     );
   };
-
-  /*const bookingTable = () => {
-    if (choosedUser) {
-      return (
-        <Dialog
-          maxWidth="lg"
-          fullWidth={true}
-          onClose={handleBookingDialogClose}
-          aria-labelledby="simple-dialog-title"
-          open={bookingDialog}
-        >
-          <h1>
-            {' '}
-            Bookings of User {choosedUser.firstName} {choosedUser.lastName}
-          </h1>
-          <BookingTable bookings={choosedUser.bookings} />
-        </Dialog>
-      );
-    }
-  };*/
 
   const bookingDialogOpen = async (id: string) => {
     const choosedUserBooking = users.filter((u) => u.userId.toString() === id.toString());

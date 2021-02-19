@@ -345,7 +345,7 @@ export const VehicleTable = () => {
         headers: { 'content-type': 'application/json', Authorization: token},
         method: 'DELETE',
       });
-      if (vehicleRequest.status === 204) {
+      if (vehicleRequest.status === 200) {
         await allVehicles();
         setOpen(true);
       } else {
@@ -505,7 +505,7 @@ export const VehicleTable = () => {
               </TextField>
             </FormControl>
             <p> Longitude: </p>
-            <FormControl required>
+            <FormControl>
               <OutlinedInput
                 data-testid="admin-createVehicle-longitude"
                 id="filled-adornment-weight"
@@ -519,7 +519,7 @@ export const VehicleTable = () => {
             </FormControl>
             <FormHelperText id="component-helper-text">{errorLongitude}</FormHelperText>
             <p> Latitude: </p>
-            <FormControl required>
+            <FormControl>
               <OutlinedInput
                 data-testid="admin-createVehicle-latitude"
                 id="filled-adornment-weight"

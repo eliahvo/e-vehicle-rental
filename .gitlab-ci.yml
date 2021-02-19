@@ -1,0 +1,166 @@
+image: node:alpine
+
+stages:
+  - preparation
+  - build
+  - test
+  - deploy
+
+variables:
+    BASE: /builds/bretsch/main_project/bretsch-app
+    API: $BASE/bretsch-api
+    FRONTEND: $BASE/bretsch-frontend
+    SOCKET_SERVER: $BASE/bretsch-socket-server
+    CYPRESS: $BASE/cypress
+    CYPRESS_CACHE_FOLDER: $BASE/cypress/.cache/
+    DOCKER_TLS_CERTDIR: ""
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    # Env Files
+    - $API/.env
+    - $FRONTEND/.env
+    - $SOCKET_SERVER/.env
+    # NPM Dependencies
+    - $API/node_modules/
+    - $FRONTEND/node_modules/
+    - $SOCKET_SERVER/node_modules/
+    - $CYPRESS/node_modules/
+    # Cypress Cache
+    - $BASE/cypress/.cache/
+
+📦 env files:
+  stage: preparation
+  script:
+    # API
+    - echo "PREPARING API .ENV FILE..."
+    - rm $API/.env || true
+    - echo "SERVER_PORT=$SERVER_PORT" >> $API/.env
+    - echo "NODE_ENV=$NODE_ENV" >> $API/.env
+    - echo "DB_HOST=$DB_HOST" >> $API/.env
+    - echo "DB_PORT=$DB_PORT" >> $API/.env
+    - echo "DB_DATABASE=$DB_DATABASE" >> $API/.env
+    - echo "DB_USER=$DB_USER" >> $API/.env
+    - echo "DB_PASSWORD=$DB_PASSWORD" >> $API/.env
+    - echo "DB_CONNECTION_RETRIES=$DB_CONNECTION_RETRIES" >> $API/.env
+    # Frontend
+    - echo "PREPARING FRONTEND .ENV FILE..."
+    - rm $FRONTEND/.env || true
+    - echo "PORT=$FRONTEND_PORT" >> $FRONTEND/.env
+    - echo "REACT_APP_MAP_KEY=$REACT_APP_MAP_KEY" >> $FRONTEND/.env
+    - echo "REACT_APP_PAYPAL_CLIENT_ID=$REACT_APP_PAYPAL_CLIENT_ID" >> $FRONTEND/.env 
+    # Socket Server
+    - echo "PREPARING SOCKET SERVER .ENV FILE..."
+    - rm $SOCKET_SERVER/.env || true
+    - echo "SERVER_PORT=$SOCKET_SERVER_PORT" >> $SOCKET_SERVER/.env
+  only:
+    - master
+
+📦 dependencies:
+  stage: preparation
+  script:
+    # API
+    - echo "PREPARING API DEPENDENCIES..."
+    - cd $API
+    - npm ci
+    # Frontend
+    - echo "PREPARING FRONTEND DEPENDENCIES..."
+    - cd $FRONTEND
+    - npm ci
+    # Socket Server
+    - echo "PREPARING SOCKET SERVER DEPENDENCIES..."
+    - cd $SOCKET_SERVER
+    - npm ci
+    # Cypress
+    - echo "PREPARING CYPRESS DEPENDENCIES..."
+    - cd $CYPRESS
+    - npm ci
+  only:
+    - master
+
+🏗️ build:
+  stage: build
+  script:
+    # API
+    - echo "BUILDING API..."
+    - cd $API
+    - npm run build
+    # Frontend
+    - echo "BUILDING FRONTEND..."
+    - cd $FRONTEND
+    - npm run build
+    # Socket Server
+    - echo "BUILDING SOCKET SERVER..."
+    - cd $SOCKET_SERVER
+    - npm run build
+  artifacts:
+    paths:
+      - $API/dist/
+      - $FRONTEND/build/
+      - $SOCKET_SERVER/dist/
+  only:
+    - master
+  except:
+    - merge_requests
+
+.db-integration:
+  services:
+    - mariadb:10.1
+  variables:
+    MYSQL_ROOT_PASSWORD: "$DB_PASSWORD"
+    MYSQL_DATABASE: "$DB_DATABASE"
+
+🧪 backend:
+  stage: test
+  extends: .db-integration
+  script:
+    - echo "RUNNING BACKEND TESTS..."
+    - cd $API
+    - npm run test:ci
+  only:
+    - master
+
+🧪 frontend:
+  stage: test
+  image: cypress/base
+  extends: .db-integration
+  script:
+    - echo "FRONTEND TESTS"
+    # Start Frontend
+    - echo "STARTING FRONTEND..."
+    - cd $FRONTEND
+    # -- This changes the proxy setting of the frontend package.json, so it's no longer set to the api docker name
+    - sed -i -- 's/bretsch-api/localhost/g' package.json
+    - npm start &
+    - sleep 20
+    # Start API
+    - echo "STARTING API..."
+    - cd $API
+    - npm start &
+    - sleep 10
+    - npm run typeorm schema:sync
+    - npm run fixtures
+    # Cypress Tests
+    - echo "RUNNING CYPRESS TESTS..."
+    - cd $CYPRESS
+    - npm run test
+  only:
+    - master
+
+🌐 deploy:
+  stage: deploy
+  image: docker/compose
+  services: 
+    - docker:dind
+  script:
+    - echo "DEPLOY"
+    - docker-compose up -d
+  environment:
+    name: master
+    url: https://87.157.233.23:61640
+  only:
+    - master
+  except:
+    - merge_requests
+  when: manual

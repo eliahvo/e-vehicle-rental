@@ -72,7 +72,6 @@ export const DashboardPage = () => {
     if (socketclient) {
       socketclient.on('booking', async (arg: any) => {
         setVehicleBlacklist((blacklist) => [...blacklist, arg.vehicleId]);
-        console.log('arg: ', arg.vehicleId, ' current: ', currentVehicleIdForInfo);
         if (
           history.location.pathname.toLowerCase().includes('dashboard') &&
           arg.vehicleId === currentVehicleIdForInfo
@@ -93,7 +92,6 @@ export const DashboardPage = () => {
   useEffect(() => {
     if (socketclient) {
       socketclient.on('stopBooking', async (arg: any) => {
-        console.log('stopBooking');
         await reloadVehicles();
         const index = vehicleBlacklist.indexOf(arg.vehicleId);
         setVehicleBlacklist((blacklist) => blacklist.filter((_, i) => i !== index));
@@ -254,7 +252,6 @@ export const DashboardPage = () => {
                         }}
                         onClick={() => {
                           setOpenVehicleInfo(true);
-                          console.log('vehicle: ', vehicle.vehicleId);
                           setCurrenVehicleIdForInfo(vehicle.vehicleId);
                         }}
                         icon={`./icons/marker/${vehicle.vehicleType.type}.png`}
