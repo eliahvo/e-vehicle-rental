@@ -17,7 +17,10 @@
   + [Testing manually](#2-testing-manually)
 * [💡 Frontend Reference](#-frontend-reference)
 * [🖥️ API Reference](#%EF%B8%8F-api-reference)
-  + [Route `/example`](#route-example)
+  + [Route `/booking`](#route-booking)
+  + [Route `/user`](#route-user)
+  + [Route `/vehicle`](#route-vehicle)
+  + [Route `/vehicletype`](#route-vehicletype)
 * [⚠ Status codes](#-status-codes)
 * [© License](#-license)
 
