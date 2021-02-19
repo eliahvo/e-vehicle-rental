@@ -4,7 +4,7 @@ import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
-import { setVehicleStats, setVehicleStatus } from '../../util/RequestHelper';
+import { setVehicleStats } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 import { PaymentContext } from '../../contexts/PaymentContext';
@@ -173,13 +173,12 @@ export const BookingPage = () => {
 
     if (bookingPatch.status === 200) {
       const newBattery: number = Number(booking?.vehicle.batteryLevel) - battery;
-      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery);
+      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery, token);
 
       {
         /* updating user */
       }
       const userPatch = await fetch(`/api/user/${getTokenData()?.id}`, {
-        /* 1 must be changed to logged in userId */
         body: JSON.stringify({
           actualBookingId: -1,
         }),
@@ -214,7 +213,7 @@ export const BookingPage = () => {
           {/* vehicle info */}
           <Section>
             <Grid container spacing={3}>
-              <Grid item xs={2}>
+              <Grid item xs={5}>
                 Type:
               </Grid>
               <Grid item xs={2}>
@@ -222,18 +221,18 @@ export const BookingPage = () => {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid item xs={2}>
-                Batterylevel:
+              <Grid item xs={5}>
+                Battery level:
               </Grid>
               <Grid item xs={2}>
                 {booking?.vehicle.batteryLevel}%
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid item xs={2}>
+              <Grid item xs={5}>
                 Start date:
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={7}>
                 {new Date(booking?.startDate).toLocaleString()}
               </Grid>
             </Grid>
