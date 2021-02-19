@@ -1,6 +1,6 @@
-import { Helper } from '../../helper';
 import request from 'supertest';
 import { User } from '../../../src/entity/User.entity';
+import { Helper } from '../../helper';
 
 const helper = new Helper();
 helper.init();
@@ -19,7 +19,7 @@ describe('Tests for the User class', () => {
   it('createUser Test Happy Path', async (done) => {
     await helper.resetDatabase();
     await helper.loadFixtures();
-
+    const authToken = await helper.loginUser('user1@bretsch.eu');
     request(helper.app)
       .post('/api/user')
       .send({
@@ -35,6 +35,7 @@ describe('Tests for the User class', () => {
       })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
+      .set('Authorization', authToken)
       .expect(201)
       .end(async (err, res) => {
         if (err) throw err;
@@ -51,6 +52,7 @@ describe('Tests for the User class', () => {
     await helper.resetDatabase();
     await helper.loadFixtures();
 
+    const authToken = await helper.loginUser('user1@bretsch.eu');
     let user = new User();
     try {
       user = await helper.getRepo(User).findOneOrFail({ userId: 2 });
@@ -62,6 +64,7 @@ describe('Tests for the User class', () => {
       .delete(`/api/user/${user.userId}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
+      .set('Authorization', authToken)
       .expect(200)
       .end(async (err) => {
         if (err) throw err;
@@ -74,10 +77,12 @@ describe('Tests for the User class', () => {
     await helper.resetDatabase();
     await helper.loadFixtures();
 
+    const authToken = await helper.loginUser('user1@bretsch.eu');
     request(helper.app)
       .get(`/api/user`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
+      .set('Authorization', authToken)
       .expect(200)
       .end(async (err, res) => {
         if (err) throw err;
@@ -85,8 +90,8 @@ describe('Tests for the User class', () => {
         expect(user).toBe(3);
         expect(res.body.data.length).toBe(3);
         expect(res.body.data[0].firstName).toBe('user1');
-        //expect(res.body.data[1].birthDate).toBe('11.11.11');
-        //expect(res.body.data[2].email).toBe('user3@bretsch.eu');
+        // expect(res.body.data[1].birthDate).toBe('11.11.11');
+        // expect(res.body.data[2].email).toBe('user3@bretsch.eu');
         done();
       });
   });
@@ -95,6 +100,7 @@ describe('Tests for the User class', () => {
     await helper.resetDatabase();
     await helper.loadFixtures();
 
+    const authToken = await helper.loginUser('user1@bretsch.eu');
     let user = new User();
     try {
       user = await helper.getRepo(User).findOneOrFail({ userId: 3 });
@@ -105,13 +111,14 @@ describe('Tests for the User class', () => {
       .get(`/api/user/${user.userId}/bookings`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
+      .set('Authorization', authToken)
       .expect(200)
       .end((err, res) => {
         if (err) throw err;
         expect(res.body.data.length).toBe(1);
         expect(res.body.data[0].bookingId).toBe(3);
-        expect(res.body.data[0].price).toBe('20.00');
-        expect(res.body.data[0].paymentStatus).toBe('not payed');
+        expect(res.body.data[0].price).toBe('1.00');
+        expect(res.body.data[0].paymentStatus).toBe('payed');
         done();
       });
   });
@@ -120,6 +127,7 @@ describe('Tests for the User class', () => {
     await helper.resetDatabase();
     await helper.loadFixtures();
 
+    const authToken = await helper.loginUser('user1@bretsch.eu');
     let user = new User();
     try {
       user = await helper.getRepo(User).findOneOrFail({ userId: 3 });
@@ -131,6 +139,7 @@ describe('Tests for the User class', () => {
       .get(`/api/user/${user.userId}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
+      .set('Authorization', authToken)
       .expect(200)
       .end(async (err, res) => {
         if (err) throw err;
@@ -148,6 +157,7 @@ describe('Tests for the User class', () => {
     await helper.resetDatabase();
     await helper.loadFixtures();
 
+    const authToken = await helper.loginUser('user1@bretsch.eu');
     let user = new User();
     try {
       user = await helper.getRepo(User).findOneOrFail({ userId: 1 });
@@ -163,6 +173,7 @@ describe('Tests for the User class', () => {
       })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
+      .set('Authorization', authToken)
       .expect(200)
       .end(async (err, res) => {
         if (err) throw err;

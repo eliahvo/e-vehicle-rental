@@ -1,6 +1,6 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import { Request, Response, NextFunction } from "express";
+import bcrypt from 'bcryptjs';
+import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 
 export interface JWTUserData {
   email: string;
@@ -15,12 +15,6 @@ export interface JWTToken extends JWTUserData {
 }
 
 export class Authentication {
-  private static SECRET_KEY = "JWT_SECRET";
-  private static JWT_OPTIONS: jwt.SignOptions = {
-    expiresIn: 3600, // in seconds
-  };
-  private static SALT_ROUNDS: number = 10;
-
   public static async generateToken(userdata: JWTUserData): Promise<string> {
     return jwt.sign(userdata, this.SECRET_KEY, this.JWT_OPTIONS);
   }
@@ -47,30 +41,35 @@ export class Authentication {
   }
 
   public static async verifyAccess(req: Request, res: Response, next: NextFunction) {
-    const jwt = req.get("Authorization");
+    const jwt = req.get('Authorization');
 
     // Check if the authorization header exists
     if (!jwt) {
-      return res.status(401).send({ status: "unauthorized" });
+      return res.status(401).send({ status: 'unauthorized' });
     }
 
     // Verify the token. Returns the jwt object if valid - else null
     const validToken = await Authentication.verifyToken(jwt);
     if (!validToken) {
-      return res.status(401).send({ status: "unauthorized" });
+      return res.status(401).send({ status: 'unauthorized' });
     }
 
     return next();
   }
+  private static SECRET_KEY = 'JWT_SECRET';
+  private static JWT_OPTIONS: jwt.SignOptions = {
+    expiresIn: 3600, // in seconds
+  };
+  private static SALT_ROUNDS: number = 10;
 }
 
 export const authMiddleware = async (
   req: Request,
   // tslint:disable-next-line: variable-name
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  const token = req.get("Authorization");
+  const token = req.get('Authorization');
   if (token) {
     try {
       const decodedToken = (await Authentication.verifyToken(token)) as JWTToken;

@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import {
-  registerUser,
+  checkMailExists,
   deleteUser,
   getAllUser,
   getBookingsByUserId,
   getSpecificUser,
-  updateUser,
   loginUser,
-  checkMailExists,
+  registerUser,
+  updateUser,
   validatePassword,
 } from '../controller/user.controller';
 import { Authentication } from '../middleware/authentication';
@@ -19,13 +19,7 @@ userRouter.post('/token', loginUser);
 userRouter.post('/checkpwd', Authentication.verifyAccess, validatePassword);
 userRouter.delete('/:userId', Authentication.verifyAccess, deleteUser);
 userRouter.get('/', Authentication.verifyAccess, getAllUser);
-userRouter.get(
-  '/email/:email',
-  Authentication.verifyAccess, checkMailExists
-);
-userRouter.get(
-  '/:userId/bookings',
-  Authentication.verifyAccess, getBookingsByUserId
-);
+userRouter.get('/email/:email', Authentication.verifyAccess, checkMailExists);
+userRouter.get('/:userId/bookings', Authentication.verifyAccess, getBookingsByUserId);
 userRouter.get('/:userId', Authentication.verifyAccess, getSpecificUser);
 userRouter.patch('/:userId', Authentication.verifyAccess, updateUser);

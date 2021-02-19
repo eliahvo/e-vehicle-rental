@@ -13,10 +13,9 @@ export const validateBirthday = (date: Date): boolean => {
     if (isNaN(date.getTime())) {
       // date is not valid
       return false;
-    } else {
-      if (date > maxDate) {
-        return false;
-      }
+    }
+    if (date > maxDate) {
+      return false;
     }
   } else {
     // not a date

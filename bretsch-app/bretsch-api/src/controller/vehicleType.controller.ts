@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import { VehicleType } from "../entity/VehicleType.entity";
+import { Request, Response } from 'express';
+import { getRepository } from 'typeorm';
+import { VehicleType } from '../entity/VehicleType.entity';
 
 /**
  * Create VehicleType
@@ -19,7 +19,7 @@ export const createVehicleType = async (req: Request, res: Response) => {
 
   if (!type || !pricePerMinute || !pricePerMinute || !minimalBatteryLevel) {
     res.status(400).send({
-      status: "Error: Parameter missing!",
+      status: 'Error: Parameter missing!',
     });
     return;
   }
@@ -52,14 +52,12 @@ export const deleteVehicleType = async (req: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
-    const vehicleType = await vehicleTypeRepository.findOneOrFail(
-      vehicleTypeId
-    );
+    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId);
     await vehicleTypeRepository.remove(vehicleType);
     res.status(200).send({});
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -72,23 +70,17 @@ export const deleteVehicleType = async (req: Request, res: Response) => {
  * @param {Request}req Request
  * @param {Response}res Response
  */
-export const getAllVehiclesByVehicleTypeId = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllVehiclesByVehicleTypeId = async (req: Request, res: Response) => {
   const vehicleTypeId = req.params.vehicleTypeId;
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
-    const vehicleType = await vehicleTypeRepository.findOneOrFail(
-      vehicleTypeId,
-      { relations: ["vehicles"] }
-    );
+    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId, { relations: ['vehicles'] });
     const vehicleList = vehicleType.vehicles;
     res.status(200).send({ data: vehicleList });
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -103,7 +95,7 @@ export const getAllVehiclesByVehicleTypeId = async (
 export const getAllVehicleType = async (_: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
   const vehicleTypes = await vehicleTypeRepository.find({
-    relations: ["vehicles"],
+    relations: ['vehicles'],
   });
 
   res.status(200).send({
@@ -124,16 +116,13 @@ export const getSpecificVehicleType = async (req: Request, res: Response) => {
   const vehicleTypeRepository = getRepository(VehicleType);
 
   try {
-    const vehicleType = await vehicleTypeRepository.findOneOrFail(
-      vehicleTypeId,
-      { relations: ["vehicles"] }
-    );
+    const vehicleType = await vehicleTypeRepository.findOneOrFail(vehicleTypeId, { relations: ['vehicles'] });
     res.status(200).send({
       data: vehicleType,
     });
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -169,7 +158,7 @@ export const updateVehicleType = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };

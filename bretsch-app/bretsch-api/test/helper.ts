@@ -3,6 +3,8 @@ import express, { Express } from 'express';
 import * as path from 'path';
 import { Connection, createConnection, ObjectType } from 'typeorm';
 import { Builder, fixturesIterator, Loader, Parser, Resolver } from 'typeorm-fixtures-cli';
+import { User } from '../src/entity/User.entity';
+import { Authentication, authMiddleware } from '../src/middleware/authentication';
 import { globalRouter } from '../src/router/global.router';
 
 /**
@@ -19,16 +21,17 @@ export class Helper {
     jest.setTimeout(10000);
     this.app = express();
     this.app.use(bodyParser.json());
+    this.app.use(authMiddleware);
 
     this.app.use('/api', globalRouter);
     this.dbConnection = await createConnection();
-    
+
     /**
      * These two lines cause an error runnng the tests
-     * 
+     *
      **/
-    //await this.resetDatabase();
-    //await this.loadFixtures();
+    // await this.resetDatabase();
+    // await this.loadFixtures();
   }
 
   /**
@@ -68,5 +71,16 @@ export class Helper {
    */
   public getRepo<Entity>(target: ObjectType<Entity>) {
     return this.dbConnection.getRepository(target);
+  }
+
+  public async loginUser(userEmail: string) {
+    const user = await this.getRepo(User).findOneOrFail({ email: userEmail });
+
+    return Authentication.generateToken({
+      email: user.email,
+      id: user.userId.toString(),
+      name: user.firstName,
+      role: user.userRole,
+    });
   }
 }
