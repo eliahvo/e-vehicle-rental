@@ -173,7 +173,7 @@ export const BookingPage = () => {
 
     if (bookingPatch.status === 200) {
       const newBattery: number = Number(booking?.vehicle.batteryLevel) - battery;
-      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery);
+      setVehicleStats(booking?.vehicle.vehicleId, vehicle_status.Free, newBattery, token);
 
       {
         /* updating user */
