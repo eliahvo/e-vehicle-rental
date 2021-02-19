@@ -35,7 +35,7 @@ describe('Tests for the User class', () => {
       })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
-      .expect(200)
+      .expect(201)
       .end(async (err, res) => {
         if (err) throw err;
         const [, user] = await helper.getRepo(User).findAndCount();

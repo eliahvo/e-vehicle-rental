@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "53c71146-60ca-4bb9-a5f8-32f91c5e9653",
+		"_postman_id": "27e6f94e-d1dd-4448-8c8d-58ceec946619",
 		"name": "Main_Project Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,13 @@
 					"name": "createVehicleType",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"type\": \"scooter\",\r\n    \"startPrice\": 1.00,\r\n    \"pricePerMinute\": 0.19,\r\n    \"minimalBatteryLevel\": 10\r\n}",
@@ -40,7 +46,13 @@
 					"name": "deleteVehicleType",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/vehicletype/3",
 							"host": [
@@ -120,7 +132,13 @@
 					"name": "updateVehicleType",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"type\": \"plane\",\r\n    \"startPrice\": 2.00,\r\n    \"pricePerMinute\": 0.37,\r\n    \"minimalBatteryLevel\": 15\r\n}",
@@ -182,7 +200,13 @@
 					"name": "deleteUser",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "",
@@ -214,7 +238,13 @@
 					},
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIxQGJyZXRzY2guZXUiLCJpZCI6IjEiLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2MTM3MzI5OTksImV4cCI6MTYxMzczNjU5OX0.Mt1VIza9NEanMcfs72E9jNulvXL8O83K7WNEYIWUCe0",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{}",
@@ -245,7 +275,13 @@
 					},
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{}",
@@ -278,7 +314,13 @@
 					},
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{}",
@@ -307,7 +349,13 @@
 					"name": "checkMailExists",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/user/email/user1@bretsch.eu",
 							"host": [
@@ -328,7 +376,13 @@
 					"name": "updateUser",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"email\": \"test@test.de\",\r\n    \"password\": \"testpwd\",\r\n    \"firstName\": \"User  Update\",\r\n    \"lastName\":  \"User lastName Update\",\r\n    \"birthDate\": \"01.01.2000\",\r\n    \"preferedPayment\": \"PayPal\",\r\n    \"streetPlusNumber\": \"Teststraße 1\",\r\n    \"city\": \"berlin\",\r\n    \"actualBookingId\": -1\r\n}",
@@ -357,7 +411,13 @@
 					"name": "validatePassword",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"email\": \"user1@bretsch.eu\",\r\n    \"password\": \"bretsch1\"\r\n}",
@@ -420,7 +480,13 @@
 					"name": "createBooking",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"startDate\": \"19.01.2021\",\r\n    \"endDate\": \"22.01.2021\",\r\n    \"paymentStatus\": \"payed\",\r\n    \"price\": 90,\r\n    \"vehicleId\": 1,\r\n    \"userId\": 1\r\n}",
@@ -448,7 +514,13 @@
 					"name": "getAllBookings",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/booking",
 							"host": [
@@ -467,7 +539,13 @@
 					"name": "getSpecificBooking",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/booking/2",
 							"host": [
@@ -487,7 +565,13 @@
 					"name": "deleteBooking",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/booking/1",
 							"host": [
@@ -507,7 +591,13 @@
 					"name": "updateBooking",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"endDate\": \"23.01.2021\",\r\n    \"price\": 120,\r\n    \"paymentStatus\": \"payed\"\r\n}",
@@ -541,7 +631,13 @@
 					"name": "createVehicle",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"status\": 1,\r\n    \"positionLongitude\": 8.651596,\r\n    \"positionLatitude\": 49.881575,\r\n    \"batteryLevel\": 100,\r\n    \"vehicleType\": 1\r\n}",
@@ -570,7 +666,13 @@
 					"name": "DeleteVehicle",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:3000/api/vehicle/4",
 							"protocol": "http",
@@ -591,7 +693,13 @@
 					"name": "BookingsByVehicle",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:3000/api/vehicle/1/bookings",
 							"protocol": "http",
@@ -654,10 +762,16 @@
 					"name": "updateVehicle",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"licencePlate\":\"DA-IT-21\",\r\n    \"status\": 0,\r\n    \"positionLongitude\": 8.651596,\r\n    \"positionLatitude\": 49.861575,\r\n    \"batteryLevel\": 100,\r\n    \"vehicleType\": 1\r\n}",
+							"raw": "{\r\n    \"licencePlate\":\"DA-IT-21\",\r\n    \"status\": 1,\r\n    \"positionLongitude\": 8.651596,\r\n    \"positionLatitude\": 49.861575,\r\n    \"batteryLevel\": 100,\r\n    \"vehicleType\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -665,7 +779,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/vehicle/1",
+							"raw": "http://localhost:3000/api/vehicle/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -674,7 +788,7 @@
 							"path": [
 								"api",
 								"vehicle",
-								"1"
+								"3"
 							]
 						}
 					},
