@@ -4,7 +4,7 @@ import { Booking, vehicle_status } from '../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Box, Button, Divider, Grid, MenuItem, TextField } from '@material-ui/core';
 import useLocalStorage from '../../util/LocalStorageHook';
-import { setVehicleStats, setVehicleStatus } from '../../util/RequestHelper';
+import { setVehicleStats } from '../../util/RequestHelper';
 import { authContext } from '../../contexts/AuthenticationContext';
 import { SocketclientContext } from '../../contexts/SocketclientContext';
 import { PaymentContext } from '../../contexts/PaymentContext';
