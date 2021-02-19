@@ -80,7 +80,7 @@ export default function vehicleInfoFormDialog() {
 
   const handleClose = (submitForm: boolean) => {
     vehicleInfoContext.toggleOpen();
-    if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
+    if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used, token);
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
