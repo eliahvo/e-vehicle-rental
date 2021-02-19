@@ -5,7 +5,7 @@ import { authContext } from '../../contexts/AuthenticationContext';
 import { Button } from '@material-ui/core';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
-import {PricesItem } from './components/PricesComponents';
+import { PricesItem } from './components/PricesComponents';
 
 export const PricesDiv = styled.div`
   margin: 5rem 5rem 10rem 10rem;
@@ -28,12 +28,10 @@ export const PricePage = () => {
       headers: { 'content-type': 'application/json' },
       method: 'GET',
     });
-    console.log(vehicleTypeRequest);
     if (vehicleTypeRequest.status === 200) {
       const taskJSON = await vehicleTypeRequest.json();
       setVehicleType(taskJSON.data);
     }
-    console.log(vehicleType);
   };
 
   React.useEffect(() => {
@@ -69,5 +67,3 @@ export const PricePage = () => {
     );
   }
 };
-
-

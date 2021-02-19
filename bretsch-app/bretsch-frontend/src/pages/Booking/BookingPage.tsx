@@ -213,7 +213,7 @@ export const BookingPage = () => {
           {/* vehicle info */}
           <Section>
             <Grid container spacing={3}>
-              <Grid item xs={2}>
+              <Grid item xs={5}>
                 Type:
               </Grid>
               <Grid item xs={2}>
@@ -221,18 +221,18 @@ export const BookingPage = () => {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid item xs={2}>
-                Batterylevel:
+              <Grid item xs={5}>
+                Battery level:
               </Grid>
               <Grid item xs={2}>
                 {booking?.vehicle.batteryLevel}%
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid item xs={2}>
+              <Grid item xs={5}>
                 Start date:
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={7}>
                 {new Date(booking?.startDate).toLocaleString()}
               </Grid>
             </Grid>

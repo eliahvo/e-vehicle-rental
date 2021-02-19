@@ -248,19 +248,15 @@ export const updateVehicle = async (req: Request, res: Response) => {
     } else {
       vehicle.positionLatitude = positionLatitude;
     }
-    console.log("1: ", status);
     if (status != undefined) {
-      console.log("2: ", status);
       // because of enum  -  "/2" because enum has the douple size
       if (
         typeof status === "number" &&
         status >= 0 &&
         status < Object.values(vehicle_status).length / 2
       ) {
-        console.log("3: ", status);
         vehicle.status = vehicle_status[status].toString();
       } else {
-        console.log("4: ", status);
         res.status(400).send({
           status: "Error: Parameter status is wrong",
         });
