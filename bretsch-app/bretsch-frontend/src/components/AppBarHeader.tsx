@@ -158,11 +158,6 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
     setNavigationDrawer(false);
   };
 
-  const resetLocalStorage = () => {
-    enqueueSnackbar(`Removed ${localStorage.length} entries from local storage!`, { variant: 'info' });
-    localStorage.clear();
-  };
-
   const reloadAllData = () => {
     enqueueSnackbar(`Reloading all data...`, { variant: 'info' });
     reloadAll();
@@ -182,7 +177,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         })}
       >
         <Toolbar>
-          <IconButton data-testid="drawer-id"
+          <IconButton
+            data-testid="drawer-id"
             color="inherit"
             onClick={handleDrawerOpen}
             edge="start"
@@ -221,10 +217,6 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
                 <CachedIcon className={classes.menuIcon} />
                 Reload all data
               </MenuItem>
-              <MenuItem onClick={resetLocalStorage}>
-                <DeleteIcon className={classes.menuIcon} />
-                Clear local storage
-              </MenuItem>
             </Menu>
           </div>
         </Toolbar>
@@ -250,7 +242,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         <Divider />
         {/* ADD REFS TO OTHER SITES BELOW */}
         <List>
-          <ListItem data-testid="Dashboard-button-id"
+          <ListItem
+            data-testid="Dashboard-button-id"
             button
             onClick={() => {
               history.push('/');
@@ -261,7 +254,7 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
             </ListItemIcon>
             <ListItemText primary={'Dashboard'} />
           </ListItem>
-          <ListItem 
+          <ListItem
             button
             onClick={() => {
               history.push('/booking');
@@ -288,7 +281,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         {token ? (
           <>
             <List>
-              <ListItem data-testid="Profile-button-id"
+              <ListItem
+                data-testid="Profile-button-id"
                 button
                 onClick={() => {
                   history.push('/profile');
@@ -318,7 +312,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
         )}
         <List>
           {verifyPermittedRole(login, auth, true) ? (
-            <ListItem data-testid="admin-button-id"
+            <ListItem
+              data-testid="admin-button-id"
               button
               onClick={() => {
                 history.push('/admin');
@@ -332,7 +327,8 @@ export const AppBarHeader = ({ title }: AppBarHeaderProps) => {
           ) : (
             ''
           )}
-          <ListItem data-testid="login-button-id"
+          <ListItem
+            data-testid="login-button-id"
             button
             onClick={() => {
               token ? exitApp() : login.toggleOpen();
