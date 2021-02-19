@@ -81,7 +81,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       },
     });
 
-    if (registerRequest.status === 200) {
+    if (registerRequest.status === 201) {
       const { data } = await registerRequest.json();
       await login({ email: values.email, password: values.password });
     } else {
