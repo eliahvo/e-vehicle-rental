@@ -205,7 +205,7 @@ export const ProfilePage = () => {
                 required
               />
             ) : (
-              `${profile?.firstName}`
+              `${profile?.firstName} `
             )}
             {editNameSettings ? (
               <TextField
