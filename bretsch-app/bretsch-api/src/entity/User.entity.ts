@@ -7,8 +7,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { Booking } from "./Booking.entity";
+} from 'typeorm';
+import { Booking } from './Booking.entity';
 
 @Entity()
 export class User {

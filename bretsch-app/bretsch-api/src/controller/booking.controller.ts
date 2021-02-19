@@ -1,8 +1,8 @@
-import { getRepository } from "typeorm";
-import { Request, Response } from "express";
-import { Booking } from "../entity/Booking.entity";
-import { Vehicle } from "../entity/Vehicle.entity";
-import { User } from "../entity/User.entity";
+import { Request, Response } from 'express';
+import { getRepository } from 'typeorm';
+import { Booking } from '../entity/Booking.entity';
+import { User } from '../entity/User.entity';
+import { Vehicle } from '../entity/Vehicle.entity';
 
 /**
  * Create Booking
@@ -26,7 +26,7 @@ export const createBooking = async (req: Request, res: Response) => {
   const vehicleRepository = await getRepository(Vehicle);
 
   if (!startDate || !paymentStatus || !vehicleId || !userId) {
-    res.status(400).send({ status: "Error: Parameter missing!" });
+    res.status(400).send({ status: 'Error: Parameter missing!' });
     return;
   }
 
@@ -35,20 +35,20 @@ export const createBooking = async (req: Request, res: Response) => {
 
   try {
     const foundUser = await userRepository.findOneOrFail({
-      where: { userId: userId },
+      where: { userId },
     });
     booking.user = foundUser;
   } catch (error) {
-    res.status(404).send({ status: "Error: " + error });
+    res.status(404).send({ status: 'Error: ' + error });
     return;
   }
   try {
     const foundVehicle = await vehicleRepository.findOneOrFail({
-      where: { vehicleId: vehicleId },
+      where: { vehicleId },
     });
     booking.vehicle = foundVehicle;
   } catch (error) {
-    res.status(404).send({ status: "Error: " + error });
+    res.status(404).send({ status: 'Error: ' + error });
     return;
   }
   const createdBooking = await bookingRepository.save(booking);
@@ -73,7 +73,7 @@ export const deleteBooking = async (req: Request, res: Response) => {
     await bookingRepository.remove(foundBooking);
     res.send({});
   } catch (error) {
-    res.status(404).send({ status: "Error: " + error });
+    res.status(404).send({ status: 'Error: ' + error });
   }
 };
 
@@ -88,7 +88,7 @@ export const deleteBooking = async (req: Request, res: Response) => {
 export const getAllBookings = async (_: Request, res: Response) => {
   const bookingRepository = await getRepository(Booking);
   const bookings = await bookingRepository.find({
-    relations: ["user", "vehicle"],
+    relations: ['user', 'vehicle'],
   });
   res.status(200).send({ data: bookings });
 };
@@ -107,15 +107,15 @@ export const getSpecificBooking = async (req: Request, res: Response) => {
 
   try {
     const foundBooking = await bookingRepository.findOneOrFail({
-      relations: ["vehicle", "user", "vehicle.vehicleType"],
-      where: { bookingId: bookingId },
+      relations: ['vehicle', 'user', 'vehicle.vehicleType'],
+      where: { bookingId },
     });
     res.status(200).send({
       data: foundBooking,
     });
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -138,8 +138,8 @@ export const updateBooking = async (req: Request, res: Response) => {
 
   try {
     let foundBooking = await bookingRepository.findOneOrFail({
-      relations: ["user", "vehicle"],
-      where: { bookingId: bookingId },
+      relations: ['user', 'vehicle'],
+      where: { bookingId },
     });
     foundBooking.endDate = endDate;
     foundBooking.price = price;
@@ -151,7 +151,7 @@ export const updateBooking = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(404).send({
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };

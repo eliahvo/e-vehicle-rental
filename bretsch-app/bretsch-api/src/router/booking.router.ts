@@ -1,13 +1,11 @@
 import { Router } from 'express';
 import {
-    createBooking,
-    deleteBooking,
-    getAllBookings,
-    getSpecificBooking,
-    updateBooking
+  createBooking,
+  deleteBooking,
+  getAllBookings,
+  getSpecificBooking,
+  updateBooking,
 } from '../controller/booking.controller';
-
-
 
 export const bookingRouter = Router({ mergeParams: true });
 

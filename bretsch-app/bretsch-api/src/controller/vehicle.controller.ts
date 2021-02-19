@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import { Vehicle } from "../entity/Vehicle.entity";
-import { VehicleType } from "../entity/VehicleType.entity";
+import { Request, Response } from 'express';
+import { getRepository } from 'typeorm';
+import { Vehicle } from '../entity/Vehicle.entity';
+import { VehicleType } from '../entity/VehicleType.entity';
 
 // to have consistent values for the status
 enum vehicle_status {
@@ -25,41 +25,31 @@ enum vehicle_status {
  * @param {Response} res Response
  */
 export const createVehicle = async (req: Request, res: Response) => {
-  const {
-    status,
-    positionLongitude,
-    positionLatitude,
-    batteryLevel,
-    vehicleType,
-  } = req.body;
+  const { status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
   if (!status || !batteryLevel || !vehicleType) {
     res.status(400).send({
-      status: "Error: Missing parameter!",
+      status: 'Error: Missing parameter!',
     });
     return;
   }
   const vehicle = new Vehicle();
   // because of enum
-  if (
-    typeof status === "number" &&
-    status >= 0 &&
-    status < Object.values(vehicle_status).length / 2
-  ) {
+  if (typeof status === 'number' && status >= 0 && status < Object.values(vehicle_status).length / 2) {
     vehicle.status = vehicle_status[status].toString();
   } else {
     res.status(400).send({
-      status: "Error: Parameter status is wrong",
+      status: 'Error: Parameter status is wrong',
     });
     return;
   }
   try {
     const vehicleRep = getRepository(Vehicle);
     const vehicles = await vehicleRep.find({
-      relations: ["bookings", "vehicleType"],
+      relations: ['bookings', 'vehicleType'],
     });
     const lastvehicle = vehicles.pop();
     const licenceNumber = lastvehicle.vehicleId + 1;
-    const generatedLicencePlate = "DA-BR-" + licenceNumber;
+    const generatedLicencePlate = 'DA-BR-' + licenceNumber;
     vehicle.licencePlate = generatedLicencePlate;
   } catch (error) {}
 
@@ -79,7 +69,7 @@ export const createVehicle = async (req: Request, res: Response) => {
   if (validBatteryNumber(batteryLevel)) {
     vehicle.batteryLevel = batteryLevel;
   } else {
-    res.status(404).send({ status: "Battery Level must be between 0 and 100" });
+    res.status(404).send({ status: 'Battery Level must be between 0 and 100' });
     return;
   }
   // VehicleType by Id
@@ -89,7 +79,7 @@ export const createVehicle = async (req: Request, res: Response) => {
       where: { vehicleTypeId: vehicleType },
     });
   } catch (error) {
-    res.status(404).send({ status: "Vehicle Type not_found" });
+    res.status(404).send({ status: 'Vehicle Type not_found' });
     return;
   }
   const vehicleRep = getRepository(Vehicle);
@@ -124,7 +114,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(404).send({
       // tslint:disable-next-line:prefer-template
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -137,22 +127,19 @@ export const deleteVehicle = async (req: Request, res: Response) => {
  * @param {Request} req Request
  * @param {Response} res Response
  */
-export const getAllBookingsByVehicleId = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllBookingsByVehicleId = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
   const vehicleRep = await getRepository(Vehicle);
   try {
     const vehicle = await vehicleRep.findOneOrFail(vehicleId, {
-      relations: ["bookings"],
+      relations: ['bookings'],
     });
     res.status(200).send({
       data: vehicle.bookings,
     });
   } catch (e) {
     res.status(404).send({
-      status: "Vehicle_not_found",
+      status: 'Vehicle_not_found',
     });
   }
 };
@@ -169,7 +156,7 @@ export const getAllBookingsByVehicleId = async (
 export const getAllVehicle = async (_req: Request, res: Response) => {
   const vehicleRep = getRepository(Vehicle);
   const vehicles = await vehicleRep.find({
-    relations: ["bookings", "vehicleType"],
+    relations: ['bookings', 'vehicleType'],
   });
 
   res.status(200).send({
@@ -191,7 +178,7 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
 
   try {
     const vehicle = await vehicleRep.findOneOrFail(vehicleId, {
-      relations: ["bookings", "vehicleType"],
+      relations: ['bookings', 'vehicleType'],
     });
     res.status(200).send({
       data: vehicle,
@@ -199,7 +186,7 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(404).send({
       // tslint:disable-next-line:prefer-template
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
@@ -221,19 +208,12 @@ export const getSpecificVehicle = async (req: Request, res: Response) => {
  */
 export const updateVehicle = async (req: Request, res: Response) => {
   const vehicleId = req.params.vehicleId;
-  const {
-    licencePlate,
-    status,
-    positionLongitude,
-    positionLatitude,
-    batteryLevel,
-    vehicleType,
-  } = req.body;
+  const { licencePlate, status, positionLongitude, positionLatitude, batteryLevel, vehicleType } = req.body;
   const vehicleRep = getRepository(Vehicle);
   try {
     // actual vehicle
     const vehicle = await vehicleRep.findOneOrFail(vehicleId, {
-      relations: ["bookings", "vehicleType"],
+      relations: ['bookings', 'vehicleType'],
     });
     vehicle.licencePlate = licencePlate;
 
@@ -250,15 +230,11 @@ export const updateVehicle = async (req: Request, res: Response) => {
     }
     if (status != undefined) {
       // because of enum  -  "/2" because enum has the douple size
-      if (
-        typeof status === "number" &&
-        status >= 0 &&
-        status < Object.values(vehicle_status).length / 2
-      ) {
+      if (typeof status === 'number' && status >= 0 && status < Object.values(vehicle_status).length / 2) {
         vehicle.status = vehicle_status[status].toString();
       } else {
         res.status(400).send({
-          status: "Error: Parameter status is wrong",
+          status: 'Error: Parameter status is wrong',
         });
         return;
       }
@@ -266,9 +242,7 @@ export const updateVehicle = async (req: Request, res: Response) => {
     if (validBatteryNumber(batteryLevel)) {
       vehicle.batteryLevel = batteryLevel;
     } else {
-      res
-        .status(404)
-        .send({ status: "Battery Level must be between 0 and 100" });
+      res.status(404).send({ status: 'Battery Level must be between 0 and 100' });
       return;
     }
 
@@ -280,7 +254,7 @@ export const updateVehicle = async (req: Request, res: Response) => {
           where: { vehicleTypeId: vehicleType },
         });
       } catch (error) {
-        res.status(404).send({ status: "Vehicle Type not_found" });
+        res.status(404).send({ status: 'Vehicle Type not_found' });
         return;
       }
     }
@@ -291,7 +265,7 @@ export const updateVehicle = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(404).send({
       // tslint:disable-next-line:prefer-template
-      status: "Error: " + error,
+      status: 'Error: ' + error,
     });
   }
 };
