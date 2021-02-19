@@ -19,7 +19,7 @@ describe('Tests for the Booking class Scary Path', () => {
     it('Should not create Booking for missing param', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
-
+        const authToken = await helper.loginUser('user1@bretsch.eu');
 		request(helper.app)
 			.post('/api/booking')
 			.send({
@@ -31,6 +31,7 @@ describe('Tests for the Booking class Scary Path', () => {
 			})
 			.set('Content-Type', 'application/json')
 			.set('Accept', 'application/json')
+            .set('Authorization', authToken)
 			.expect(400)
 			.end(async (err, res) => {
                 if (err) throw err;
@@ -42,7 +43,7 @@ describe('Tests for the Booking class Scary Path', () => {
     it('Should not create Booking with missing vehicle', async (done) => {
 		await helper.resetDatabase();
 		await helper.loadFixtures();
-
+        const authToken = await helper.loginUser('user1@bretsch.eu');
 		request(helper.app)
 			.post('/api/booking')
 			.send({
@@ -55,6 +56,7 @@ describe('Tests for the Booking class Scary Path', () => {
 			})
 			.set('Content-Type', 'application/json')
 			.set('Accept', 'application/json')
+            .set('Authorization', authToken)
 			.expect(404)
 			.end(async (err) => {
 				if (err) throw err;
@@ -68,13 +70,14 @@ describe('Tests for the Booking class Scary Path', () => {
         it('Should not delete Booking', async (done) => {
             await helper.resetDatabase();
             await helper.loadFixtures();
-    
+            const authToken = await helper.loginUser('user1@bretsch.eu');
             const bookingId = 55; 
     
             request(helper.app)
                 .delete(`/api/user/${bookingId}`)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
+                .set('Authorization', authToken)
                 .expect(404)
                 .end(async (err ) => {
                     if (err) throw err;
@@ -88,13 +91,14 @@ describe('Tests for the Booking class Scary Path', () => {
            it('Should not get Specific Booking', async (done) => {
             await helper.resetDatabase();
             await helper.loadFixtures();
-    
+            const authToken = await helper.loginUser('user1@bretsch.eu');
             const bookignId = 55; 
     
             request(helper.app)
                 .get(`/api/booking/${bookignId}`)
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
+                .set('Authorization', authToken)
                 .expect(404)
                 .end(async (err) => {
                     if (err) throw err;
@@ -108,7 +112,7 @@ describe('Tests for the Booking class Scary Path', () => {
         it('Should not update Booking', async (done) => {
             await helper.resetDatabase();
             await helper.loadFixtures();
-    
+            const authToken = await helper.loginUser('user1@bretsch.eu');
             const bookingId = 55; 
     
             request(helper.app)
@@ -118,6 +122,7 @@ describe('Tests for the Booking class Scary Path', () => {
                 })
                 .set('Content-Type', 'application/json')
                 .set('Accept', 'application/json')
+                .set('Authorization', authToken)
                 .expect(404)
                 .end(async (err) => {
                     if (err) throw err;
