@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Button,
   Chip,
@@ -20,12 +20,15 @@ import { Vehicle, VehicleType } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Alert } from '@material-ui/lab';
 import { CreateButton } from './vehicleTable';
+import {authContext} from "../../../contexts/AuthenticationContext";
 
 export const ChipsPos = styled.span`
   margin: 0.2%;
 `;
 
 export const VehicleTypeChips = () => {
+  const { token } = useContext(authContext);
+
   const [open, setOpen] = React.useState(false);
   const [openDialogCreate, setDialogCreate] = React.useState(false);
   const [openDialogUpdate, setDialogUpdate] = React.useState(false);
@@ -95,7 +98,6 @@ export const VehicleTypeChips = () => {
   };
 
   const handleStartPriceChange = (e) => {
-    console.log(e.target.value);
     if (parseFloat(e.target.value) || e.target.value.empty) {
       setvStartPrice(parseFloat(e.target.value));
     }
@@ -240,59 +242,10 @@ export const VehicleTypeChips = () => {
     );
   };
 
-  /*const updateVehicleTypeDialog = () => {
-    return (
-      <Dialog onClose={handleUpdateDialogClose} aria-labelledby="simple-dialog-title" open={openDialogUpdate}>
-        <form onSubmit={updateVehicleTypeDB}>
-          <DialogTitle id="simple-dialog-title">Update vehicle type</DialogTitle>
-          <DialogContent dividers>
-            <p> Name: </p>
-            <FormControl>
-              <TextField data-testid="admin-updateVehicleType-name" required  onChange={handleNameChange}  id="outlined-required" defaultValue={name} variant="outlined" />
-            </FormControl>
-            <p> Price </p>
-            <FormControl required>
-              <OutlinedInput data-testid="admin-updateVehicleType-price"
-                id="filled-adornment-weight"
-                defaultValue={price}
-                onChange={handlePriceChange}
-                endAdornment={<InputAdornment position="end">€/min</InputAdornment>}
-                aria-describedby="filled-weight-helper-text"
-                inputProps={{
-                  'aria-label': 'weight',
-                }}
-              />
-            </FormControl>
-            <FormHelperText id="component-helper-text">{errorprice}</FormHelperText>
-            <p> Minimal Battery Level: </p>
-            <FormControl required>
-              <OutlinedInput data-testid="admin-updateVehicleType-battery"
-                id="filled-adornment-weight"
-                defaultValue={bLevel}
-                onChange={handleBLevelChange}
-                endAdornment={<InputAdornment position="end">%</InputAdornment>}
-                aria-describedby="filled-weight-helper-text"
-                inputProps={{
-                  'aria-label': 'weight',
-                }}
-              />
-            </FormControl>
-            <FormHelperText id="component-helper-text">{errorbLevel}</FormHelperText>
-          </DialogContent>
-
-          <div>
-            <Button data-testid="admin-updateVehicleType-update" type="submit" color="primary">
-              Update
-            </Button>
-          </div>
-        </form>
-      </Dialog>
-    );
-  };*/
 
   const allVehicleTypes = async () => {
     const vehicleTypeRequest = await fetch(`/api/vehicletype/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token},
       method: 'GET',
     });
     if (vehicleTypeRequest.status === 200) {
@@ -313,7 +266,7 @@ export const VehicleTypeChips = () => {
   const updateVehicleTypeDB = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const vehicleTypeRequest = await fetch(`/api/vehicletype/` + typeId, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token},
       body: JSON.stringify({
         type: name,
         pricePerMinute: price,
@@ -335,7 +288,7 @@ export const VehicleTypeChips = () => {
   const createVehicleType = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const vehicleTypeRequest = await fetch(`/api/vehicletype/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token},
       body: JSON.stringify({
         type: name,
         pricePerMinute: price,
@@ -357,7 +310,7 @@ export const VehicleTypeChips = () => {
   const deleteOneVehicleType = async (e: any) => {
     if (choosedVehicleType) {
       const vehicleTypeRequest = await fetch(`/api/vehicletype/` + choosedVehicleType.vehicleTypeId.toString(), {
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: token },
         method: 'DELETE',
       });
       if (vehicleTypeRequest.status === 200) {
