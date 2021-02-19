@@ -101,7 +101,9 @@ export const App = () => {
     (async () => {
       await loadAll();
       /* setup socket.io-client */
-      setSocketclient(io('http://localhost:5000', { transports: ['websocket', 'polling', 'flashsocket'] }));
+      setSocketclient(
+        io(`http://${window.location.host}:5000`, { transports: ['websocket', 'polling', 'flashsocket'] }),
+      );
     })();
   }, []);
 
