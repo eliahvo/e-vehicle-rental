@@ -29,7 +29,7 @@ In the following guide you get a quick overview over the use of Bretsch.
 This button directs back to the Dashboard Map.
 
 ### 2 - Active Booking
-This will direct to the currently running bookings of the logged in user.<br>
+This will direct to the currently running booking of the logged in user.<br>
 
 **For example**:
 
@@ -117,9 +117,10 @@ With the right access rights you get the option to enter the Admin page
 <img src="pic/Frontend_Admin_Vehicle.png" alt="All bookings of one user" width=700>
 <br><br>
 
-**Create**:  Licence Plate (is fully generated - 'DA-BR' + number), battery level, status, according vehicle type, longitude (for car position), latitude (for car position)<br>
-**Update**: Licence Plate (can be fully replaced by an individual licence plate), battery level, status, according vehicle type, longitude (for car position), latitude (for car position)<br>
+**Create**:  Licence Plate (not required (!) - fully generated - 'DA-BR' + number), battery level, status, according vehicle type, longitude (for car position), latitude (for car position)<br>
+_Note_: longitude and latitude are not required. If they are not given, the vehicle gets a random position.
 
+**Update**: Licence Plate (can be fully replaced by an individual licence plate), battery level, status, according vehicle type, longitude (for car position), latitude (for car position)<br>
 
 ### Users
 <img src="pic/Frontend_Admin_Users.png" alt="All bookings of one user" width=700>
