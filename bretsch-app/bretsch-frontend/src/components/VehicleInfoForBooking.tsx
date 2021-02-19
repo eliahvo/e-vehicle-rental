@@ -9,7 +9,7 @@ import { Box, Chip, Divider, makeStyles } from '@material-ui/core';
 import { Booking, Vehicle, vehicle_status } from '../util/EntityInterfaces';
 import styled from 'styled-components';
 import WarningIcon from '@material-ui/icons/Warning';
-import { setVehicleStatus } from '../util/RequestHelper';
+import { setVehicleStats } from '../util/RequestHelper';
 import { authContext } from '../contexts/AuthenticationContext';
 import { LoginContext } from '../contexts/LoginContext';
 import { SocketclientContext } from '../contexts/SocketclientContext';
@@ -78,9 +78,9 @@ export default function vehicleInfoFormDialog() {
     }
   }, [vehicleInfoContext.vehicleId]);
 
-  const handleClose = (submitForm: boolean) => {
+  const handleClose = async (submitForm: boolean) => {
     vehicleInfoContext.toggleOpen();
-    if (submitForm) setVehicleStatus(vehicle?.vehicleId, vehicle_status.Used);
+    if (submitForm) setVehicleStats(vehicle?.vehicleId, vehicle_status.Used, vehicle?.batteryLevel, token);
   };
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
