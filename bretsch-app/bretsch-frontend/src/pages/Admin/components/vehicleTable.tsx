@@ -1,7 +1,7 @@
 import { DataGrid, FilterModel, ValueFormatterParams } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Vehicle, VehicleType } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { Alert } from '@material-ui/lab';
@@ -21,6 +21,7 @@ import {
   Snackbar,
   TextField,
 } from '@material-ui/core';
+import { authContext } from '../../../contexts/AuthenticationContext';
 // progress style by https://codepen.io/restlessdesign/pen/CJrad
 export const BatteryProgressNumber = styled.span`
   position: absolute;
@@ -181,6 +182,8 @@ export const deleteDialog = (
 };
 
 export const VehicleTable = () => {
+  const { token } = useContext(authContext);
+
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [choosedVehiclesDelete, setchoosedVehicleDelete] = useState<Vehicle>();
   const [choosedVehiclesDeleteLicencePlate, setChoosedVehiclesDeleteLicencePlate] = useState<string>('');
@@ -318,7 +321,7 @@ export const VehicleTable = () => {
   // get all Vehicle Types
   const allVehicleTypes = async () => {
     const vehicleTypeRequest = await fetch(`/api/vehicletype/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
     if (vehicleTypeRequest.status === 200) {
@@ -339,7 +342,7 @@ export const VehicleTable = () => {
   const deleteVehicleDB = async () => {
     if (choosedVehiclesDelete) {
       const vehicleRequest = await fetch(`/api/vehicle/` + choosedVehiclesDelete.vehicleId, {
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: token},
         method: 'DELETE',
       });
       if (vehicleRequest.status === 204) {
@@ -356,7 +359,7 @@ export const VehicleTable = () => {
   const createVehicleDB = async (e) => {
     e.preventDefault();
     const vehicleRequest = await fetch(`/api/vehicle/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token},
       method: 'POST',
       body: JSON.stringify({
         licencePlate: licencePlateV,
@@ -382,7 +385,7 @@ export const VehicleTable = () => {
     e.preventDefault();
     if (choosedUpdateVehicle) {
       const vehicleRequest = await fetch(`/api/vehicle/` + choosedUpdateVehicle.vehicleId, {
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: token},
         method: 'PATCH',
         body: JSON.stringify({
           licencePlate: licencePlateV,
@@ -611,7 +614,8 @@ export const VehicleTable = () => {
                   width: 150,
                   renderCell: (params: ValueFormatterParams) => (
                     <>
-                      <IconButton data-testid="admin-updateVehicle-button"
+                      <IconButton
+                        data-testid="admin-updateVehicle-button"
                         aria-label="info"
                         color="primary"
                         onClick={() => {

@@ -1,6 +1,6 @@
 import { DataGrid, FilterModel, ValueFormatterParams } from '@material-ui/data-grid';
 import Button from '@material-ui/core/Button';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Booking, User, Vehicle } from '../../../util/EntityInterfaces';
 import styled from 'styled-components';
 import { chipMessageError, chipMessageSucess, CreateButton, deleteDialog, vehicleStatus } from './vehicleTable';
@@ -22,6 +22,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DateFnsUtils from '@date-io/date-fns';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import { BookingTable } from './bookingTable';
+import { authContext } from '../../../contexts/AuthenticationContext';
 
 export const Refresh = styled.div`
   margin-left: 2%;
@@ -39,6 +40,8 @@ export const userRole = [
 ];
 
 export const UserTable = () => {
+  const { token } = useContext(authContext);
+
   const [users, setUsers] = useState<User[]>([]);
   const [choosedUser, setchoosedUsers] = useState<User>();
   const [choosedUserName, setchoosedUsersName] = useState<string>();
@@ -169,7 +172,7 @@ export const UserTable = () => {
   // get all users
   const allUsers = async () => {
     const userRequest = await fetch(`/api/user/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
     if (userRequest.status === 200) {
@@ -182,7 +185,7 @@ export const UserTable = () => {
   const deleteUserDB = async () => {
     if (choosedUser) {
       const userRequest = await fetch(`/api/user/` + choosedUser.userId.toString(), {
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: token },
         method: 'DELETE',
       });
       if (userRequest.status === 200) {
@@ -199,7 +202,7 @@ export const UserTable = () => {
   const createUserDB = async (e) => {
     e.preventDefault();
     const userRequest = await fetch(`/api/user/`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'POST',
       body: JSON.stringify({
         email: uemail,
@@ -229,7 +232,7 @@ export const UserTable = () => {
       let userRequest;
       if (upassword === '') {
         userRequest = await fetch(`/api/user/` + choosedUser.userId, {
-          headers: { 'content-type': 'application/json' },
+          headers: { 'content-type': 'application/json', Authorization: token },
           method: 'PATCH',
           body: JSON.stringify({
             email: uemail,
@@ -244,7 +247,7 @@ export const UserTable = () => {
         });
       } else {
         userRequest = await fetch(`/api/user/` + choosedUser.userId, {
-          headers: { 'content-type': 'application/json' },
+          headers: { 'content-type': 'application/json', Authorization: token },
           method: 'PATCH',
           body: JSON.stringify({
             email: uemail,
@@ -301,7 +304,7 @@ export const UserTable = () => {
 
   const bookingsByUserDB = async (uid: string) => {
     const userRequest = await fetch(`/api/user/` + uid + `/bookings`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
     if (userRequest.status === 200) {
@@ -391,7 +394,7 @@ export const UserTable = () => {
             </FormControl>
             <p>Lastname: </p>
             <FormControl required>
-              <TextField 
+              <TextField
                 data-testid="admin-createUser-Lastname"
                 onChange={handleULastName}
                 value={ulastName}
@@ -403,7 +406,8 @@ export const UserTable = () => {
             <p>Birthdate:</p>
             <FormControl required>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker data-testid="admin-createUser-Bday"
+                <KeyboardDatePicker
+                  data-testid="admin-createUser-Bday"
                   margin="normal"
                   id="date-picker-dialog"
                   format="dd/MM/yyyy"
@@ -456,7 +460,7 @@ export const UserTable = () => {
     );
   };
 
-  const bookingTable = () => {
+  /*const bookingTable = () => {
     if (choosedUser) {
       return (
         <Dialog
@@ -474,7 +478,7 @@ export const UserTable = () => {
         </Dialog>
       );
     }
-  };
+  };*/
 
   const bookingDialogOpen = async (id: string) => {
     const choosedUserBooking = users.filter((u) => u.userId.toString() === id.toString());
@@ -511,7 +515,12 @@ export const UserTable = () => {
   return (
     <>
       <CreateButton>
-        <Button data-testid="admin-createUser-button" variant="outlined" color="primary" onClick={handleCreateDialogOpen}>
+        <Button
+          data-testid="admin-createUser-button"
+          variant="outlined"
+          color="primary"
+          onClick={handleCreateDialogOpen}
+        >
           Create
         </Button>
         <Button style={{ margin: 10 }} variant="outlined" onClick={allUsers}>
@@ -563,7 +572,8 @@ export const UserTable = () => {
                   headerName: '',
                   renderCell: (params: ValueFormatterParams) => (
                     <strong>
-                      <Button data-testid="admin-deleteUser-button"
+                      <Button
+                        data-testid="admin-deleteUser-button"
                         id={params.value.toString()}
                         onClick={handleDeleteUser}
                         variant="outlined"
@@ -613,7 +623,6 @@ export const UserTable = () => {
       {deleteDialog(choosedUserName, 'User', handleDeleteDialogClose, deleteUserDB, deleteDialogUser)}
       {userManageDialog(createDialogUser, handleCreateDialogClose, 'Create', createUserDB, false)}
       {userManageDialog(updateDialogUser, handleUpdateDialogClose, 'Update', updateUserDB, true)}
-      {bookingTable()}
     </>
   );
 };
