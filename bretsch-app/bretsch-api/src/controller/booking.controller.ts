@@ -53,7 +53,7 @@ export const createBooking = async (req: Request, res: Response) => {
   }
   const createdBooking = await bookingRepository.save(booking);
 
-  res.status(200).send({ data: createdBooking });
+  res.status(201).send({ data: createdBooking });
 };
 
 /**

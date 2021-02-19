@@ -8,6 +8,7 @@ import {
 } from '../controller/booking.controller';
 
 
+
 export const bookingRouter = Router({ mergeParams: true });
 
 bookingRouter.post('/', createBooking);
