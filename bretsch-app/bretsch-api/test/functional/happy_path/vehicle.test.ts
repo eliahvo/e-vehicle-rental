@@ -76,7 +76,7 @@ describe('Tests for the Vehicle class', () => {
       .delete('/api/Vehicle/1')
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
-      .expect(204)
+      .expect(200)
       .end(async (err) => {
         if (err) throw err;
         const [, vehicle] = await helper.getRepo(Vehicle).findAndCount();

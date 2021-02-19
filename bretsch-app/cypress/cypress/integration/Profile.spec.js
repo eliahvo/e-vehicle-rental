@@ -43,7 +43,6 @@ it("can change profile values for names", () => {
     cy.findByTestId(/profile-edit-lastname2/i).children().next().children().clear();
     cy.findByTestId(/profile-edit-lastname2/i).type(profile.lastname);
     cy.findByTestId(/profile-edit-name/i).click();
-    cy.findByTestId(/profile-edit-name/i).click();
         
 })
 

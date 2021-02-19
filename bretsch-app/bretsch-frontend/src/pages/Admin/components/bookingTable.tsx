@@ -490,7 +490,7 @@ export const BookingTable = () => {
                   headerName: 'Button',
                   renderCell: (params: ValueFormatterParams) => (
                     <strong>
-                      <Button
+                      <Button data-testid="12345"
                         id={params.value.toString()}
                         onClick={handleDeleteBooking}
                         variant="outlined"

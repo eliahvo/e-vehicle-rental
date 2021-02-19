@@ -16,7 +16,7 @@ it("can filter a car ", () => {
     cy.findByTestId(/dashboard-filterButton1/i).click();
     cy.findByTestId(/dashboard-filterButtonOption2/i).children().children().children().first().click();
     cy.findByTestId(/dashboard-filterButtonOption2/i).click();
-    expect(cy.findByTestId(/dashboard-filterButton1/i).next().next().children().children().children().children().next().next().children().children().next().next().children().should('have.length', 2));
+    expect(cy.findByTestId(/dashboard-filterButton1/i).next().next().children().children().children().children().next().next().children().children().next().next().children().should('have.length', 4));
 })
 
 });
