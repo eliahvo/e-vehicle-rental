@@ -345,7 +345,7 @@ export const VehicleTable = () => {
         headers: { 'content-type': 'application/json', Authorization: token},
         method: 'DELETE',
       });
-      if (vehicleRequest.status === 204) {
+      if (vehicleRequest.status === 200) {
         await allVehicles();
         setOpen(true);
       } else {
