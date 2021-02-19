@@ -21,12 +21,13 @@ export const MyBookingPage = () => {
   const history = useHistory();
   const [userBookings, setUserBookings] = React.useState<Booking[]>([]);
   const {
+    token,
     actions: { getTokenData },
   } = useContext(authContext);
 
   const fetchUserBookings = async () => {
     const userBookingsRequest = await fetch(`api/user/${getTokenData()?.id}/bookings`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
     console.log(userBookingsRequest);

@@ -61,7 +61,7 @@ export default function vehicleInfoFormDialog() {
   const fetchActualBooking = async () => {
     if (verifyAuthentication(login, auth) && getTokenData()?.id) {
       const userRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: token },
         method: 'GET',
       });
       if (userRequest.status === 200) {
@@ -117,10 +117,10 @@ export default function vehicleInfoFormDialog() {
           userId: getTokenData()?.id,
           vehicleId: vehicle?.vehicleId,
         }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: token },
         method: 'POST',
       });
-      if (createBookingRequest.status === 200) {
+      if (createBookingRequest.status === 201) {
         const createBookingJSON = await createBookingRequest.json();
         try {
           const bookingId = createBookingJSON['data']['bookingId'];
@@ -128,7 +128,7 @@ export default function vehicleInfoFormDialog() {
             body: JSON.stringify({
               actualBookingId: bookingId,
             }),
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Authorization: token },
             method: 'PATCH',
           });
           if (updateUserRequest.status === 200) {

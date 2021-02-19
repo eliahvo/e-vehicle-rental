@@ -79,6 +79,7 @@ export const ProfilePage = () => {
   const [editPersonalSettings, setEditPersonalSettings] = React.useState(false);
   const [editPaymentSettings, setEditPaymentSettings] = React.useState(false);
   const {
+    token,
     actions: { getTokenData },
   } = useContext(authContext);
   const [chosenPayment, setChosenPayment] = React.useState('');
@@ -87,7 +88,7 @@ export const ProfilePage = () => {
 
   const fetchProfile = async () => {
     const profileRequest = await fetch(`/api/user/${getTokenData()?.id}`, {
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', Authorization: token },
       method: 'GET',
     });
 
@@ -172,7 +173,7 @@ export const ProfilePage = () => {
       body: JSON.stringify({
         ...values,
       }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: token },
       method: 'PATCH',
     });
     enqueueSnackbar(`Saved changes!`, {
