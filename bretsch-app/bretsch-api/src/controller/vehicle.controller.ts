@@ -120,7 +120,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
   try {
     const vehicle = await vehicleRepository.findOneOrFail(vehicleId);
     await vehicleRepository.remove(vehicle);
-    res.status(204).send({});
+    res.status(200).send({});
   } catch (error) {
     res.status(404).send({
       // tslint:disable-next-line:prefer-template

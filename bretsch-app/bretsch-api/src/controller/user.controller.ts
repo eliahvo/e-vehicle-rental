@@ -77,7 +77,7 @@ export const registerUser = async (req: Request, res: Response) => {
   const createdUser = await userRepository.save(newUser);
   delete createdUser.hashedPassword;
 
-  return res.status(200).send({
+  return res.status(201).send({
     data: createdUser,
   });
 };
