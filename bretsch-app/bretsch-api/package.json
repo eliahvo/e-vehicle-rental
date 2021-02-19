@@ -8,6 +8,7 @@
     "start": "ts-node ./src/server.ts",
     "dev": "ts-node-dev ./src/server.ts",
     "lint": "tslint --project .",
+    "lint:fix": "tslint --project . --fix",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "fixtures": "NODE_ENV=dev npx fixtures ./src/fixture --config ormconfig.js",
     "test": "jest --verbose --coverage --forceExit --detectOpenHandles --runInBand",

@@ -25,13 +25,13 @@ export class Helper {
 
     this.app.use('/api', globalRouter);
     this.dbConnection = await createConnection();
-    
+
     /**
      * These two lines cause an error runnng the tests
-     * 
+     *
      **/
-    //await this.resetDatabase();
-    //await this.loadFixtures();
+    // await this.resetDatabase();
+    // await this.loadFixtures();
   }
 
   /**
@@ -83,6 +83,4 @@ export class Helper {
       role: user.userRole,
     });
   }
-
-
 }
