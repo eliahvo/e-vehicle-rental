@@ -221,6 +221,7 @@ docker-compose exec bretsch-api npm run test
 ```
 We could not test the booking of a vehicle in the frontend. For this we need to click the label on the map which is not possible and then also pay it with paypal which is also not possible. Because of this we tested it by hand to make sure our customers are able to book and pay properly.
 We also could not delete bookings with cypress. Cypress is not able to click this button. It is not in the dom at all in the test environment but it is on the normal Website and the delete button also works fine.
+<img src="doc/pic_tests/testsWorking.png" alt="All tests working">
 
 ## 2. Testing manually
 
