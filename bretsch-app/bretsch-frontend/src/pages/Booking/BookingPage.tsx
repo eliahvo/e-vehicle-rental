@@ -179,7 +179,6 @@ export const BookingPage = () => {
         /* updating user */
       }
       const userPatch = await fetch(`/api/user/${getTokenData()?.id}`, {
-        /* 1 must be changed to logged in userId */
         body: JSON.stringify({
           actualBookingId: -1,
         }),
